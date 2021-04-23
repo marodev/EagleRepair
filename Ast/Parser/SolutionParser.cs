@@ -5,17 +5,17 @@ using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.MSBuild;
 
-namespace AstRewriter
+namespace Ast.Parser
 {
     public class SolutionParser : IDisposable
     {
-        private readonly MSBuildWorkspace _workspace;
-        
-        public SolutionParser(string solutionFilePath)
+        public SolutionParser()
         {
             MSBuildLocator.RegisterDefaults();
-            _workspace = MSBuildWorkspace.Create();
+            Workspace = MSBuildWorkspace.Create();
         }
+        
+        public MSBuildWorkspace Workspace { get; }
 
         public async Task<Solution> OpenSolutionAsync(string solutionFilePath)
         {
@@ -23,12 +23,13 @@ namespace AstRewriter
             {
                 throw new ArgumentException($"Path {solutionFilePath} provided for {nameof(solutionFilePath)} does not exist.");
             }
-            return await _workspace.OpenSolutionAsync(solutionFilePath);
+            Console.WriteLine($"await Workspace.OpenSolutionAsync({solutionFilePath})");
+            return await Workspace.OpenSolutionAsync(solutionFilePath);
         }
 
         private void ReleaseUnmanagedResources()
         {
-            _workspace?.Dispose();
+            Workspace?.Dispose();
         }
 
         public void Dispose()
