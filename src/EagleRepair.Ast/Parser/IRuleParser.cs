@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Ast.Parser
+namespace EagleRepair.Ast.Parser
 {
     public interface IRuleParser
     {

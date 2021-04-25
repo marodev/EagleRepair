@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Cli
+namespace EagleRepair.Cli
 {
     public interface IApplication
     {

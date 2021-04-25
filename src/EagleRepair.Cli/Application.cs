@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Ast;
+using EagleRepair.Ast;
+using EagleRepair.Cli.Input;
 
-namespace Cli
+namespace EagleRepair.Cli
 {
     public class Application : IApplication
     {

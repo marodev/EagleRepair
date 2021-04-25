@@ -1,4 +1,4 @@
-namespace Cli.Wrapper
+namespace EagleRepair.Cli.Wrapper
 {
     public interface IFileWrapper
     {

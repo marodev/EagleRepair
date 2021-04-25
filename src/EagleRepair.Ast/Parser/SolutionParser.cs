@@ -5,7 +5,7 @@ using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.MSBuild;
 
-namespace Ast.Parser
+namespace EagleRepair.Ast.Parser
 {
     public class SolutionParser : IDisposable, ISolutionParser
     {

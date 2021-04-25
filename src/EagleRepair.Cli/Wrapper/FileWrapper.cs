@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Cli.Wrapper
+namespace EagleRepair.Cli.Wrapper
 {
     public class FileWrapper : IFileWrapper
     {

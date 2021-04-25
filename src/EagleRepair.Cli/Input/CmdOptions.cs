@@ -1,9 +1,8 @@
-using System;
 using System.Collections.Generic;
-using Ast;
 using CommandLine;
+using EagleRepair.Ast;
 
-namespace Cli
+namespace EagleRepair.Cli.Input
 {
     public class CmdOptions
     {

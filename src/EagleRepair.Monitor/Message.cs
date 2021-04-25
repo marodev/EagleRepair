@@ -1,4 +1,4 @@
-namespace Monitor
+namespace EagleRepair.Monitor
 {
     public record Message
     {

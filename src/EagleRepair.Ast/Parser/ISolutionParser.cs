@@ -1,8 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.MSBuild;
 
-namespace Ast.Parser
+namespace EagleRepair.Ast.Parser
 {
     public interface ISolutionParser
     {

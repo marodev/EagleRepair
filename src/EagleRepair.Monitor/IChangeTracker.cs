@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Monitor
+namespace EagleRepair.Monitor
 {
     public interface IChangeTracker
     {

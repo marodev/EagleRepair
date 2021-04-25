@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using CommandLine;
 
-namespace Cli
+namespace EagleRepair.Cli.Input
 {
     public class CmdLineReader : ICmdLineReader
     {

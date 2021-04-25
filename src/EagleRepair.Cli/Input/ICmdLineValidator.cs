@@ -1,4 +1,4 @@
-namespace Cli
+namespace EagleRepair.Cli.Input
 {
     public interface ICmdLineValidator
     {

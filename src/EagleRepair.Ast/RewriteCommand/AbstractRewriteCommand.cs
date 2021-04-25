@@ -1,8 +1,7 @@
-using Microsoft.CodeAnalysis;
+using EagleRepair.Monitor;
 using Microsoft.CodeAnalysis.CSharp;
-using Monitor;
 
-namespace Ast.RewriteCommand
+namespace EagleRepair.Ast.RewriteCommand
 {
     public abstract class AbstractRewriteCommand : CSharpSyntaxRewriter
     {

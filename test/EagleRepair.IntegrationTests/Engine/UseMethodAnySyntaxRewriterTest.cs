@@ -1,11 +1,11 @@
 using System.Linq;
 using System.Threading.Tasks;
-using Ast;
-using Ast.Parser;
 using Autofac;
+using EagleRepair.Ast;
+using EagleRepair.Ast.Parser;
 using Xunit;
 
-namespace Tests.Engine
+namespace EagleRepair.IntegrationTests.Engine
 {
     public class UnitTest1
     {

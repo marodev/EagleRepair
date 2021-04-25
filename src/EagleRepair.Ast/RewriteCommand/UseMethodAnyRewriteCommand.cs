@@ -1,10 +1,10 @@
 using System.Linq;
+using EagleRepair.Monitor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Monitor;
 
-namespace Ast.RewriteCommand
+namespace EagleRepair.Ast.RewriteCommand
 {
     public class UseMethodAnyRewriteCommand : AbstractRewriteCommand
     {

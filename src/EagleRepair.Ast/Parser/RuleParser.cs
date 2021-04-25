@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Ast.Parser
+namespace EagleRepair.Ast.Parser
 {
     public class RuleParser : IRuleParser
     {

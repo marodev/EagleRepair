@@ -1,15 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
-using Ast.Parser;
-using Ast.RewriteCommand;
+using EagleRepair.Ast.Parser;
+using EagleRepair.Ast.RewriteCommand;
+using EagleRepair.Monitor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Monitor;
 
-namespace Ast
+namespace EagleRepair.Ast
 {
     public class Engine : IEngine
     {

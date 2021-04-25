@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Tests
+namespace EagleRepair.IntegrationTests
 {
     public static class Utils
     {

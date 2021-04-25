@@ -1,10 +1,10 @@
-using Ast;
-using Ast.Parser;
-using Ast.RewriteCommand;
 using Autofac;
-using Monitor;
+using EagleRepair.Ast;
+using EagleRepair.Ast.Parser;
+using EagleRepair.Ast.RewriteCommand;
+using EagleRepair.Monitor;
 
-namespace Tests.Engine
+namespace EagleRepair.IntegrationTests.Engine
 {
     public static class DiContainerTestConfig
     {
@@ -19,7 +19,7 @@ namespace Tests.Engine
                 .Where(t => t.IsSubclassOf(typeof(AbstractRewriteCommand)))
                 .As<AbstractRewriteCommand>();
 
-            builder.RegisterType<Ast.Engine>().As<IEngine>();
+            builder.RegisterType<EagleRepair.Ast.Engine>().As<IEngine>();
 
 
             return builder;

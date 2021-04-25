@@ -1,4 +1,4 @@
-namespace Ast
+namespace EagleRepair.Ast
 {
     public enum Rule
     {

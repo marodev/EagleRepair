@@ -1,12 +1,11 @@
-using System.Runtime.InteropServices;
-using Ast;
-using Ast.Parser;
-using Ast.RewriteCommand;
 using Autofac;
-using Microsoft.CodeAnalysis.CSharp;
-using Monitor;
+using EagleRepair.Ast;
+using EagleRepair.Ast.Parser;
+using EagleRepair.Ast.RewriteCommand;
+using EagleRepair.Cli.Input;
+using EagleRepair.Monitor;
 
-namespace Cli
+namespace EagleRepair.Cli
 {
     public static class DiContainerConfig
     {

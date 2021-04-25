@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Ast;
 using Autofac;
-using CommandLine;
 
-namespace Cli
+namespace EagleRepair.Cli
 {
     public static class Program
     {

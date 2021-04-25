@@ -1,9 +1,9 @@
 using System;
 using System.IO;
 using System.Linq;
-using Ast.Parser;
+using EagleRepair.Ast.Parser;
 
-namespace Cli
+namespace EagleRepair.Cli.Input
 {
     public class CmdLineValidator : ICmdLineValidator
     {

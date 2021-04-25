@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Cli
+namespace EagleRepair.Cli.Input
 {
     public interface ICmdLineReader
     {
