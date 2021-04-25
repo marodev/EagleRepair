@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace EagleRepair.IntegrationTests.Engine
+namespace EagleRepair.IntegrationTests.Cli
 {
     public static class TestDataProvider
     {

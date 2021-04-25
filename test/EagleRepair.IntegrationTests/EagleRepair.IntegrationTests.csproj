@@ -24,6 +24,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\src\EagleRepair.Ast\EagleRepair.Ast.csproj" />
+      <ProjectReference Include="..\..\src\EagleRepair.Cli\EagleRepair.Cli.csproj" />
     </ItemGroup>
 
 </Project>

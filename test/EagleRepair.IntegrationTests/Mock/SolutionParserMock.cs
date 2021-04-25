@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using EagleRepair.Ast.Parser;
 using Microsoft.CodeAnalysis;
 
-namespace EagleRepair.IntegrationTests
+namespace EagleRepair.IntegrationTests.Mock
 {
     public class MockSolutionParser : ISolutionParser
     {

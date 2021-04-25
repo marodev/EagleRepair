@@ -2,16 +2,19 @@ using System;
 using System.IO;
 using System.Linq;
 using EagleRepair.Ast.Parser;
+using EagleRepair.Cli.Wrapper;
 
 namespace EagleRepair.Cli.Input
 {
     public class CmdLineValidator : ICmdLineValidator
     {
         private readonly IRuleParser _ruleParser;
+        private readonly IFileWrapper _fileWrapper;
 
-        public CmdLineValidator(IRuleParser ruleParser)
+        public CmdLineValidator(IRuleParser ruleParser, IFileWrapper fileWrapper)
         {
             _ruleParser = ruleParser;
+            _fileWrapper = fileWrapper;
         }
 
         public CmdOptions Validate(CmdOptions options)
@@ -22,14 +25,14 @@ namespace EagleRepair.Cli.Input
             return options;
         }
 
-        private static string ValidateSolutionPath(string solutionPath)
+        private string ValidateSolutionPath(string solutionPath)
         {
             if (solutionPath is null or ".")
             {
                 return FindSolution();
             }
 
-            if (!File.Exists(solutionPath))
+            if (!_fileWrapper.Exists(solutionPath))
             {
                 throw new ArgumentException($"Solution file not found: {solutionPath}");
             }
