@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace Ast.Parser
 {
-    public static class RuleParser
+    public class RuleParser : IRuleParser
     {
-        public static ICollection<Rule> Parse(ICollection<string> rules)
+        public ICollection<Rule> Parse(ICollection<string> rules)
         {
             if (rules == null || !rules.Any())
             {

@@ -11,4 +11,8 @@
       <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="3.9.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Monitor\Monitor.csproj" />
+    </ItemGroup>
+
 </Project>

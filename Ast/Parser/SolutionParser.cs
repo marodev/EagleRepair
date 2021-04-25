@@ -7,15 +7,14 @@ using Microsoft.CodeAnalysis.MSBuild;
 
 namespace Ast.Parser
 {
-    public class SolutionParser : IDisposable
+    public class SolutionParser : IDisposable, ISolutionParser
     {
+        private readonly MSBuildWorkspace _workspace;
         public SolutionParser()
         {
             MSBuildLocator.RegisterDefaults();
-            Workspace = MSBuildWorkspace.Create();
+            _workspace = MSBuildWorkspace.Create();
         }
-        
-        public MSBuildWorkspace Workspace { get; }
 
         public async Task<Solution> OpenSolutionAsync(string solutionFilePath)
         {
@@ -23,17 +22,24 @@ namespace Ast.Parser
             {
                 throw new ArgumentException($"Path {solutionFilePath} provided for {nameof(solutionFilePath)} does not exist.");
             }
+            
             Console.WriteLine($"await Workspace.OpenSolutionAsync({solutionFilePath})");
-            return await Workspace.OpenSolutionAsync(solutionFilePath);
+            return await _workspace.OpenSolutionAsync(solutionFilePath);
+        }
+
+        public Workspace Workspace()
+        {
+            return _workspace;
         }
 
         private void ReleaseUnmanagedResources()
         {
-            Workspace?.Dispose();
+            _workspace?.Dispose();
         }
 
         public void Dispose()
         {
+            Console.WriteLine("SolutionParser.Dispose() called.");
             ReleaseUnmanagedResources();
             GC.SuppressFinalize(this);
         }

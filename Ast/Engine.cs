@@ -1,37 +1,52 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Ast.Parser;
-using Ast.SyntaxRewriter;
+using Ast.RewriteCommand;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Monitor;
 
 namespace Ast
 {
-    public class Engine
+    public class Engine : IEngine
     {
-        public static async Task<bool> RunAsync(string solutionFilePath, IEnumerable<Rule> rules)
+        private readonly ICollection<AbstractRewriteCommand> _commands;
+        private readonly IChangeTracker _changeTracker;
+        private readonly ISolutionParser _solutionParser;
+
+        public Engine(ICollection<AbstractRewriteCommand> commands, IChangeTracker changeTracker, ISolutionParser solutionParser)
         {
-            using var solutionParser = new SolutionParser();
-            var solution = await solutionParser.OpenSolutionAsync(solutionFilePath);
+            _commands = commands;
+            _changeTracker = changeTracker;
+            _solutionParser = solutionParser;
+        }
+        
+        public async Task<bool> RunAsync(string solutionFilePath, IEnumerable<Rule> rules)
+        {
+            var solution = await _solutionParser.OpenSolutionAsync(solutionFilePath);
             // select all files
             var files = solution.Projects.SelectMany(p => p.Documents).ToList();
-            var syntaxRewriters = FetchRewriters(rules);
             // rewrite the syntax tree
-            solution = await VisitNodes(solution, files, syntaxRewriters);
-            // apply the changes to the solution
-            var result = solutionParser.Workspace.TryApplyChanges(solution);
+            var newSolution = await VisitNodes(solution, files);
+            if (ReferenceEquals(newSolution, _solutionParser.Workspace().CurrentSolution))
+            {
+                Console.WriteLine("ReferenceEquals(newSolution, solutionParser.Workspace.CurrentSolution)");
+                return true;
+            }
 
-            return result;
+            Console.WriteLine("solutionParser.Workspace.TryApplyChanges(solution)");
+            // apply the changes to the solution
+            return _solutionParser.Workspace().TryApplyChanges(newSolution);
         }
 
-        private static async Task<Solution> VisitNodes(Solution solution, ICollection<Document> documents,
-            ICollection<CSharpSyntaxRewriter> rewriters)
+        private async Task<Solution> VisitNodes(Solution solution, ICollection<Document> documents)
         {
-            foreach (var rewriter in rewriters)
+            foreach (var document in documents)
             {
-                foreach (var document in documents)
+                foreach (var rewriter in _commands)
                 {
                     // Selects the syntax tree
                     var syntaxTree = await document.GetSyntaxTreeAsync();
@@ -41,57 +56,33 @@ namespace Ast
                         continue;
                     }
 
-                    var root = await ModifySyntaxTree(document, rewriter);
+                    // var semanticModel = await document.GetSemanticModelAsync();
+                    
+                    Console.WriteLine("Document.FilePath --> " + document.FilePath);
+                    var root = await syntaxTree.GetRootAsync();
+ 
+                    var newRoot = rewriter.Visit(root);
 
+                    if (root.IsEquivalentTo(newRoot))
+                    {
+                        continue;
+                    }
+                    
+                    Console.WriteLine("!newRoot.IsEquivalentTo(root)");
                     // Exchanges the document in the solution by the newly generated document
-                    solution = solution.WithDocumentSyntaxRoot(document.Id, root);
+                    solution = solution.WithDocumentSyntaxRoot(document.Id, newRoot);
                 }
             }
 
             return solution;
         }
 
-        public static async Task<SyntaxNode> ModifySyntaxTree(Document document, CSharpSyntaxRewriter rewriter)
-        {
-            var syntaxTree = await document.GetSyntaxTreeAsync();
-            return await ModifySyntaxTree(syntaxTree, rewriter);
-        }
-
         public static async Task<string> ModifySyntaxTree(string sourceCode, CSharpSyntaxRewriter rewriter)
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(sourceCode);
-            var node = await ModifySyntaxTree(syntaxTree, rewriter);
-            return node.ToFullString();
-        }
-
-        private static async Task<SyntaxNode> ModifySyntaxTree(SyntaxTree syntaxTree, CSharpSyntaxRewriter rewriter)
-        {
             var root = await syntaxTree.GetRootAsync();
-            return rewriter.Visit(root);
-        }
-
-        private static ICollection<CSharpSyntaxRewriter> FetchRewriters(IEnumerable<Rule> rules)
-        {
-            
-            List<CSharpSyntaxRewriter> syntaxRewriters = new();
-            foreach (var rule in rules)
-            {
-                switch (rule)
-                {
-                    case Rule.Dummy:
-                        syntaxRewriters.Add(new DummySyntaxRewriter());
-                        break;
-                    case Rule.Foo:
-                        break;
-                    case Rule.UseMethodAny:
-                        syntaxRewriters.Add(new UseMethodAnySyntaxRewriter());
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(rule));
-                }
-            }
-
-            return syntaxRewriters;
+            var newRoot = rewriter.Visit(root);
+            return newRoot.ToFullString();
         }
     }
 }
