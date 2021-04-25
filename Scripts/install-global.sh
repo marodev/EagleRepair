@@ -7,4 +7,4 @@ dotnet tool uninstall cli --global
 dotnet pack
 
 # install
-dotnet tool install --global --add-source ./Cli/nupkg cli
+dotnet tool install --global --add-source ./src/EagleRepair.Cli/nupkg EagleRepair.Cli

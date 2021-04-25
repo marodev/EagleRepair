@@ -4,6 +4,8 @@
         <TargetFramework>net5.0</TargetFramework>
 
         <IsPackable>false</IsPackable>
+
+        <RootNamespace>EagleRepair.IntegrationTests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -21,7 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\Ast\Ast.csproj" />
+      <ProjectReference Include="..\..\src\EagleRepair.Ast\EagleRepair.Ast.csproj" />
     </ItemGroup>
 
 </Project>

@@ -7,7 +7,7 @@
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>eaglerepair</ToolCommandName>
         <PackageOutputPath>./nupkg</PackageOutputPath>
-        <RootNamespace>Cli</RootNamespace>
+        <RootNamespace>EagleRepair.Cli</RootNamespace>
         
     </PropertyGroup>
 
@@ -17,7 +17,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Ast\Ast.csproj" />
+      <ProjectReference Include="..\EagleRepair.Ast\EagleRepair.Ast.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="nupkg" />
     </ItemGroup>
 
 </Project>
