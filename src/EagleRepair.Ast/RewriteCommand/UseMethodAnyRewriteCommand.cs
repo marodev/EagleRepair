@@ -76,6 +76,13 @@ namespace EagleRepair.Ast.RewriteCommand
 
         private ExpressionSyntax ReplaceCountWithAny(BinaryExpressionSyntax node)
         {
+            if (node.Left is BinaryExpressionSyntax left && node.Right is BinaryExpressionSyntax right)
+            {
+                var leftNode = this.VisitBinaryExpression(left);
+                var rightNode = this.VisitBinaryExpression(right);
+                return InjectUtils.ConnectBinaryExpr(node, leftNode, rightNode, node.OperatorToken.ValueText);
+            }
+            
             var countNode = node.DescendantNodes().OfType<IdentifierNameSyntax>()
                 .FirstOrDefault(n => n.Identifier.ValueText.Equals("Count"));
 

@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
@@ -87,6 +88,40 @@ namespace EagleRepair.Ast.RewriteCommand
                 );
 
             return usingDirective;
+        }
+
+
+        public static BinaryExpressionSyntax ConnectBinaryExpr(BinaryExpressionSyntax root, SyntaxNode left,
+            SyntaxNode right, string op)
+        {
+            SyntaxKind parsedOp;
+
+            try
+            {
+                parsedOp = ParseOp(op);
+            }
+            catch (ArgumentException ae)
+            {
+                // TODO: log exception
+                return root;
+            }
+
+            if (left is ExpressionSyntax leftExpr && right is ExpressionSyntax rightExpr)
+            {
+                return BinaryExpression(parsedOp, leftExpr, rightExpr).NormalizeWhitespace();
+            }
+
+            return root;
+        }
+
+        private static SyntaxKind ParseOp(string op)
+        {
+            return op switch
+            {
+                "&&" => SyntaxKind.LogicalAndExpression,
+                "||" => SyntaxKind.LogicalOrExpression,
+                _ => throw new ArgumentException(nameof(op))
+            };
         }
     }
 }

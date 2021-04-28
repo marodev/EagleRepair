@@ -30,14 +30,15 @@ public class FooClass
         {
             Console.WriteLine(""List is empty"");
         }
-        if (myList.Count() <= 0)
+
+        if (myList.Count() <= 0 && myList.Count() == 0)
         {
             Console.WriteLine(""List is empty"");
         }
 
 
 
-        if (myList.Count < 1)
+        while (myList.Count < 1)
         {
             Console.WriteLine(""List is empty"");
         }
@@ -72,14 +73,15 @@ public class FooClass
         {
             Console.WriteLine(""List is empty"");
         }
-        if (!myList.Any())
+
+        if (!myList.Any() && !myList.Any())
         {
             Console.WriteLine(""List is empty"");
         }
 
 
 
-        if (!myList.Any())
+        while (!myList.Any())
         {
             Console.WriteLine(""List is empty"");
         }
