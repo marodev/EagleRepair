@@ -19,7 +19,7 @@ namespace EagleRepair.Cli.Input
             {
                 return Parser.Default.ParseArguments<CmdOptions>(commandLineArgs)
                     .MapResult(options => _cmdLineValidator.Validate(options),
-                        (errors) => null);
+                        errors => null);
             }
             catch (ArgumentException ae)
             {

@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
-using EagleRepair.Ast;
 using EagleRepair.Ast.Parser;
 using EagleRepair.Cli;
+using EagleRepair.IntegrationTests.Cli.DataProvider;
 using EagleRepair.IntegrationTests.Mock;
 using Microsoft.CodeAnalysis;
 using Xunit;
@@ -14,7 +14,10 @@ namespace EagleRepair.IntegrationTests.Cli
     public class CliTests
     {
         [Theory]
-        [MemberData(nameof(TestDataProvider.TestCases), MemberType = typeof(TestDataProvider))]
+        [MemberData(nameof(AnySimpleDataProvider.TestCases), MemberType = typeof(AnySimpleDataProvider))]
+        [MemberData(nameof(AnySimpleDataProvider.TestCases), MemberType = typeof(AnyNestedDataProvider))]
+        [MemberData(nameof(AnyNegativeDataProvider.TestCases), MemberType = typeof(AnyNegativeDataProvider))]
+        [MemberData(nameof(AnyIEnumerableDataProvider.TestCases), MemberType = typeof(AnyIEnumerableDataProvider))]
         public async Task UseMethodAnyTest(string inputTree, string expectedTree)
         {
             // Arrange
@@ -35,7 +38,7 @@ namespace EagleRepair.IntegrationTests.Cli
             Assert.True(succeeded);
             Assert.Equal(expectedTree, actualTree);
         }
-        
+
         private static async Task<SyntaxNode> ExtractRootAsync(ISolutionParser solutionParser)
         {
             return await solutionParser.Workspace().CurrentSolution.Projects

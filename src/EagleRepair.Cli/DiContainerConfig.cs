@@ -2,6 +2,7 @@ using Autofac;
 using EagleRepair.Ast;
 using EagleRepair.Ast.Parser;
 using EagleRepair.Ast.RewriteCommand;
+using EagleRepair.Ast.Services;
 using EagleRepair.Cli.Input;
 using EagleRepair.Cli.Wrapper;
 using EagleRepair.Monitor;
@@ -14,6 +15,7 @@ namespace EagleRepair.Cli
         {
             var builder = new ContainerBuilder();
 
+            builder.RegisterType<TypeService>().As<ITypeService>();
             builder.RegisterType<FileWrapper>().As<IFileWrapper>();
             builder.RegisterType<RuleParser>().As<IRuleParser>();
             builder.RegisterType<SolutionParser>().As<ISolutionParser>();
@@ -21,7 +23,7 @@ namespace EagleRepair.Cli
             builder.RegisterType<CmdLineReader>().As<ICmdLineReader>();
             builder.RegisterType<Application>().As<IApplication>();
             builder.RegisterType<ChangeTracker>().As<IChangeTracker>().SingleInstance();
-            
+
             // register all rules
             builder.RegisterAssemblyTypes(typeof(AbstractRewriteCommand).Assembly)
                 .Where(t => t.IsSubclassOf(typeof(AbstractRewriteCommand)))

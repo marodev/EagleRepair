@@ -8,8 +8,8 @@ namespace EagleRepair.Cli.Input
 {
     public class CmdLineValidator : ICmdLineValidator
     {
-        private readonly IRuleParser _ruleParser;
         private readonly IFileWrapper _fileWrapper;
+        private readonly IRuleParser _ruleParser;
 
         public CmdLineValidator(IRuleParser ruleParser, IFileWrapper fileWrapper)
         {
@@ -27,7 +27,7 @@ namespace EagleRepair.Cli.Input
 
         private string ValidateSolutionPath(string solutionPath)
         {
-            if (solutionPath is null or ".")
+            if (solutionPath is null || solutionPath is ".")
             {
                 return FindSolution();
             }
@@ -36,27 +36,31 @@ namespace EagleRepair.Cli.Input
             {
                 throw new ArgumentException($"Solution file not found: {solutionPath}");
             }
-            
+
             if (!solutionPath.EndsWith(".sln"))
             {
                 throw new ArgumentException("Only solution (*.sln) files are supported yet");
             }
 
             return solutionPath;
-
         }
-       
+
         private static string FindSolution()
         {
             var currentDir = Environment.CurrentDirectory;
             var paths = Directory.GetFiles(currentDir, "*.sln");
 
-            return paths.Length switch
+            if (paths.Length == 0)
             {
-                0 => throw new ArgumentException($"Solution (*.sln) file not found in: {currentDir}"),
-                > 1 => throw new ArgumentException($"Multiple solution (*.sln) files found in: {currentDir}"),
-                _ => paths.First()
-            };
+                throw new ArgumentException($"Solution (*.sln) file not found in: {currentDir}");
+            }
+
+            if (paths.Length > 1)
+            {
+                throw new ArgumentException($"Multiple solution (*.sln) files found in: {currentDir}");
+            }
+
+            return paths.First();
         }
     }
 }

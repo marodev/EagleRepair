@@ -7,10 +7,12 @@ namespace EagleRepair.IntegrationTests.Mock
     public class MockSolutionParser : ISolutionParser
     {
         private readonly Solution _solution;
+
         public MockSolutionParser(Solution solution)
         {
             _solution = solution;
         }
+
         public Task<Solution> OpenSolutionAsync(string solutionFilePath)
         {
             return Task.FromResult(_solution);

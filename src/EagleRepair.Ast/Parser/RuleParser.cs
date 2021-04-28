@@ -12,8 +12,8 @@ namespace EagleRepair.Ast.Parser
             {
                 return FetchAllRules();
             }
-            
-            List<Rule> parsedRules = new();
+
+            var parsedRules = new List<Rule>();
             foreach (var rule in rules)
             {
                 var success = Enum.TryParse(rule, true, out Rule parsedRule);
@@ -27,6 +27,7 @@ namespace EagleRepair.Ast.Parser
                     throw new ArgumentException($"Unknown rule: {rule}. Possible values are: {possibleRules}");
                 }
             }
+
             return parsedRules;
         }
 

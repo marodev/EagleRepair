@@ -1,10 +1,29 @@
 namespace EagleRepair.Monitor
 {
-    public record Message
+    public class Message
     {
-        public string Project { get; init; }
-        public string Path { get; init; }
-        public string Line { get; init; }
-        public string Text { get; init; }
+        public string Project
+        {
+            get;
+            set;
+        }
+
+        public string Path
+        {
+            get;
+            set;
+        }
+
+        public string Line
+        {
+            get;
+            set;
+        }
+
+        public string Text
+        {
+            get;
+            set;
+        }
     }
 }

@@ -4,5 +4,4 @@ namespace EagleRepair.Cli.Wrapper
     {
         bool Exists(string filePath);
     }
- 
 }

@@ -2,12 +2,12 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net5.0</TargetFramework>
 
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>eaglerepair</ToolCommandName>
         <PackageOutputPath>./nupkg</PackageOutputPath>
         <RootNamespace>EagleRepair.Cli</RootNamespace>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
         
     </PropertyGroup>
 

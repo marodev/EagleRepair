@@ -9,12 +9,13 @@ namespace EagleRepair.Cli
     {
         private readonly ICmdLineReader _cmdLineReader;
         private readonly IEngine _engine;
-        
+
         public Application(ICmdLineReader cmdLineReader, IEngine engine)
         {
             _cmdLineReader = cmdLineReader;
             _engine = engine;
         }
+
         public async Task<bool> Run(IEnumerable<string> commandLineArgs)
         {
             var cmdOptions = _cmdLineReader.Parse(commandLineArgs);

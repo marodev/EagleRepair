@@ -10,19 +10,28 @@ namespace EagleRepair.Ast.Parser
     public class SolutionParser : IDisposable, ISolutionParser
     {
         private readonly MSBuildWorkspace _workspace;
+
         public SolutionParser()
         {
             MSBuildLocator.RegisterDefaults();
             _workspace = MSBuildWorkspace.Create();
         }
 
+        public void Dispose()
+        {
+            Console.WriteLine("SolutionParser.Dispose() called.");
+            ReleaseUnmanagedResources();
+            GC.SuppressFinalize(this);
+        }
+
         public async Task<Solution> OpenSolutionAsync(string solutionFilePath)
         {
             if (!File.Exists(solutionFilePath))
             {
-                throw new ArgumentException($"Path {solutionFilePath} provided for {nameof(solutionFilePath)} does not exist.");
+                throw new ArgumentException(
+                    $"Path {solutionFilePath} provided for {nameof(solutionFilePath)} does not exist.");
             }
-            
+
             Console.WriteLine($"await Workspace.OpenSolutionAsync({solutionFilePath})");
             return await _workspace.OpenSolutionAsync(solutionFilePath);
         }
@@ -35,13 +44,6 @@ namespace EagleRepair.Ast.Parser
         private void ReleaseUnmanagedResources()
         {
             _workspace?.Dispose();
-        }
-
-        public void Dispose()
-        {
-            Console.WriteLine("SolutionParser.Dispose() called.");
-            ReleaseUnmanagedResources();
-            GC.SuppressFinalize(this);
         }
 
         ~SolutionParser()
