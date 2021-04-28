@@ -82,7 +82,7 @@ namespace EagleRepair.Ast.RewriteCommand
                         SyntaxKind.SemicolonToken,
                         TriviaList
                         (
-                            CarriageReturnLineFeed
+                            LineFeed
                         )
                     )
                 );

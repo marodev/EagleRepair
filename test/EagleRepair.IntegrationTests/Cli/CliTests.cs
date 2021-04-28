@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Autofac;
 using EagleRepair.Ast.Parser;
@@ -36,7 +37,15 @@ namespace EagleRepair.IntegrationTests.Cli
 
             // Assert
             Assert.True(succeeded);
+
+            expectedTree = UnifyNewLineCharacters(expectedTree);
+            actualTree = UnifyNewLineCharacters(actualTree);
             Assert.Equal(expectedTree, actualTree);
+        }
+
+        private static string UnifyNewLineCharacters(string text)
+        {
+           return Regex.Replace(text, @"\r\n?|\n", System.Environment.NewLine);
         }
 
         private static async Task<SyntaxNode> ExtractRootAsync(ISolutionParser solutionParser)
