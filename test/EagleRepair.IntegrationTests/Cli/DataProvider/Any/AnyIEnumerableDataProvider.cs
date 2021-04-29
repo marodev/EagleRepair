@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace EagleRepair.IntegrationTests.Cli.DataProvider
+namespace EagleRepair.IntegrationTests.Cli.DataProvider.Any
 {
     public class AnyIEnumerableDataProvider
     {

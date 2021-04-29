@@ -6,20 +6,16 @@ using Autofac;
 using EagleRepair.Ast.Parser;
 using EagleRepair.Cli;
 using EagleRepair.IntegrationTests.Cli.DataProvider;
+using EagleRepair.IntegrationTests.Cli.DataProvider.Any;
 using EagleRepair.IntegrationTests.Mock;
 using Microsoft.CodeAnalysis;
 using Xunit;
 
 namespace EagleRepair.IntegrationTests.Cli
 {
-    public class CliTests
+    public static class TestExecutor
     {
-        [Theory]
-        [MemberData(nameof(AnySimpleDataProvider.TestCases), MemberType = typeof(AnySimpleDataProvider))]
-        [MemberData(nameof(AnySimpleDataProvider.TestCases), MemberType = typeof(AnyNestedDataProvider))]
-        [MemberData(nameof(AnyNegativeDataProvider.TestCases), MemberType = typeof(AnyNegativeDataProvider))]
-        [MemberData(nameof(AnyIEnumerableDataProvider.TestCases), MemberType = typeof(AnyIEnumerableDataProvider))]
-        public async Task UseMethodAnyTest(string inputTree, string expectedTree)
+        public static async Task Run(string inputTree, string expectedTree)
         {
             // Arrange
             var diBuilder = DiContainerTestConfig.Builder();
