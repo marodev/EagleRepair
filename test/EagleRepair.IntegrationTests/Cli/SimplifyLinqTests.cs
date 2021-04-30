@@ -47,5 +47,12 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree);
         }
+        
+        [Theory]
+        [MemberData(nameof(SimplifyIEnumerableLinqWhereSelect.TestCases), MemberType = typeof(SimplifyIEnumerableLinqWhereSelect))]
+        public async Task SimplifyLinq_WhereSelect_ReturnsOfType(string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree);
+        }
     }
 }

@@ -17,7 +17,8 @@ namespace EagleRepair.Ast.RewriteCommand
             if (namespaces.Length != 2)
             {
                 // might need to refactor this method to support longer namespaces
-                throw new ArgumentException("Refactor this method to support longer namespaces", nameof(usingDirective));
+                throw new ArgumentException("Refactor this method to support longer namespaces",
+                    nameof(usingDirective));
             }
 
             var allUsings = compilation.Usings;
@@ -141,16 +142,16 @@ namespace EagleRepair.Ast.RewriteCommand
             ArgumentListSyntax arguments = null)
         {
             var invocation = InvocationExpression(
-                    MemberAccessExpression(
-                        SyntaxKind.SimpleMemberAccessExpression,
-                        IdentifierName(variable),
-                        IdentifierName(methodName)));
+                MemberAccessExpression(
+                    SyntaxKind.SimpleMemberAccessExpression,
+                    IdentifierName(variable),
+                    IdentifierName(methodName)));
 
             if (arguments is null)
             {
                 return invocation;
-            }   
-                
+            }
+
             return invocation.WithArgumentList(arguments);
         }
 
@@ -162,6 +163,18 @@ namespace EagleRepair.Ast.RewriteCommand
                     IdentifierName(type),
                     SingleVariableDesignation(
                         Identifier(designation)))).NormalizeWhitespace();
+        }
+
+        public static InvocationExpressionSyntax CreateOfTypeT(string variable, string type)
+        {
+            return InvocationExpression(MemberAccessExpression(
+                SyntaxKind.SimpleMemberAccessExpression, IdentifierName(variable),
+                GenericName(
+                        Identifier("OfType"))
+                    .WithTypeArgumentList(
+                        TypeArgumentList(
+                            SingletonSeparatedList<TypeSyntax>(
+                                IdentifierName(type))))));
         }
     }
 }
