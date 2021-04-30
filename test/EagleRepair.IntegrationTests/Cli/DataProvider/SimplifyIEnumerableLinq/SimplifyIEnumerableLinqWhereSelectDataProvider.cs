@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace EagleRepair.IntegrationTests.Cli.DataProvider.SimplifyIEnumerableLinq
 {
-    public class SimplifyIEnumerableLinqWhereSelect
+    public class SimplifyIEnumerableLinqWhereSelectDataProvider
     {
         private const string Input = @"
 using System.Collections.Generic;
