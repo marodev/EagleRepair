@@ -176,5 +176,25 @@ namespace EagleRepair.Ast.RewriteCommand
                             SingletonSeparatedList<TypeSyntax>(
                                 IdentifierName(type))))));
         }
+
+        public static ExpressionStatementSyntax CreateNullPropagation(string variableName, string methodName,
+            ArgumentListSyntax arguments = null)
+        {
+            var invocationExpr = InvocationExpression(
+                MemberBindingExpression(
+                    IdentifierName(methodName)));
+
+            if (arguments != null)
+            {
+                invocationExpr = invocationExpr.WithArgumentList(arguments);
+            }
+
+            var expr = ExpressionStatement(
+                ConditionalAccessExpression(IdentifierName(variableName),
+                    invocationExpr
+                ));
+
+            return expr.NormalizeWhitespace();
+        }
     }
 }
