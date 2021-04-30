@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 using Autofac;
 using EagleRepair.Ast.Parser;
 using EagleRepair.Cli;
-using EagleRepair.IntegrationTests.Cli.DataProvider;
-using EagleRepair.IntegrationTests.Cli.DataProvider.Any;
 using EagleRepair.IntegrationTests.Mock;
 using Microsoft.CodeAnalysis;
 using Xunit;

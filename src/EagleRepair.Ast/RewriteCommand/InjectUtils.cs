@@ -15,9 +15,9 @@ namespace EagleRepair.Ast.RewriteCommand
             var namespaces = usingDirective.Split(".");
 
             if (namespaces.Length != 2)
-                // might need to refactor this method to support longer namespaces
             {
-                throw new ArgumentException(nameof(usingDirective));
+                // might need to refactor this method to support longer namespaces
+                throw new ArgumentException("Refactor this method to support longer namespaces", nameof(usingDirective));
             }
 
             var allUsings = compilation.Usings;
@@ -122,6 +122,29 @@ namespace EagleRepair.Ast.RewriteCommand
                 "||" => SyntaxKind.LogicalOrExpression,
                 _ => throw new ArgumentException(nameof(op))
             };
+        }
+
+        public static SyntaxToken CreateIdentifier(string identifier)
+        {
+            return Identifier(identifier);
+        }
+
+        public static MemberAccessExpressionSyntax CreateMemberAccess(string variable, string methodName)
+        {
+            return MemberAccessExpression(
+                SyntaxKind.SimpleMemberAccessExpression,
+                IdentifierName(variable),
+                IdentifierName(methodName));
+        }
+
+        public static IsPatternExpressionSyntax CreateIsPattern(string identifierName, string type, string designation)
+        {
+            return IsPatternExpression(
+                IdentifierName(identifierName),
+                DeclarationPattern(
+                    IdentifierName(type),
+                    SingleVariableDesignation(
+                        Identifier(designation)))).NormalizeWhitespace();
         }
     }
 }

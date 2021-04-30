@@ -69,8 +69,7 @@ namespace EagleRepair.Ast.RewriteCommand
             {
                 return base.VisitBinaryExpression(node);
             }
-
-
+            
             return ReplaceCountWithAny(node);
         }
 

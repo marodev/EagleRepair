@@ -34,5 +34,12 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree);
         }
+        
+        [Theory]
+        [MemberData(nameof(AnyMultipleBinaryExprDataProvider.TestCases), MemberType = typeof(AnyMultipleBinaryExprDataProvider))]
+        public async Task UseCount_UsesMultipleBinaryExpr_ReturnsAny(string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree);
+        }
     }
 }

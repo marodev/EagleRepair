@@ -31,13 +31,6 @@ public class FooClass
             Console.WriteLine(""List is empty"");
         }
 
-        if (myList.Count() <= 0 && myList.Count() == 0)
-        {
-            Console.WriteLine(""List is empty"");
-        }
-
-
-
         while (myList.Count < 1)
         {
             Console.WriteLine(""List is empty"");
@@ -73,13 +66,6 @@ public class FooClass
         {
             Console.WriteLine(""List is empty"");
         }
-
-        if (!myList.Any() && !myList.Any())
-        {
-            Console.WriteLine(""List is empty"");
-        }
-
-
 
         while (!myList.Any())
         {
