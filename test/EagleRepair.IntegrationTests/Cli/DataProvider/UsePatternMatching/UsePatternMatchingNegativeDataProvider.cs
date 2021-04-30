@@ -9,9 +9,9 @@ using System;
 
 namespace Entry
 {
-    public class TypeCheckAndCast
+    public class C
     {        
-        public void FooMethod(object o)
+        public void M(object o)
         {
             var s = o as string;
             if (o != null) {

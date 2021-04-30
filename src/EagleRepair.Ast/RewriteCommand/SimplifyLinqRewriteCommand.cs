@@ -24,7 +24,7 @@ namespace EagleRepair.Ast.RewriteCommand
 
             var invokedMethodName = memberAccessExpr.Name.ToString();
 
-            var linqKeyWords = new List<string> {"Any", "Count", "First", "FirstOrDefault", "Single", "SingleOrDefault", "Select"};
+            var linqKeyWords = new List<string> {"Any", "Count", "First", "FirstOrDefault", "Single", "SingleOrDefault", "Select", "Last"};
             if (!linqKeyWords.Contains(invokedMethodName))
             {
                 return base.VisitInvocationExpression(node);

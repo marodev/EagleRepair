@@ -53,6 +53,13 @@ namespace EagleRepair.IntegrationTests.Cli
         public async Task SimplifyLinq_WhereSelect_ReturnsOfType(string inputTree, string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree);
+        }        
+        
+        [Theory]
+        [MemberData(nameof(SimplifyIEnumerableLinqWhereLastDataProvider.TestCases), MemberType = typeof(SimplifyIEnumerableLinqWhereLastDataProvider))]
+        public async Task SimplifyLinq_WhereLast_ReturnsLast(string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree);
         }
     }
 }
