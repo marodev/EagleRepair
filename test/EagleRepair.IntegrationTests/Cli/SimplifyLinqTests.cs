@@ -18,6 +18,34 @@ namespace EagleRepair.IntegrationTests.Cli
         public async Task SimplifyLinq_WhereCount_ReturnsCount(string inputTree, string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree);
+        }        
+        
+        [Theory]
+        [MemberData(nameof(SimplifyIEnumerableLinqWhereFirstDataProvider.TestCases), MemberType = typeof(SimplifyIEnumerableLinqWhereFirstDataProvider))]
+        public async Task SimplifyLinq_WhereFirst_ReturnsFirst(string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree);
+        }        
+        
+        [Theory]
+        [MemberData(nameof(SimplifyIEnumerableLinqWhereFirstOrDefaultDataProvider.TestCases), MemberType = typeof(SimplifyIEnumerableLinqWhereFirstOrDefaultDataProvider))]
+        public async Task SimplifyLinq_WhereFirstOrDefault_ReturnsFirstOrDefault(string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree);
+        }        
+        
+        [Theory]
+        [MemberData(nameof(SimplifyIEnumerableLinqWhereSingleDataProvider.TestCases), MemberType = typeof(SimplifyIEnumerableLinqWhereSingleDataProvider))]
+        public async Task SimplifyLinq_WhereSingle_ReturnsSingle(string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree);
+        }        
+        
+        [Theory]
+        [MemberData(nameof(SimplifyIEnumerableLinqWhereSingleOrDefaultDataProvider.TestCases), MemberType = typeof(SimplifyIEnumerableLinqWhereSingleOrDefaultDataProvider))]
+        public async Task SimplifyLinq_WhereSingleOrDefault_ReturnsSingleOrDefault(string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree);
         }
     }
 }

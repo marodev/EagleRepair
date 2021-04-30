@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using EagleRepair.Ast.Services;
 using EagleRepair.Monitor;
 using Microsoft.CodeAnalysis;
@@ -21,7 +22,8 @@ namespace EagleRepair.Ast.RewriteCommand
 
             var invokedMethodName = memberAccessExpr.Name.ToString();
 
-            if (!invokedMethodName.Equals("Any") && !invokedMethodName.Equals("Count"))
+            var linqKeyWords = new List<string> {"Any", "Count", "First", "FirstOrDefault", "Single", "SingleOrDefault"};
+            if (!linqKeyWords.Contains(invokedMethodName))
             {
                 return base.VisitInvocationExpression(node);
             }
