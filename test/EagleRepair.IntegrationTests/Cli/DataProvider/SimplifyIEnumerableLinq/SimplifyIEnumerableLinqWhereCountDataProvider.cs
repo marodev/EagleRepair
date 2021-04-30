@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace EagleRepair.IntegrationTests.Cli.DataProvider.SimplifyIEnumerableLinq
 {
-    public static class SimplifyIEnumerableLinqWhereAnyDataProvider
+    public static class SimplifyIEnumerableLinqWhereCountDataProvider
     {
         private const string Input = @"
 using System.Collections.Generic;
@@ -16,13 +16,12 @@ namespace Entry
         {
             var list = new List<object>();
 
-            var result = list.Where(i => i is not null && i.ToString().Equals(""foo"")).Any();
+            var result = list.Where(i => i is not null && i.ToString().Equals(""foo"")).Count();
 
-            return result;
+            return result > 0;
         }
     }
-}
-";
+}";
 
         private const string ExpectedOutput = @"
 using System.Collections.Generic;
@@ -36,13 +35,12 @@ namespace Entry
         {
             var list = new List<object>();
 
-            var result = list.Any(i => i is not null && i.ToString().Equals(""foo""));
+            var result = list.Count(i => i is not null && i.ToString().Equals(""foo""));
 
-            return result;
+            return result > 0;
         }
     }
-}
-";
+}";
 
         public static IEnumerable<object[]> TestCases()
         {

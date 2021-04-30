@@ -137,6 +137,23 @@ namespace EagleRepair.Ast.RewriteCommand
                 IdentifierName(methodName));
         }
 
+        public static InvocationExpressionSyntax CreateInvocation(string variable, string methodName,
+            ArgumentListSyntax arguments = null)
+        {
+            var invocation = InvocationExpression(
+                    MemberAccessExpression(
+                        SyntaxKind.SimpleMemberAccessExpression,
+                        IdentifierName(variable),
+                        IdentifierName(methodName)));
+
+            if (arguments is null)
+            {
+                return invocation;
+            }   
+                
+            return invocation.WithArgumentList(arguments);
+        }
+
         public static IsPatternExpressionSyntax CreateIsPattern(string identifierName, string type, string designation)
         {
             return IsPatternExpression(

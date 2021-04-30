@@ -11,6 +11,13 @@ namespace EagleRepair.IntegrationTests.Cli
         public async Task SimplifyLinq_WhereAny_ReturnsAny(string inputTree, string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree);
+        }        
+        
+        [Theory]
+        [MemberData(nameof(SimplifyIEnumerableLinqWhereCountDataProvider.TestCases), MemberType = typeof(SimplifyIEnumerableLinqWhereCountDataProvider))]
+        public async Task SimplifyLinq_WhereCount_ReturnsCount(string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree);
         }
     }
 }
