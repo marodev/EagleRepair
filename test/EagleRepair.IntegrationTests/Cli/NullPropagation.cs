@@ -11,6 +11,13 @@ namespace EagleRepair.IntegrationTests.Cli
         public async Task IfNotNull_InvokeMethod_ReturnsNullPropagation(string inputTree, string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree);
+        }        
+        
+        [Theory]
+        [MemberData(nameof(NegativeNullPropagationDataProvider.TestCases), MemberType = typeof(NegativeNullPropagationDataProvider))]
+        public async Task IfNotNull_InvokeMethod_ReturnsOriginal(string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree);
         }
     }
 }
