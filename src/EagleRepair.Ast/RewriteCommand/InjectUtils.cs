@@ -293,7 +293,7 @@ namespace EagleRepair.Ast.RewriteCommand
             {
                 return unaryExpr;
             }
-            
+
             return IsPatternExpression
             (
                 IdentifierName(binaryExpr.Left.ToString()),
@@ -306,7 +306,5 @@ namespace EagleRepair.Ast.RewriteCommand
                 )
             ).NormalizeWhitespace();
         }
-        
-        
     }
 }

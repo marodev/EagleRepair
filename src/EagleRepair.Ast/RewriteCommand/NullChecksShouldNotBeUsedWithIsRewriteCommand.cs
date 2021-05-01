@@ -7,7 +7,8 @@ namespace EagleRepair.Ast.RewriteCommand
 {
     public class NullChecksShouldNotBeUsedWithIsRewriteCommand : AbstractRewriteCommand
     {
-        public NullChecksShouldNotBeUsedWithIsRewriteCommand(IChangeTracker changeTracker, ITypeService typeService) : base(changeTracker, typeService)
+        public NullChecksShouldNotBeUsedWithIsRewriteCommand(IChangeTracker changeTracker, ITypeService typeService) :
+            base(changeTracker, typeService)
         {
         }
 
@@ -63,7 +64,7 @@ namespace EagleRepair.Ast.RewriteCommand
                 {
                     return base.VisitBinaryExpression(node);
                 }
-                
+
                 rightIdentifier = ExtractIdentifier(rightBinaryExprInParenthesis);
             }
 
@@ -71,7 +72,7 @@ namespace EagleRepair.Ast.RewriteCommand
             {
                 return base.VisitBinaryExpression(node);
             }
-          
+
             var leftIdentifier = leftIdentifierName.Identifier.ValueText;
             if (!leftIdentifier.Equals(rightIdentifier))
             {
@@ -83,10 +84,10 @@ namespace EagleRepair.Ast.RewriteCommand
                 return node.Right;
             }
 
+            // use C# 9 !(s is string) --> s is not string
             var newNode = InjectUtils.ConvertUnaryToIsNotPattern(unaryExpr);
             return newNode;
         }
-
 
         private static string ExtractIdentifier(BinaryExpressionSyntax binaryExpr)
         {
@@ -94,12 +95,12 @@ namespace EagleRepair.Ast.RewriteCommand
             {
                 return null;
             }
-                
+
             if (binaryExpr.Left is not IdentifierNameSyntax rightIdentifierName)
             {
                 return null;
             }
-            
+
             return rightIdentifierName.Identifier.ValueText;
         }
     }

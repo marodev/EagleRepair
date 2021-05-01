@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using EagleRepair.IntegrationTests.Cli.DataProvider.MergeSequentialChecks;
 using EagleRepair.IntegrationTests.Cli.DataProvider.NullChecksShouldNotBeUsedWithIs;
 using Xunit;
 
@@ -14,7 +13,7 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree);
         }
-        
+
         [Theory]
         [MemberData(nameof(NullChecksShouldNotBeUsedWithIsOrDataProvider.TestCases),
             MemberType = typeof(NullChecksShouldNotBeUsedWithIsOrDataProvider))]

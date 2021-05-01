@@ -1,5 +1,3 @@
-using System;
-
 namespace EagleRepair.Ast.Services
 {
     public class TypeService : ITypeService
