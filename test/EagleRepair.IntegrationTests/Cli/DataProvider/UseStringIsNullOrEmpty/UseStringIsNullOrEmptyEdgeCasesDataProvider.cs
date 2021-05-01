@@ -11,9 +11,9 @@ namespace Entry
 {
     public class C
     {        
-        public void M(string s)
+        public void M(string s, object o)
         {
-            if(s != null && s != """") {
+            if(s != null && s != """" && o != null) {
                 // do something
             }
         }
@@ -27,9 +27,9 @@ namespace Entry
 {
     public class C
     {        
-        public void M(string s)
+        public void M(string s, object o)
         {
-            if(!string.IsNullOrEmpty(s)) {
+            if(!string.IsNullOrEmpty(s) && o != null) {
                 // do something
             }
         }

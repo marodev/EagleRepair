@@ -215,7 +215,8 @@ namespace EagleRepair.Ast.RewriteCommand
             return Interpolation(argument);
         }
 
-        public static InterpolatedStringExpressionSyntax CreateInterpolatedString(SeparatedSyntaxList<ArgumentSyntax> allArguments)
+        public static InterpolatedStringExpressionSyntax CreateInterpolatedString(
+            SeparatedSyntaxList<ArgumentSyntax> allArguments)
         {
             // first argument contains the full string
             var text = allArguments.FirstOrDefault()?.ToString();
@@ -240,9 +241,10 @@ namespace EagleRepair.Ast.RewriteCommand
                 {
                     texts.Add(part);
                 }
+
                 position++;
             }
-            
+
             var interpolationContents = new List<InterpolatedStringContentSyntax>();
             var index = 0;
             foreach (var interpolationArgument in interpolationArguments)
@@ -257,13 +259,30 @@ namespace EagleRepair.Ast.RewriteCommand
 
             interpolationContents.Add(CreateInterpolatedText(texts[index]));
 
-            var expressionStmt = 
+            var expressionStmt =
                 InterpolatedStringExpression(
                         Token(SyntaxKind.InterpolatedStringStartToken))
                     .WithContents(
                         List(interpolationContents));
 
             return expressionStmt;
+        }
+
+        public static PrefixUnaryExpressionSyntax CreateIsNotNullOrEmpty(string variableName)
+        {
+            return PrefixUnaryExpression(
+                    SyntaxKind.LogicalNotExpression,
+                    InvocationExpression(
+                            MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                PredefinedType(
+                                    Token(SyntaxKind.StringKeyword)),
+                                IdentifierName("IsNullOrEmpty")))
+                        .WithArgumentList(
+                            ArgumentList(
+                                SingletonSeparatedList<ArgumentSyntax>(
+                                    Argument(
+                                        IdentifierName(variableName))))));
         }
     }
 }
