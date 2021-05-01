@@ -12,29 +12,6 @@ namespace EagleRepair.Ast.Services
         public bool IsBuiltInType(string containingNamespace)
         {
             return containingNamespace is not null && containingNamespace.StartsWith("System");
-
-            // switch (type)
-            // {
-            //     case "bool":
-            //     case "byte":
-            //     case "sbyte":
-            //     case "char":
-            //     case "decimal":
-            //     case "double":
-            //     case "float":
-            //     case "int":
-            //     case "uint":
-            //     case "nint":
-            //     case "long":
-            //     case "ulong":
-            //     case "short":
-            //     case "ushort":
-            //         
-            //         return true;
-            // }
-            //
-
-            throw new NotImplementedException();
         }
     }
 }

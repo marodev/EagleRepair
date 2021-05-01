@@ -284,5 +284,29 @@ namespace EagleRepair.Ast.RewriteCommand
                                 Argument(
                                     IdentifierName(variableName))))));
         }
+
+        public static ExpressionSyntax ConvertUnaryToIsNotPattern(PrefixUnaryExpressionSyntax unaryExpr)
+        {
+            var binaryExpr = unaryExpr.DescendantNodes().OfType<BinaryExpressionSyntax>().FirstOrDefault();
+
+            if (binaryExpr is null)
+            {
+                return unaryExpr;
+            }
+            
+            return IsPatternExpression
+            (
+                IdentifierName(binaryExpr.Left.ToString()),
+                UnaryPattern
+                (
+                    ConstantPattern
+                    (
+                        IdentifierName(binaryExpr.Right.ToString())
+                    )
+                )
+            ).NormalizeWhitespace();
+        }
+        
+        
     }
 }
