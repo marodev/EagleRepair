@@ -11,8 +11,6 @@ namespace EagleRepair.IntegrationTests.Cli
         public async Task UseStringFormat_ReturnsStringInterpolation(string inputTree, string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree);
-        } 
-        
-        
+        }
     }
 }
