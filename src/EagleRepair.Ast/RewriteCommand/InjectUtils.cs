@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -195,6 +196,74 @@ namespace EagleRepair.Ast.RewriteCommand
                 ));
 
             return expr.NormalizeWhitespace();
+        }
+
+        private static InterpolatedStringTextSyntax CreateInterpolatedText(string text)
+        {
+            return InterpolatedStringText()
+                .WithTextToken(
+                    Token(
+                        TriviaList(),
+                        SyntaxKind.InterpolatedStringTextToken,
+                        text,
+                        text,
+                        TriviaList()));
+        }
+
+        private static InterpolationSyntax CreateInterpolation(ExpressionSyntax argument)
+        {
+            return Interpolation(argument);
+        }
+
+        public static InterpolatedStringExpressionSyntax CreateInterpolatedString(SeparatedSyntaxList<ArgumentSyntax> allArguments)
+        {
+            // first argument contains the full string
+            var text = allArguments.FirstOrDefault()?.ToString();
+
+            if (string.IsNullOrEmpty(text) || text.Length < 3 || allArguments.Count < 2)
+            {
+                return null;
+            }
+
+            // Remove first and last character, which are "
+            text = text.Substring(1, text.Length - 2);
+            // member accesses and method invocations
+            var interpolationArguments = allArguments.Skip(1).ToList();
+            var texts = new List<string>();
+            var textParts = text.Split('{', '}');
+
+            var position = 0;
+            foreach (var part in textParts)
+            {
+                // ignore {0} ... {1} .. that occur in odd positions (except first and last position)
+                if (position == 0 || position % 2 == 0 || position == part.Length - 1)
+                {
+                    texts.Add(part);
+                }
+                position++;
+            }
+            
+            var interpolationContents = new List<InterpolatedStringContentSyntax>();
+            var index = 0;
+            foreach (var interpolationArgument in interpolationArguments)
+            {
+                var interpolatedString = CreateInterpolatedText(texts[index]);
+                interpolationContents.Add(interpolatedString);
+
+                var memberOrMethodCall = CreateInterpolation(interpolationArgument.Expression);
+                interpolationContents.Add(memberOrMethodCall);
+                index++;
+            }
+
+            interpolationContents.Add(CreateInterpolatedText(texts[index]));
+
+            var expressionStmt = 
+                InterpolatedStringExpression(
+                        Token(SyntaxKind.InterpolatedStringStartToken))
+                    .WithContents(
+                        List(interpolationContents));
+
+            return expressionStmt;
         }
     }
 }
