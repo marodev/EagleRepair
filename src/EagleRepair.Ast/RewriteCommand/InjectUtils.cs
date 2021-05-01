@@ -271,18 +271,18 @@ namespace EagleRepair.Ast.RewriteCommand
         public static PrefixUnaryExpressionSyntax CreateIsNotNullOrEmpty(string variableName)
         {
             return PrefixUnaryExpression(
-                    SyntaxKind.LogicalNotExpression,
-                    InvocationExpression(
-                            MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                PredefinedType(
-                                    Token(SyntaxKind.StringKeyword)),
-                                IdentifierName("IsNullOrEmpty")))
-                        .WithArgumentList(
-                            ArgumentList(
-                                SingletonSeparatedList<ArgumentSyntax>(
-                                    Argument(
-                                        IdentifierName(variableName))))));
+                SyntaxKind.LogicalNotExpression,
+                InvocationExpression(
+                        MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            PredefinedType(
+                                Token(SyntaxKind.StringKeyword)),
+                            IdentifierName("IsNullOrEmpty")))
+                    .WithArgumentList(
+                        ArgumentList(
+                            SingletonSeparatedList(
+                                Argument(
+                                    IdentifierName(variableName))))));
         }
     }
 }

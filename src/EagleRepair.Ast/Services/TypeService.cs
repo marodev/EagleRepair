@@ -1,3 +1,5 @@
+using System;
+
 namespace EagleRepair.Ast.Services
 {
     public class TypeService : ITypeService
@@ -31,8 +33,8 @@ namespace EagleRepair.Ast.Services
             //         return true;
             // }
             //
-            
-            throw new System.NotImplementedException();
+
+            throw new NotImplementedException();
         }
     }
 }

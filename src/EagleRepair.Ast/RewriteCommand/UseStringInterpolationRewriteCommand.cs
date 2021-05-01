@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using EagleRepair.Ast.Services;
 using EagleRepair.Monitor;
@@ -9,7 +8,8 @@ namespace EagleRepair.Ast.RewriteCommand
 {
     public class UseStringInterpolationRewriteCommand : AbstractRewriteCommand
     {
-        public UseStringInterpolationRewriteCommand(IChangeTracker changeTracker, ITypeService typeService) : base(changeTracker, typeService)
+        public UseStringInterpolationRewriteCommand(IChangeTracker changeTracker, ITypeService typeService) : base(
+            changeTracker, typeService)
         {
         }
 

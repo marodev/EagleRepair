@@ -7,7 +7,8 @@ namespace EagleRepair.Ast.RewriteCommand
 {
     public class UseStringIsNullOrEmptyRewriteCommand : AbstractRewriteCommand
     {
-        public UseStringIsNullOrEmptyRewriteCommand(IChangeTracker changeTracker, ITypeService typeService) : base(changeTracker, typeService)
+        public UseStringIsNullOrEmptyRewriteCommand(IChangeTracker changeTracker, ITypeService typeService) : base(
+            changeTracker, typeService)
         {
         }
 
@@ -19,13 +20,13 @@ namespace EagleRepair.Ast.RewriteCommand
             {
                 return base.VisitBinaryExpression(node);
             }
-            
+
             // we are looking for a binary expr that has 2 children, which are as well binary expressions
             if (node.Left is not BinaryExpressionSyntax subLeftBinaryExpr)
             {
                 return base.VisitBinaryExpression(node);
             }
-            
+
             if (node.Right is not BinaryExpressionSyntax subRightBinaryExpr)
             {
                 return base.VisitBinaryExpression(node);
@@ -36,26 +37,26 @@ namespace EagleRepair.Ast.RewriteCommand
             {
                 return base.VisitBinaryExpression(node);
             }
-            
+
             if (!subLeftBinaryExpr.OperatorToken.ValueText.Equals("!="))
             {
                 return base.VisitBinaryExpression(node);
             }
-            
+
             if (subLeftBinaryExpr.Right is not LiteralExpressionSyntax nullLiteralExpr)
             {
                 return base.VisitBinaryExpression(node);
             }
-            
+
             if (!nullLiteralExpr.Token.ToString().Equals("null"))
             {
                 return base.VisitBinaryExpression(node);
             }
-            
+
 
             var rightIdentifier = subRightBinaryExpr.Left;
             IdentifierNameSyntax rightIdentifierName;
-            
+
             switch (rightIdentifier)
             {
                 case IdentifierNameSyntax identifierName:
@@ -73,9 +74,9 @@ namespace EagleRepair.Ast.RewriteCommand
 
                         if (!literalExpr.Token.ValueText.Equals(""))
                         {
-                            return base.VisitBinaryExpression(node); 
+                            return base.VisitBinaryExpression(node);
                         }
-                        
+
                         rightIdentifierName = identifierName;
                         break;
                     }
@@ -100,7 +101,7 @@ namespace EagleRepair.Ast.RewriteCommand
             {
                 return base.VisitBinaryExpression(node);
             }
-            
+
             var leftSymbol = _semanticModel.GetSymbolInfo(leftIdentifierName).Symbol?.ToString();
             var rightSymbol = _semanticModel.GetSymbolInfo(rightIdentifierName).Symbol?.ToString();
 

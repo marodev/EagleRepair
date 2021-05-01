@@ -9,10 +9,11 @@ namespace EagleRepair.Ast.RewriteCommand
 {
     public class UsePatternMatchingRewriteCommand : AbstractRewriteCommand
     {
-        public UsePatternMatchingRewriteCommand(IChangeTracker changeTracker, ITypeService typeService) : base(changeTracker, typeService)
+        public UsePatternMatchingRewriteCommand(IChangeTracker changeTracker, ITypeService typeService) : base(
+            changeTracker, typeService)
         {
         }
-        
+
         public override SyntaxNode VisitMethodDeclaration(MethodDeclarationSyntax node)
         {
             var localDeclarationStatements = node.DescendantNodes().OfType<LocalDeclarationStatementSyntax>().ToList();
@@ -32,7 +33,7 @@ namespace EagleRepair.Ast.RewriteCommand
                 {
                     continue;
                 }
-                
+
                 var identifierName = declaration.Identifier.ToString();
                 var expression = declaration.Initializer.Value;
 
@@ -59,7 +60,7 @@ namespace EagleRepair.Ast.RewriteCommand
 
                 var newConditionExpr = InjectUtils.CreateIsPattern(left, right, identifierName);
                 var newIfStatementNode = ifStatementToReplace.WithCondition(newConditionExpr);
-                
+
                 oldNewNodeDict.Add(localDeclaration, null); // null -> remove node
                 oldNewNodeDict.Add(ifStatementToReplace, newIfStatementNode);
             }
@@ -68,14 +69,15 @@ namespace EagleRepair.Ast.RewriteCommand
             {
                 return base.VisitMethodDeclaration(node);
             }
-            
-            var newMethod = node.ReplaceNodes(oldNewNodeDict.Keys.AsEnumerable(), 
+
+            var newMethod = node.ReplaceNodes(oldNewNodeDict.Keys.AsEnumerable(),
                 (n1, n2) => oldNewNodeDict[n1]);
-            
+
             return base.VisitMethodDeclaration(newMethod);
         }
 
-        private static IfStatementSyntax FindIfStatement(string variableName, IEnumerable<IfStatementSyntax> ifStatements)
+        private static IfStatementSyntax FindIfStatement(string variableName,
+            IEnumerable<IfStatementSyntax> ifStatements)
         {
             foreach (var ifStatement in ifStatements)
             {

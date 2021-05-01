@@ -4,7 +4,6 @@ namespace EagleRepair.IntegrationTests.Cli.DataProvider.UsePatternMatching
 {
     public static class UsePatternMatchingDataProvider
     {
-        
         private const string Input = @"
 using System;
 
@@ -23,7 +22,7 @@ namespace Entry
     }
 }
 ";
-        
+
         private const string ExpectedOutput = @"
 using System;
 

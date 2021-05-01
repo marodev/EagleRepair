@@ -12,31 +12,32 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree);
         }
-        
-        
+
+
         [Theory]
         [MemberData(nameof(AnySimpleDataProvider.TestCases), MemberType = typeof(AnyNestedDataProvider))]
         public async Task UseCount_MultipleMethodCalls_ReturnsAny(string inputTree, string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree);
-        }        
-        
+        }
+
         [Theory]
         [MemberData(nameof(AnyNegativeDataProvider.TestCases), MemberType = typeof(AnyNegativeDataProvider))]
         public async Task UseCount_NoIEnumerableImplemented_ReturnsCount(string inputTree, string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree);
-        }        
-        
+        }
+
         [Theory]
         [MemberData(nameof(AnyIEnumerableDataProvider.TestCases), MemberType = typeof(AnyIEnumerableDataProvider))]
         public async Task UseCount_ImplementsIEnumerable_ReturnsAny(string inputTree, string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree);
         }
-        
+
         [Theory]
-        [MemberData(nameof(AnyMultipleBinaryExprDataProvider.TestCases), MemberType = typeof(AnyMultipleBinaryExprDataProvider))]
+        [MemberData(nameof(AnyMultipleBinaryExprDataProvider.TestCases),
+            MemberType = typeof(AnyMultipleBinaryExprDataProvider))]
         public async Task UseCount_UsesMultipleBinaryExpr_ReturnsAny(string inputTree, string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree);

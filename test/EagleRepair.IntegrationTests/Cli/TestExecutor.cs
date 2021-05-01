@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -39,7 +40,7 @@ namespace EagleRepair.IntegrationTests.Cli
 
         private static string UnifyNewLineCharacters(string text)
         {
-           return Regex.Replace(text, @"\r\n?|\n", System.Environment.NewLine);
+            return Regex.Replace(text, @"\r\n?|\n", Environment.NewLine);
         }
 
         private static async Task<SyntaxNode> ExtractRootAsync(ISolutionParser solutionParser)

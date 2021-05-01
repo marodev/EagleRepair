@@ -1,17 +1,16 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using EagleRepair.Ast.Services;
 using EagleRepair.Monitor;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EagleRepair.Ast.RewriteCommand
 {
     public class SimplifyLinqRewriteCommand : AbstractRewriteCommand
     {
-        public SimplifyLinqRewriteCommand(IChangeTracker changeTracker, ITypeService typeService) : base(changeTracker, typeService)
+        public SimplifyLinqRewriteCommand(IChangeTracker changeTracker, ITypeService typeService) : base(changeTracker,
+            typeService)
         {
         }
 
@@ -24,7 +23,17 @@ namespace EagleRepair.Ast.RewriteCommand
 
             var invokedMethodName = memberAccessExpr.Name.ToString();
 
-            var linqKeyWords = new List<string> {"Any", "Count", "First", "FirstOrDefault", "Single", "SingleOrDefault", "Select", "Last"};
+            var linqKeyWords = new List<string>
+            {
+                "Any",
+                "Count",
+                "First",
+                "FirstOrDefault",
+                "Single",
+                "SingleOrDefault",
+                "Select",
+                "Last"
+            };
             if (!linqKeyWords.Contains(invokedMethodName))
             {
                 return base.VisitInvocationExpression(node);
@@ -35,7 +44,8 @@ namespace EagleRepair.Ast.RewriteCommand
                 return base.VisitInvocationExpression(node);
             }
 
-            var nameSpace = ModelExtensions.GetTypeInfo(_semanticModel, invocationExpr).Type?.ContainingNamespace.ToString();
+            var nameSpace = ModelExtensions.GetTypeInfo(_semanticModel, invocationExpr).Type?.ContainingNamespace
+                .ToString();
 
             if (!_typeService.InheritsFromIEnumerable(nameSpace))
             {
@@ -56,7 +66,7 @@ namespace EagleRepair.Ast.RewriteCommand
             var whereNameSpace = ModelExtensions.GetTypeInfo(_semanticModel, variableIdentifier)
                 .Type
                 ?.ContainingNamespace?.ToString();
-            
+
             if (!_typeService.InheritsFromIEnumerable(whereNameSpace))
             {
                 return base.VisitInvocationExpression(node);
@@ -71,11 +81,13 @@ namespace EagleRepair.Ast.RewriteCommand
 
             if (!invokedMethodName.Equals("Select"))
             {
-                var newNode = InjectUtils.CreateInvocation(variableName, invokedMethodName, invocationExpr.ArgumentList);
+                var newNode =
+                    InjectUtils.CreateInvocation(variableName, invokedMethodName, invocationExpr.ArgumentList);
                 return base.VisitInvocationExpression(newNode);
             }
 
-            var whereConditionLambdas = invocationExpr.DescendantNodes().OfType<SimpleLambdaExpressionSyntax>().ToList();
+            var whereConditionLambdas =
+                invocationExpr.DescendantNodes().OfType<SimpleLambdaExpressionSyntax>().ToList();
 
             if (whereConditionLambdas.Count != 1)
             {
@@ -112,10 +124,10 @@ namespace EagleRepair.Ast.RewriteCommand
                 base.VisitInvocationExpression(node);
             }
 
-            var castedTypeInWhereCondition = ((IdentifierNameSyntax) lambdaBinaryExpr.Right).Identifier.ValueText;
-            
+            var castedTypeInWhereCondition = ((IdentifierNameSyntax)lambdaBinaryExpr.Right).Identifier.ValueText;
+
             // selectLambdaExpr.Block;
-            var bodyExpr = ((SimpleLambdaExpressionSyntax) selectArgumentExpr).Body;
+            var bodyExpr = ((SimpleLambdaExpressionSyntax)selectArgumentExpr).Body;
             switch (bodyExpr)
             {
                 case BinaryExpressionSyntax bodyExprAsType:
@@ -147,11 +159,10 @@ namespace EagleRepair.Ast.RewriteCommand
                 default:
                     return base.VisitInvocationExpression(node);
             }
-            
+
             var newOfTypeNode = InjectUtils.CreateOfTypeT(variableName, castedTypeInWhereCondition);
 
             return base.VisitInvocationExpression(newOfTypeNode);
-
         }
     }
 }

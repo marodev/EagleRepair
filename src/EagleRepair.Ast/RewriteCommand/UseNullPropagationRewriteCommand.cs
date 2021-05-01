@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using EagleRepair.Ast.Services;
@@ -10,7 +9,8 @@ namespace EagleRepair.Ast.RewriteCommand
 {
     public class UseNullPropagation : AbstractRewriteCommand
     {
-        public UseNullPropagation(IChangeTracker changeTracker, ITypeService typeService) : base(changeTracker, typeService)
+        public UseNullPropagation(IChangeTracker changeTracker, ITypeService typeService) : base(changeTracker,
+            typeService)
         {
         }
 
@@ -26,7 +26,7 @@ namespace EagleRepair.Ast.RewriteCommand
             {
                 return base.VisitMethodDeclaration(node);
             }
-            
+
             var nodesToUpdate = new Dictionary<IfStatementSyntax, SyntaxNode>();
             foreach (var ifStatementSyntax in ifStatements)
             {
@@ -39,7 +39,7 @@ namespace EagleRepair.Ast.RewriteCommand
 
                 nullPropagation = nullPropagation.WithLeadingTrivia(ifStatementSyntax.GetLeadingTrivia());
                 nullPropagation = nullPropagation.WithTrailingTrivia(ifStatementSyntax.GetTrailingTrivia());
-                    
+
                 nodesToUpdate.Add(ifStatementSyntax, nullPropagation);
             }
 
@@ -49,7 +49,7 @@ namespace EagleRepair.Ast.RewriteCommand
             }
 
             var newMethodNode = node.ReplaceNodes(nodesToUpdate.Keys.AsEnumerable(), (n1, n2) => nodesToUpdate[n1]);
-            
+
             return base.VisitMethodDeclaration(newMethodNode);
         }
 
@@ -57,7 +57,7 @@ namespace EagleRepair.Ast.RewriteCommand
         {
             var binaryExpr = (BinaryExpressionSyntax)node.Condition;
             var block = (BlockSyntax)node.Statement;
-            
+
             var statements = block.Statements;
 
             if (statements.Count != 1)
@@ -95,18 +95,19 @@ namespace EagleRepair.Ast.RewriteCommand
             }
 
             var variableName = methodIdentifierName.Identifier.ToString();
-            
+
             var variableNameInCondition = identifierName.Identifier.ToString();
             if (!variableNameInCondition.Equals(variableName))
             {
                 // if (s != null) { m.Foo() }
                 return null;
             }
-            
+
             var argsPassedToMethod = invocationExpr.ArgumentList;
             var methodName = memberAccessExpr.Name.Identifier.ToString();
 
-            var newNullPropagationNode = InjectUtils.CreateNullPropagation(variableName, methodName, argsPassedToMethod);
+            var newNullPropagationNode =
+                InjectUtils.CreateNullPropagation(variableName, methodName, argsPassedToMethod);
 
             return newNullPropagationNode;
         }
