@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace EagleRepair.IntegrationTests.Cli.DataProvider.MergeSequentialChecks
 {
-    public class MergeSequentialChecksNotNullDataProvider
+    public static class MergeSequentialChecksNotNullDataProvider
     {
         private const string Input = @"
 namespace Entry
