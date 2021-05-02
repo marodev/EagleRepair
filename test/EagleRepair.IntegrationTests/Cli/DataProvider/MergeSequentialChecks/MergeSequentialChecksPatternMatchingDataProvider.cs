@@ -16,7 +16,7 @@ namespace Entry
         }
         public void M(B b)
         {
-            if (b != null && b.Parent is B b)
+            if (b != null && b.Parent is B p)
             {
                 // do something
             }
@@ -36,7 +36,7 @@ namespace Entry
         }
         public void M(B b)
         {
-            if (b?.Parent is B b)
+            if (b?.Parent is B p)
             {
                 // do something
             }

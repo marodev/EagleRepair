@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -305,6 +306,95 @@ namespace EagleRepair.Ast.RewriteCommand
                     )
                 )
             ).NormalizeWhitespace();
+        }
+
+        public static ExpressionSyntax CreateConditionalAccess(string variableName, string memberName)
+        {
+            return ConditionalAccessExpression
+            (
+                IdentifierName(variableName),
+                MemberBindingExpression
+                (
+                    IdentifierName(memberName)
+                )
+            );
+        }
+
+        private static PatternSyntax CreateNullLiteral()
+        {
+            return ConstantPattern
+            (
+                LiteralExpression
+                (
+                    SyntaxKind.NullLiteralExpression
+                )
+            );
+        }
+
+        private static PatternSyntax CreateNullPattern(string op)
+        {
+            if (op.Equals("!=") || op.Equals("is not"))
+            {
+                return UnaryPattern
+                (
+                    CreateNullLiteral()
+                );
+            }
+
+            return CreateNullLiteral();
+        }
+
+        public static IsPatternExpressionSyntax CreateNullPatternExprWithConditionalMemberAccess(string variableName, string op, string memberName)
+        {
+            return IsPatternExpression
+            (
+                CreateConditionalAccess(variableName, memberName),
+                CreateNullPattern(op)
+            ).NormalizeWhitespace();
+        }
+
+        private static PatternSyntax CreateDeclarationPattern(string targetTypeName, string declarationName, string op)
+        {
+            var declaration = DeclarationPattern(
+                IdentifierName(targetTypeName),
+                SingleVariableDesignation(
+                    Identifier(declarationName)));
+
+            if (!op.Equals("!=") || !op.Equals("is not"))
+            {
+                return declaration;
+            }
+
+            return UnaryPattern(declaration);
+        }
+
+        public static IsPatternExpressionSyntax CreateIsPatternExprWithConditionalMemberAccessAndDeclaration(
+            string variableName, string op, string memberName, string targetTypeName, string declarationName)
+        {
+            return IsPatternExpression(
+                CreateConditionalAccess(variableName, memberName),
+                CreateDeclarationPattern(targetTypeName, declarationName, op));
+        }
+
+        private static PatternSyntax CreateConstant(string variableName, string op)
+        {
+            var constPattern = ConstantPattern(IdentifierName(variableName));
+                    
+            if (op.Equals("!=") || op.Equals("is not"))
+            {
+                return UnaryPattern(constPattern);
+            }
+
+            return constPattern;
+
+        }
+
+        public static IsPatternExpressionSyntax CreateIsTypePatternExprWithConditionalMemberAccess(string variableName, 
+             string memberName, string op, string targetTypeName)
+        {
+            return IsPatternExpression(
+                CreateConditionalAccess(variableName, memberName),
+                CreateConstant(targetTypeName, op)).NormalizeWhitespace();
         }
     }
 }

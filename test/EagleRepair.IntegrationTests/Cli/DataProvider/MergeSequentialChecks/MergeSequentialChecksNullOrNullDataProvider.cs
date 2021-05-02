@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace EagleRepair.IntegrationTests.Cli.DataProvider.MergeSequentialChecks
 {
-    public static class MergeSequentialChecksNotNullDataProvider
+    public static class MergeSequentialChecksNullOrNullDataProvider
     {
         private const string Input = @"
 namespace Entry
@@ -14,9 +14,9 @@ namespace Entry
         {
             public IA Parent;
         }
-        public void M(B b, object o)
+        public void M(B b)
         {
-            if (b != null && b.Parent != null && o is string)
+            if (b == null || b.Parent is null)
             {
                 // do something
             }
@@ -34,9 +34,9 @@ namespace Entry
         {
             public IA Parent;
         }
-        public void M(B b, object o)
+        public void M(B b)
         {
-            if (b?.Parent is not null && o is string)
+            if (b?.Parent is null)
             {
                 // do something
             }
