@@ -9,7 +9,6 @@ namespace EagleRepair.Ast.RewriteCommand
     {
         protected readonly IChangeTracker _changeTracker;
         protected readonly ITypeService _typeService;
-        protected SemanticModel _semanticModel;
 
         protected AbstractRewriteCommand(IChangeTracker changeTracker, ITypeService typeService)
         {
@@ -17,9 +16,8 @@ namespace EagleRepair.Ast.RewriteCommand
             _typeService = typeService;
         }
 
-        public void SemanticModel(SemanticModel semanticModel)
-        {
-            _semanticModel = semanticModel;
-        }
+        public Workspace Workspace { get; set; }
+
+        public SemanticModel SemanticModel { get; set; }
     }
 }

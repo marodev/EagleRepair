@@ -44,7 +44,7 @@ namespace EagleRepair.Ast.RewriteCommand
                 return base.VisitInvocationExpression(node);
             }
 
-            var nameSpace = _semanticModel.GetTypeInfo(invocationExpr).Type?.ContainingNamespace
+            var nameSpace = SemanticModel.GetTypeInfo(invocationExpr).Type?.ContainingNamespace
                 .ToString();
 
             if (!_typeService.InheritsFromIEnumerable(nameSpace))
@@ -63,7 +63,7 @@ namespace EagleRepair.Ast.RewriteCommand
             }
 
             var variableIdentifier = listWhereMemberAccessExpr.Expression;
-            var whereNameSpace = _semanticModel.GetTypeInfo(variableIdentifier)
+            var whereNameSpace = SemanticModel.GetTypeInfo(variableIdentifier)
                 .Type
                 ?.ContainingNamespace?.ToString();
 

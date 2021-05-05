@@ -48,7 +48,7 @@ namespace EagleRepair.Ast.RewriteCommand
                 return base.VisitBinaryExpression(node);
             }
 
-            var typeSymbol = _semanticModel.GetTypeInfo(countNode.Parent.ChildNodes().ElementAt(0))
+            var typeSymbol = SemanticModel.GetTypeInfo(countNode.Parent.ChildNodes().ElementAt(0))
                 .Type;
 
             if (typeSymbol == null)

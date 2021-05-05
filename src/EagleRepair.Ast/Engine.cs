@@ -61,7 +61,9 @@ namespace EagleRepair.Ast
                 var root = await syntaxTree.GetRootAsync();
                 var semanticModel = await document.GetSemanticModelAsync();
 
-                rewriter.SemanticModel(semanticModel);
+                rewriter.SemanticModel = semanticModel;
+                rewriter.Workspace = solution.Workspace;
+                
                 var newRoot = rewriter.Visit(root);
 
                 if (root.IsEquivalentTo(newRoot))

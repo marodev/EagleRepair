@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Formatting;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace EagleRepair.Ast.RewriteCommand
@@ -344,7 +344,8 @@ namespace EagleRepair.Ast.RewriteCommand
             return CreateNullLiteral();
         }
 
-        public static IsPatternExpressionSyntax CreateNullPatternExprWithConditionalMemberAccess(string variableName, string op, string memberName)
+        public static IsPatternExpressionSyntax CreateNullPatternExprWithConditionalMemberAccess(string variableName,
+            string op, string memberName)
         {
             return IsPatternExpression
             (
@@ -379,22 +380,271 @@ namespace EagleRepair.Ast.RewriteCommand
         private static PatternSyntax CreateConstant(string variableName, string op)
         {
             var constPattern = ConstantPattern(IdentifierName(variableName));
-                    
+
             if (op.Equals("!=") || op.Equals("is not"))
             {
                 return UnaryPattern(constPattern);
             }
 
             return constPattern;
-
         }
 
-        public static IsPatternExpressionSyntax CreateIsTypePatternExprWithConditionalMemberAccess(string variableName, 
-             string memberName, string op, string targetTypeName)
+        public static IsPatternExpressionSyntax CreateIsTypePatternExprWithConditionalMemberAccess(string variableName,
+            string memberName, string op, string targetTypeName)
         {
             return IsPatternExpression(
                 CreateConditionalAccess(variableName, memberName),
                 CreateConstant(targetTypeName, op)).NormalizeWhitespace();
+        }
+
+        public static SyntaxNode AddSealedKeyword(ClassDeclarationSyntax classDecl)
+        {
+            var modifiers = classDecl.Modifiers;
+            var firstModifier = modifiers.FirstOrDefault();
+            var sealedToken = Token(SyntaxKind.SealedKeyword)
+                .WithTrailingTrivia(firstModifier.TrailingTrivia);
+
+            modifiers = modifiers.Add(sealedToken);
+            var newClass = classDecl.WithModifiers(modifiers);
+            return newClass;
+        }
+
+        private static MethodDeclarationSyntax CreateVoidMethod(SyntaxTokenList modifiers, string methodName,
+            ParameterListSyntax parameters, BlockSyntax body)
+        {
+            return MethodDeclaration(
+                    PredefinedType(
+                        Token(SyntaxKind.VoidKeyword)),
+                    Identifier(methodName))
+                .WithModifiers(TokenList(modifiers))
+                .WithParameterList(parameters)
+                .WithBody(body);
+        }
+
+        private static MethodDeclarationSyntax CreateProtectedDisposeMethod(BlockSyntax ifBlockStmts,
+            SyntaxTriviaList? leadingTrivia)
+        {
+            return MethodDeclaration(
+                    PredefinedType(
+                        Token(SyntaxKind.VoidKeyword)),
+                    Identifier("Dispose"))
+                .WithModifiers(
+                    TokenList(
+                        new[] {Token(SyntaxKind.ProtectedKeyword), Token(SyntaxKind.VirtualKeyword)}))
+                .WithParameterList(
+                    ParameterList(
+                        SingletonSeparatedList<ParameterSyntax>(
+                            Parameter(
+                                    Identifier("disposing"))
+                                .WithType(
+                                    PredefinedType(
+                                        Token(SyntaxKind.BoolKeyword))))))
+                .WithBody(
+                    Block(
+                            IfStatement(
+                                IdentifierName("_disposed"),
+                                Block(
+                                    SingletonList<StatementSyntax>(
+                                        ReturnStatement()))),
+                            IfStatement(
+                                IdentifierName("disposing"),
+                                ifBlockStmts
+                            ),
+                            ExpressionStatement(
+                                AssignmentExpression(
+                                    SyntaxKind.SimpleAssignmentExpression,
+                                    IdentifierName("_disposed"),
+                                    LiteralExpression(
+                                        SyntaxKind.TrueLiteralExpression)))).NormalizeWhitespace()
+                        .WithLeadingTrivia(leadingTrivia)
+                ).WithLeadingTrivia(TriviaList
+                (
+                    LineFeed));
+        }
+
+        private static BlockSyntax CreateDisposeMethodBlock()
+        {
+            return Block(
+                ExpressionStatement(
+                        InvocationExpression(
+                                IdentifierName("Dispose"))
+                            .WithArgumentList(
+                                ArgumentList(
+                                    SingletonSeparatedList<ArgumentSyntax>(
+                                        Argument(
+                                            LiteralExpression(
+                                                SyntaxKind.TrueLiteralExpression))))))
+                    .WithSemicolonToken(
+                        Token(TriviaList(), SyntaxKind.SemicolonToken, TriviaList(LineFeed))
+                    ),
+                ExpressionStatement(
+                        InvocationExpression(
+                                MemberAccessExpression(
+                                    SyntaxKind.SimpleMemberAccessExpression,
+                                    IdentifierName("GC"),
+                                    IdentifierName("SuppressFinalize")))
+                            .WithArgumentList(
+                                ArgumentList(
+                                    SingletonSeparatedList<ArgumentSyntax>(
+                                        Argument(
+                                            ThisExpression())))))
+                    .WithSemicolonToken
+                    (
+                        Token
+                        (
+                            TriviaList(),
+                            SyntaxKind.SemicolonToken,
+                            TriviaList
+                            (
+                                LineFeed
+                            )
+                        )
+                    )
+            ).NormalizeWhitespace();
+        }
+
+        private static ExpressionStatementSyntax? GetGcInvocation(SyntaxNode disposeMethodDecl)
+        {
+            return disposeMethodDecl
+                .DescendantNodes()
+                .OfType<ExpressionStatementSyntax>()
+                .FirstOrDefault(e =>
+                    e.Expression is InvocationExpressionSyntax
+                    {
+                        Expression: MemberAccessExpressionSyntax
+                            {Expression: IdentifierNameSyntax identifierName}
+                    } && identifierName.ToString().Equals("GC"));
+        }
+
+        private static FieldDeclarationSyntax CreateDisposeField()
+        {
+            return FieldDeclaration
+                (
+                    VariableDeclaration
+                        (
+                            PredefinedType
+                            (
+                                Token
+                                (
+                                    TriviaList(),
+                                    SyntaxKind.BoolKeyword,
+                                    TriviaList
+                                    (
+                                        Space
+                                    )
+                                )
+                            )
+                        )
+                        .WithVariables
+                        (
+                            SingletonSeparatedList<VariableDeclaratorSyntax>
+                            (
+                                VariableDeclarator
+                                    (
+                                        Identifier
+                                        (
+                                            TriviaList(),
+                                            "_disposed",
+                                            TriviaList
+                                            (
+                                                Space
+                                            )
+                                        )
+                                    )
+                                    .WithInitializer
+                                    (
+                                        EqualsValueClause
+                                            (
+                                                LiteralExpression
+                                                (
+                                                    SyntaxKind.FalseLiteralExpression
+                                                )
+                                            )
+                                            .WithEqualsToken
+                                            (
+                                                Token
+                                                (
+                                                    TriviaList(),
+                                                    SyntaxKind.EqualsToken,
+                                                    TriviaList
+                                                    (
+                                                        Space
+                                                    )
+                                                )
+                                            )
+                                    )
+                            )
+                        )
+                )
+                .WithModifiers
+                (
+                    TokenList
+                    (
+                        Token
+                        (
+                            TriviaList
+                            (
+                                new[] {Comment("// To detect redundant calls"), LineFeed}
+                            ),
+                            SyntaxKind.PrivateKeyword,
+                            TriviaList
+                            (
+                                Space
+                            )
+                        )
+                    )
+                )
+                .WithSemicolonToken
+                (
+                    Token
+                    (
+                        TriviaList(),
+                        SyntaxKind.SemicolonToken,
+                        TriviaList
+                        (
+                            LineFeed,
+                            LineFeed
+                        )
+                    )
+                );
+        }
+
+        private static SyntaxTriviaList? GetLeadingBodyTrivia(MethodDeclarationSyntax methodDecl)
+        {
+            var firstExpr = methodDecl.Body?.GetLeadingTrivia();
+            return firstExpr;
+        }
+
+        public static ClassDeclarationSyntax ModifyDisposeAndAddProtectedDispose(ClassDeclarationSyntax classDecl,
+            MethodDeclarationSyntax disposeMethodDecl)
+        {
+            var gcInvocation = GetGcInvocation(disposeMethodDecl);
+            var newDisposeNode = disposeMethodDecl;
+            if (gcInvocation is not null)
+            {
+                newDisposeNode = newDisposeNode.RemoveNode(gcInvocation, SyntaxRemoveOptions.KeepTrailingTrivia);
+            }
+
+            var leadingBlockTrivia = GetLeadingBodyTrivia(disposeMethodDecl);
+
+            var newProtectedDisposeNode =
+                CreateProtectedDisposeMethod(newDisposeNode!.Body, leadingBlockTrivia);
+
+            newDisposeNode = newDisposeNode.WithBody(CreateDisposeMethodBlock()).WithTrailingTrivia(TriviaList(LineFeed));
+
+            var members = classDecl.Members;
+
+            members = members.Insert(0, CreateDisposeField());
+            members = members.Add(newProtectedDisposeNode);
+
+            var newClass = classDecl.WithMembers(members);
+
+            var oldDisposeMethodDecl = newClass.DescendantNodes().OfType<MethodDeclarationSyntax>()
+                .First(m => m.Identifier.ToString().Equals("Dispose"));
+
+            newClass = newClass.ReplaceNode(oldDisposeMethodDecl, newDisposeNode);
+
+            return newClass;
         }
     }
 }
