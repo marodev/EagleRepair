@@ -1,5 +1,4 @@
 using System.Linq;
-using System.Linq.Expressions;
 using EagleRepair.Ast.Services;
 using EagleRepair.Monitor;
 using Microsoft.CodeAnalysis;
@@ -9,28 +8,30 @@ namespace EagleRepair.Ast.RewriteCommand
 {
     public class MergeSequentialChecksRewriteCommand : AbstractRewriteCommand
     {
-        public MergeSequentialChecksRewriteCommand(IChangeTracker changeTracker, ITypeService typeService) : base(changeTracker, typeService)
+        public MergeSequentialChecksRewriteCommand(IChangeTracker changeTracker, ITypeService typeService) : base(
+            changeTracker, typeService)
         {
         }
 
-        private static ExpressionSyntax FixRightBinaryExpr(string leftExprVariableName, BinaryExpressionSyntax binaryExpr)
+        private static ExpressionSyntax FixRightBinaryExpr(string leftExprVariableName,
+            BinaryExpressionSyntax binaryExpr)
         {
             if (binaryExpr.Left is not MemberAccessExpressionSyntax memberAccessExpr)
             {
                 return null;
             }
-            
+
             if (memberAccessExpr.Expression is not IdentifierNameSyntax identifierName)
             {
                 return null;
             }
-            
+
             var variableName = identifierName.ToString();
             if (!leftExprVariableName.Equals(variableName))
             {
                 return null;
             }
-            
+
             var invokedMemberName = memberAccessExpr.Name.ToString();
 
             var op = binaryExpr.OperatorToken.ToString();
@@ -44,14 +45,16 @@ namespace EagleRepair.Ast.RewriteCommand
                 case IdentifierNameSyntax rightIdentifierName:
                     {
                         var targetType = rightIdentifierName.Identifier.ToString();
-                        return InjectUtils.CreateIsTypePatternExprWithConditionalMemberAccess(variableName, invokedMemberName, op, targetType);
+                        return InjectUtils.CreateIsTypePatternExprWithConditionalMemberAccess(variableName,
+                            invokedMemberName, op, targetType);
                     }
                 default:
                     return null;
             }
         }
 
-        private static ExpressionSyntax FixRightIsPatternExpr(string leftExprVariableName, IsPatternExpressionSyntax isPatternExpr)
+        private static ExpressionSyntax FixRightIsPatternExpr(string leftExprVariableName,
+            IsPatternExpressionSyntax isPatternExpr)
         {
             if (isPatternExpr.Expression is not MemberAccessExpressionSyntax memberAccessExpr)
             {
@@ -93,7 +96,8 @@ namespace EagleRepair.Ast.RewriteCommand
             switch (declarationOrConstNullPattern)
             {
                 case DeclarationPatternSyntax declPattern:
-                    newNode = InjectUtils.CreateIsPatternExprWithConditionalMemberAccessAndDeclaration(variableName, opKeyword,
+                    newNode = InjectUtils.CreateIsPatternExprWithConditionalMemberAccessAndDeclaration(variableName,
+                        opKeyword,
                         invokedMemberName.ToString(), declPattern.Type.ToString(),
                         declPattern.Designation.ToString()).NormalizeWhitespace();
                     break;
@@ -108,12 +112,13 @@ namespace EagleRepair.Ast.RewriteCommand
                         {
                             return null;
                         }
+
                         newNode = InjectUtils.CreateNullPatternExprWithConditionalMemberAccess(variableName, opKeyword,
                             invokedMemberName.ToString());
                         break;
                     }
             }
-            
+
             return newNode;
         }
 
@@ -125,12 +130,12 @@ namespace EagleRepair.Ast.RewriteCommand
             {
                 return base.VisitBinaryExpression(node);
             }
-            
+
             if (node.Left is not BinaryExpressionSyntax leftBinaryExpr)
             {
                 return base.VisitBinaryExpression(node);
             }
-            
+
             if (leftBinaryExpr.Left is not IdentifierNameSyntax leftLeftIdentifierName)
             {
                 return base.VisitBinaryExpression(node);

@@ -13,27 +13,30 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree);
         }
-        
+
         [Theory]
         [MemberData(nameof(MergeSequentialChecksPatternMatchingDataProvider.TestCases),
             MemberType = typeof(MergeSequentialChecksPatternMatchingDataProvider))]
-        public async Task IfNotNull_AccessMemberPatternMatching_ReturnsConditionalPatternMatching(string inputTree, string expectedTree)
+        public async Task IfNotNull_AccessMemberPatternMatching_ReturnsConditionalPatternMatching(string inputTree,
+            string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree);
         }
-        
+
         [Theory]
         [MemberData(nameof(MergeSequentialChecksNullOrNullDataProvider.TestCases),
             MemberType = typeof(MergeSequentialChecksNullOrNullDataProvider))]
-        public async Task IfNull_OrMemberAccessNull_ReturnsConditionalPatternMatching(string inputTree, string expectedTree)
+        public async Task IfNull_OrMemberAccessNull_ReturnsConditionalPatternMatching(string inputTree,
+            string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree);
-        }        
-        
+        }
+
         [Theory]
         [MemberData(nameof(MergeSequentialChecksNullOrOfTypeDataProvider.TestCases),
             MemberType = typeof(MergeSequentialChecksNullOrOfTypeDataProvider))]
-        public async Task IfNull_OrMemberAccessIsType_ReturnsConditionalPatternMatching(string inputTree, string expectedTree)
+        public async Task IfNull_OrMemberAccessIsType_ReturnsConditionalPatternMatching(string inputTree,
+            string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree);
         }

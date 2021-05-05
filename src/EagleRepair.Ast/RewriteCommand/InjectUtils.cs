@@ -4,7 +4,6 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Formatting;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace EagleRepair.Ast.RewriteCommand
@@ -429,11 +428,10 @@ namespace EagleRepair.Ast.RewriteCommand
                         Token(SyntaxKind.VoidKeyword)),
                     Identifier("Dispose"))
                 .WithModifiers(
-                    TokenList(
-                        new[] {Token(SyntaxKind.ProtectedKeyword), Token(SyntaxKind.VirtualKeyword)}))
+                    TokenList(Token(SyntaxKind.ProtectedKeyword), Token(SyntaxKind.VirtualKeyword)))
                 .WithParameterList(
                     ParameterList(
-                        SingletonSeparatedList<ParameterSyntax>(
+                        SingletonSeparatedList(
                             Parameter(
                                     Identifier("disposing"))
                                 .WithType(
@@ -470,7 +468,7 @@ namespace EagleRepair.Ast.RewriteCommand
                                 IdentifierName("Dispose"))
                             .WithArgumentList(
                                 ArgumentList(
-                                    SingletonSeparatedList<ArgumentSyntax>(
+                                    SingletonSeparatedList(
                                         Argument(
                                             LiteralExpression(
                                                 SyntaxKind.TrueLiteralExpression))))))
@@ -485,7 +483,7 @@ namespace EagleRepair.Ast.RewriteCommand
                                     IdentifierName("SuppressFinalize")))
                             .WithArgumentList(
                                 ArgumentList(
-                                    SingletonSeparatedList<ArgumentSyntax>(
+                                    SingletonSeparatedList(
                                         Argument(
                                             ThisExpression())))))
                     .WithSemicolonToken
@@ -537,7 +535,7 @@ namespace EagleRepair.Ast.RewriteCommand
                         )
                         .WithVariables
                         (
-                            SingletonSeparatedList<VariableDeclaratorSyntax>
+                            SingletonSeparatedList
                             (
                                 VariableDeclarator
                                     (
@@ -583,9 +581,7 @@ namespace EagleRepair.Ast.RewriteCommand
                         Token
                         (
                             TriviaList
-                            (
-                                new[] {Comment("// To detect redundant calls"), LineFeed}
-                            ),
+                                (Comment("// To detect redundant calls"), LineFeed),
                             SyntaxKind.PrivateKeyword,
                             TriviaList
                             (
@@ -630,7 +626,8 @@ namespace EagleRepair.Ast.RewriteCommand
             var newProtectedDisposeNode =
                 CreateProtectedDisposeMethod(newDisposeNode!.Body, leadingBlockTrivia);
 
-            newDisposeNode = newDisposeNode.WithBody(CreateDisposeMethodBlock()).WithTrailingTrivia(TriviaList(LineFeed));
+            newDisposeNode = newDisposeNode.WithBody(CreateDisposeMethodBlock())
+                .WithTrailingTrivia(TriviaList(LineFeed));
 
             var members = classDecl.Members;
 

@@ -8,8 +8,6 @@ namespace EagleRepair.Cli
     {
         public static int Main(string[] args)
         {
-            // args = new[] {"-p", @"/Users/martinodermatt/repos/thesis/Dummy/SolutionDummy/SolutionDummy.sln"};
-            args = new[] {"-p", @"/Users/martinodermatt/repos/thesis/Dummy/SimpleRoslynPlayground/SimpleRoslynPlayground.sln"};
             return StartApp(args).Result;
         }
 

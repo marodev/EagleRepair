@@ -12,7 +12,8 @@ namespace EagleRepair.Ast.RewriteCommand
 {
     public class DisposePatternRewriteCommand : AbstractRewriteCommand
     {
-        public DisposePatternRewriteCommand(IChangeTracker changeTracker, ITypeService typeService) : base(changeTracker, typeService)
+        public DisposePatternRewriteCommand(IChangeTracker changeTracker, ITypeService typeService) : base(
+            changeTracker, typeService)
         {
         }
 
@@ -43,17 +44,17 @@ namespace EagleRepair.Ast.RewriteCommand
             var changes = new Dictionary<ClassDeclarationSyntax, ClassDeclarationSyntax>();
             changes = changes.Merge(sealedChanges);
             changes = changes.Merge(disposePatternImpl);
-            
+
             if (!changes.Any())
             {
                 return base.VisitCompilationUnit(node);
             }
 
             var newCompilation = node.ReplaceNodes(changes.Keys.AsEnumerable(),
-            (n1, n2) => changes[n1]);
-            
+                (n1, n2) => changes[n1]);
+
             // reformat code
-            newCompilation =  (CompilationUnitSyntax) Formatter.Format(newCompilation, Workspace);
+            newCompilation = (CompilationUnitSyntax)Formatter.Format(newCompilation, Workspace);
             return newCompilation;
         }
 
@@ -64,13 +65,13 @@ namespace EagleRepair.Ast.RewriteCommand
             foreach (var nonSealedClass in nonSealedClasses)
             {
                 var sealedClass = AddSealedModifier(nonSealedClass);
-                sealedClassPairs.Add(nonSealedClass, (ClassDeclarationSyntax) sealedClass);
+                sealedClassPairs.Add(nonSealedClass, (ClassDeclarationSyntax)sealedClass);
             }
 
             return sealedClassPairs;
         }
 
-        private bool CanBeSealed(IEnumerable<ClassDeclarationSyntax> allClasses, 
+        private bool CanBeSealed(IEnumerable<ClassDeclarationSyntax> allClasses,
             ClassDeclarationSyntax iDisposableClass)
         {
             var iDisposableClassName = iDisposableClass.Identifier.ValueText;
@@ -92,7 +93,7 @@ namespace EagleRepair.Ast.RewriteCommand
                 {
                     continue;
                 }
-                
+
                 foreach (var type in types)
                 {
                     var namespaceType = SemanticModel.GetTypeInfo(type.Type).Type?.ToString();
@@ -127,22 +128,24 @@ namespace EagleRepair.Ast.RewriteCommand
                     continue;
                 }
 
-                var newNode = InjectUtils.ModifyDisposeAndAddProtectedDispose(classDecl, disposeMethods.FirstOrDefault());
+                var newNode =
+                    InjectUtils.ModifyDisposeAndAddProtectedDispose(classDecl, disposeMethods.FirstOrDefault());
                 nodesToUpdate.Add(classDecl, newNode);
-
             }
 
             return nodesToUpdate;
         }
 
-        private static ImmutableList<ClassDeclarationSyntax> GetNonSealedClasses(IEnumerable<ClassDeclarationSyntax> classes)
+        private static ImmutableList<ClassDeclarationSyntax> GetNonSealedClasses(
+            IEnumerable<ClassDeclarationSyntax> classes)
         {
             return classes
                 .Where(c => c.Modifiers.Any(m => !m.ToString().Equals("Sealed")))
                 .ToImmutableList();
         }
 
-        private static ImmutableList<ClassDeclarationSyntax> GetClassesWithIDisposable(IEnumerable<ClassDeclarationSyntax> classes)
+        private static ImmutableList<ClassDeclarationSyntax> GetClassesWithIDisposable(
+            IEnumerable<ClassDeclarationSyntax> classes)
         {
             return classes
                 .Where(c => c.BaseList is not null &&

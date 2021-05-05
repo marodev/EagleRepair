@@ -6,7 +6,6 @@ namespace EagleRepair.IntegrationTests.Cli
 {
     public class DisposePatternTests
     {
-        
         [Theory]
         [MemberData(nameof(DisposePatternDataProvider.TestCases),
             MemberType = typeof(DisposePatternDataProvider))]
@@ -14,7 +13,7 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree);
         }
-        
+
         [Theory]
         [MemberData(nameof(DisposePatternSealedDataProvider.TestCases),
             MemberType = typeof(DisposePatternSealedDataProvider))]

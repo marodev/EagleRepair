@@ -63,7 +63,7 @@ namespace EagleRepair.Ast
 
                 rewriter.SemanticModel = semanticModel;
                 rewriter.Workspace = solution.Workspace;
-                
+
                 var newRoot = rewriter.Visit(root);
 
                 if (root.IsEquivalentTo(newRoot))
