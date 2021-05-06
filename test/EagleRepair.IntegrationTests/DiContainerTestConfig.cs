@@ -17,6 +17,7 @@ namespace EagleRepair.IntegrationTests
         {
             var builder = new ContainerBuilder();
 
+            builder.RegisterType<RewriteService>().As<IRewriteService>();
             builder.RegisterType<TypeService>().As<ITypeService>();
             builder.RegisterType<CmdLineValidator>().As<ICmdLineValidator>();
             builder.RegisterType<CmdLineReader>().As<ICmdLineReader>();

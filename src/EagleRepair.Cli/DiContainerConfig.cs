@@ -15,6 +15,7 @@ namespace EagleRepair.Cli
         {
             var builder = new ContainerBuilder();
 
+            builder.RegisterType<RewriteService>().As<IRewriteService>();
             builder.RegisterType<TypeService>().As<ITypeService>();
             builder.RegisterType<FileWrapper>().As<IFileWrapper>();
             builder.RegisterType<RuleParser>().As<IRuleParser>();

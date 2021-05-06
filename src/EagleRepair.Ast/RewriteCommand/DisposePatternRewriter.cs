@@ -10,14 +10,15 @@ using Microsoft.CodeAnalysis.Formatting;
 
 namespace EagleRepair.Ast.RewriteCommand
 {
-    public class DisposePatternRewriteCommand : AbstractRewriteCommand
+    public class DisposePatternRewriter : AbstractRewriteCommand
     {
-        public DisposePatternRewriteCommand(IChangeTracker changeTracker, ITypeService typeService) : base(
-            changeTracker, typeService)
+        public DisposePatternRewriter(IChangeTracker changeTracker, ITypeService typeService,
+            IRewriteService rewriteService) : base(
+            changeTracker, typeService, rewriteService)
         {
         }
 
-        public override SyntaxNode? VisitCompilationUnit(CompilationUnitSyntax node)
+        public override SyntaxNode VisitCompilationUnit(CompilationUnitSyntax node)
         {
             var allClasses = GetAllClasses(node);
             var classesThatImplementIDisposable = GetClassesWithIDisposable(allClasses);
@@ -58,7 +59,7 @@ namespace EagleRepair.Ast.RewriteCommand
             return newCompilation;
         }
 
-        private static IDictionary<ClassDeclarationSyntax, ClassDeclarationSyntax> AddSealedModifier(
+        private IDictionary<ClassDeclarationSyntax, ClassDeclarationSyntax> AddSealedModifier(
             IEnumerable<ClassDeclarationSyntax> nonSealedClasses)
         {
             var sealedClassPairs = new Dictionary<ClassDeclarationSyntax, ClassDeclarationSyntax>();
@@ -113,7 +114,7 @@ namespace EagleRepair.Ast.RewriteCommand
             return true;
         }
 
-        private static Dictionary<ClassDeclarationSyntax, ClassDeclarationSyntax> FixDisposePattern(
+        private Dictionary<ClassDeclarationSyntax, ClassDeclarationSyntax> FixDisposePattern(
             IEnumerable<ClassDeclarationSyntax> nonSealedClassesThatImplementIDisposable)
         {
             var nodesToUpdate = new Dictionary<ClassDeclarationSyntax, ClassDeclarationSyntax>();
@@ -129,7 +130,7 @@ namespace EagleRepair.Ast.RewriteCommand
                 }
 
                 var newNode =
-                    InjectUtils.ModifyDisposeAndAddProtectedDispose(classDecl, disposeMethods.FirstOrDefault());
+                    _rewriteService.ModifyDisposeAndAddProtectedDispose(classDecl, disposeMethods.FirstOrDefault());
                 nodesToUpdate.Add(classDecl, newNode);
             }
 
@@ -158,9 +159,9 @@ namespace EagleRepair.Ast.RewriteCommand
             return node.DescendantNodes().OfType<ClassDeclarationSyntax>().ToImmutableList();
         }
 
-        private static SyntaxNode AddSealedModifier(ClassDeclarationSyntax classDecl)
+        private SyntaxNode AddSealedModifier(ClassDeclarationSyntax classDecl)
         {
-            var newNode = InjectUtils.AddSealedKeyword(classDecl);
+            var newNode = _rewriteService.AddSealedKeyword(classDecl);
             return newNode;
         }
     }

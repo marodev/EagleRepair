@@ -5,10 +5,11 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EagleRepair.Ast.RewriteCommand
 {
-    public class UseStringIsNullOrEmptyRewriteCommand : AbstractRewriteCommand
+    public class UseStringIsNullOrEmptyRewriter : AbstractRewriteCommand
     {
-        public UseStringIsNullOrEmptyRewriteCommand(IChangeTracker changeTracker, ITypeService typeService) : base(
-            changeTracker, typeService)
+        public UseStringIsNullOrEmptyRewriter(IChangeTracker changeTracker, ITypeService typeService,
+            IRewriteService rewriteService) : base(
+            changeTracker, typeService, rewriteService)
         {
         }
 
@@ -111,7 +112,7 @@ namespace EagleRepair.Ast.RewriteCommand
                 return base.VisitBinaryExpression(node);
             }
 
-            var newNode = InjectUtils.CreateIsNotNullOrEmpty(leftIdentifierName.ToString());
+            var newNode = _rewriteService.CreateIsNotNullOrEmpty(leftIdentifierName.ToString());
 
             // keep original space after node
             newNode = newNode.WithTrailingTrivia(node.GetTrailingTrivia());

@@ -7,10 +7,11 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EagleRepair.Ast.RewriteCommand
 {
-    public class UsePatternMatchingRewriteCommand : AbstractRewriteCommand
+    public class UsePatternMatchingRewriter : AbstractRewriteCommand
     {
-        public UsePatternMatchingRewriteCommand(IChangeTracker changeTracker, ITypeService typeService) : base(
-            changeTracker, typeService)
+        public UsePatternMatchingRewriter(IChangeTracker changeTracker, ITypeService typeService,
+            IRewriteService rewriteService) : base(
+            changeTracker, typeService, rewriteService)
         {
         }
 
@@ -58,7 +59,7 @@ namespace EagleRepair.Ast.RewriteCommand
                     continue;
                 }
 
-                var newConditionExpr = InjectUtils.CreateIsPattern(left, right, identifierName);
+                var newConditionExpr = _rewriteService.CreateIsPattern(left, right, identifierName);
                 var newIfStatementNode = ifStatementToReplace.WithCondition(newConditionExpr);
 
                 oldNewNodeDict.Add(localDeclaration, null); // null -> remove node

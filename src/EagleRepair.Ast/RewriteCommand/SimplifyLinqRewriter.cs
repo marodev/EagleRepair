@@ -7,10 +7,11 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EagleRepair.Ast.RewriteCommand
 {
-    public class SimplifyLinqRewriteCommand : AbstractRewriteCommand
+    public class SimplifyLinqRewriter : AbstractRewriteCommand
     {
-        public SimplifyLinqRewriteCommand(IChangeTracker changeTracker, ITypeService typeService) : base(changeTracker,
-            typeService)
+        public SimplifyLinqRewriter(IChangeTracker changeTracker, ITypeService typeService,
+            IRewriteService rewriteService) : base(changeTracker,
+            typeService, rewriteService)
         {
         }
 
@@ -82,7 +83,7 @@ namespace EagleRepair.Ast.RewriteCommand
             if (!invokedMethodName.Equals("Select"))
             {
                 var newNode =
-                    InjectUtils.CreateInvocation(variableName, invokedMethodName, invocationExpr.ArgumentList);
+                    _rewriteService.CreateInvocation(variableName, invokedMethodName, invocationExpr.ArgumentList);
                 return base.VisitInvocationExpression(newNode);
             }
 
@@ -160,7 +161,7 @@ namespace EagleRepair.Ast.RewriteCommand
                     return base.VisitInvocationExpression(node);
             }
 
-            var newOfTypeNode = InjectUtils.CreateOfTypeT(variableName, castedTypeInWhereCondition);
+            var newOfTypeNode = _rewriteService.CreateOfTypeT(variableName, castedTypeInWhereCondition);
 
             return base.VisitInvocationExpression(newOfTypeNode);
         }

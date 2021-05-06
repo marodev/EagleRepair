@@ -6,14 +6,15 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EagleRepair.Ast.RewriteCommand
 {
-    public class MergeSequentialChecksRewriteCommand : AbstractRewriteCommand
+    public class MergeSequentialChecksRewriter : AbstractRewriteCommand
     {
-        public MergeSequentialChecksRewriteCommand(IChangeTracker changeTracker, ITypeService typeService) : base(
-            changeTracker, typeService)
+        public MergeSequentialChecksRewriter(IChangeTracker changeTracker, ITypeService typeService,
+            IRewriteService rewriteService) : base(
+            changeTracker, typeService, rewriteService)
         {
         }
 
-        private static ExpressionSyntax FixRightBinaryExpr(string leftExprVariableName,
+        private ExpressionSyntax FixRightBinaryExpr(string leftExprVariableName,
             BinaryExpressionSyntax binaryExpr)
         {
             if (binaryExpr.Left is not MemberAccessExpressionSyntax memberAccessExpr)
@@ -40,12 +41,12 @@ namespace EagleRepair.Ast.RewriteCommand
                 case LiteralExpressionSyntax literalExpr when !literalExpr.ToString().Equals("null"):
                     return null;
                 case LiteralExpressionSyntax:
-                    return InjectUtils.CreateNullPatternExprWithConditionalMemberAccess(variableName,
+                    return _rewriteService.CreateNullPatternExprWithConditionalMemberAccess(variableName,
                         op, invokedMemberName);
                 case IdentifierNameSyntax rightIdentifierName:
                     {
                         var targetType = rightIdentifierName.Identifier.ToString();
-                        return InjectUtils.CreateIsTypePatternExprWithConditionalMemberAccess(variableName,
+                        return _rewriteService.CreateIsTypePatternExprWithConditionalMemberAccess(variableName,
                             invokedMemberName, op, targetType);
                     }
                 default:
@@ -53,7 +54,7 @@ namespace EagleRepair.Ast.RewriteCommand
             }
         }
 
-        private static ExpressionSyntax FixRightIsPatternExpr(string leftExprVariableName,
+        private ExpressionSyntax FixRightIsPatternExpr(string leftExprVariableName,
             IsPatternExpressionSyntax isPatternExpr)
         {
             if (isPatternExpr.Expression is not MemberAccessExpressionSyntax memberAccessExpr)
@@ -96,7 +97,7 @@ namespace EagleRepair.Ast.RewriteCommand
             switch (declarationOrConstNullPattern)
             {
                 case DeclarationPatternSyntax declPattern:
-                    newNode = InjectUtils.CreateIsPatternExprWithConditionalMemberAccessAndDeclaration(variableName,
+                    newNode = _rewriteService.CreateIsPatternExprWithConditionalMemberAccessAndDeclaration(variableName,
                         opKeyword,
                         invokedMemberName.ToString(), declPattern.Type.ToString(),
                         declPattern.Designation.ToString()).NormalizeWhitespace();
@@ -113,7 +114,8 @@ namespace EagleRepair.Ast.RewriteCommand
                             return null;
                         }
 
-                        newNode = InjectUtils.CreateNullPatternExprWithConditionalMemberAccess(variableName, opKeyword,
+                        newNode = _rewriteService.CreateNullPatternExprWithConditionalMemberAccess(variableName,
+                            opKeyword,
                             invokedMemberName.ToString());
                         break;
                     }

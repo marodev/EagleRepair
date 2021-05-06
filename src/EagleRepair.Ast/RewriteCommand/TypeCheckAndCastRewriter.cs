@@ -8,10 +8,11 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EagleRepair.Ast.RewriteCommand
 {
-    public class TypeCheckAndCastRewriteCommand : AbstractRewriteCommand
+    public class TypeCheckAndCastRewriter : AbstractRewriteCommand
     {
-        public TypeCheckAndCastRewriteCommand(IChangeTracker changeTracker, ITypeService typeService) : base(
-            changeTracker, typeService)
+        public TypeCheckAndCastRewriter(IChangeTracker changeTracker, ITypeService typeService,
+            IRewriteService rewriteService) : base(
+            changeTracker, typeService, rewriteService)
         {
         }
 
@@ -72,11 +73,11 @@ namespace EagleRepair.Ast.RewriteCommand
                 : targetType.FirstCharToLowerCase();
 
             var targetMethodName = memberAccessExpr.Name.Identifier.ValueText;
-            var newMethodInvocation = InjectUtils.CreateMemberAccess(patternVariableName, targetMethodName);
+            var newMethodInvocation = _rewriteService.CreateMemberAccess(patternVariableName, targetMethodName);
 
             var newIfNode = node.ReplaceNode(memberAccessExpr, newMethodInvocation);
 
-            var patternExpr = InjectUtils.CreateIsPattern(variableName, targetType,
+            var patternExpr = _rewriteService.CreateIsPattern(variableName, targetType,
                 patternVariableName);
 
             newIfNode = newIfNode.ReplaceNode(newIfNode.Condition, patternExpr);

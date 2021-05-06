@@ -7,10 +7,11 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EagleRepair.Ast.RewriteCommand
 {
-    public class UseNullPropagation : AbstractRewriteCommand
+    public class UseNullPropagationRewriter : AbstractRewriteCommand
     {
-        public UseNullPropagation(IChangeTracker changeTracker, ITypeService typeService) : base(changeTracker,
-            typeService)
+        public UseNullPropagationRewriter(IChangeTracker changeTracker, ITypeService typeService,
+            IRewriteService rewriteService) : base(changeTracker,
+            typeService, rewriteService)
         {
         }
 
@@ -53,7 +54,7 @@ namespace EagleRepair.Ast.RewriteCommand
             return base.VisitMethodDeclaration(newMethodNode);
         }
 
-        private static SyntaxNode TryNullPropagation(IfStatementSyntax node)
+        private SyntaxNode TryNullPropagation(IfStatementSyntax node)
         {
             var binaryExpr = (BinaryExpressionSyntax)node.Condition;
             var block = (BlockSyntax)node.Statement;
@@ -107,7 +108,7 @@ namespace EagleRepair.Ast.RewriteCommand
             var methodName = memberAccessExpr.Name.Identifier.ToString();
 
             var newNullPropagationNode =
-                InjectUtils.CreateNullPropagation(variableName, methodName, argsPassedToMethod);
+                _rewriteService.CreateNullPropagation(variableName, methodName, argsPassedToMethod);
 
             return newNullPropagationNode;
         }

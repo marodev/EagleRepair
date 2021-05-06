@@ -7,8 +7,9 @@ namespace EagleRepair.Ast.RewriteCommand
 {
     public class NullChecksShouldNotBeUsedWithIsRewriteCommand : AbstractRewriteCommand
     {
-        public NullChecksShouldNotBeUsedWithIsRewriteCommand(IChangeTracker changeTracker, ITypeService typeService) :
-            base(changeTracker, typeService)
+        public NullChecksShouldNotBeUsedWithIsRewriteCommand(IChangeTracker changeTracker, ITypeService typeService,
+            IRewriteService rewriteService) :
+            base(changeTracker, typeService, rewriteService)
         {
         }
 
@@ -85,7 +86,7 @@ namespace EagleRepair.Ast.RewriteCommand
             }
 
             // use C# 9 !(s is string) --> s is not string
-            var newNode = InjectUtils.ConvertUnaryToIsNotPattern(unaryExpr);
+            var newNode = _rewriteService.ConvertUnaryToIsNotPattern(unaryExpr);
             return newNode;
         }
 

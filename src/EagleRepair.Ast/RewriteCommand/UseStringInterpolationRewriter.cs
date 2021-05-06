@@ -6,10 +6,11 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EagleRepair.Ast.RewriteCommand
 {
-    public class UseStringInterpolationRewriteCommand : AbstractRewriteCommand
+    public class UseStringInterpolationRewriter : AbstractRewriteCommand
     {
-        public UseStringInterpolationRewriteCommand(IChangeTracker changeTracker, ITypeService typeService) : base(
-            changeTracker, typeService)
+        public UseStringInterpolationRewriter(IChangeTracker changeTracker, ITypeService typeService,
+            IRewriteService rewriteService) : base(
+            changeTracker, typeService, rewriteService)
         {
         }
 
@@ -32,7 +33,7 @@ namespace EagleRepair.Ast.RewriteCommand
                 return base.VisitInvocationExpression(node);
             }
 
-            var newStringInterpolationNode = InjectUtils.CreateInterpolatedString(node.ArgumentList.Arguments);
+            var newStringInterpolationNode = _rewriteService.CreateInterpolatedString(node.ArgumentList.Arguments);
 
             return newStringInterpolationNode ?? base.VisitInvocationExpression(node);
         }

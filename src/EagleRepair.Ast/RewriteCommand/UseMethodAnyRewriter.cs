@@ -9,12 +9,13 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace EagleRepair.Ast.RewriteCommand
 {
-    public class UseMethodAnyRewriteCommand : AbstractRewriteCommand
+    public class UseMethodAnyRewriter : AbstractRewriteCommand
     {
         private bool _usesLinqDirective;
 
-        public UseMethodAnyRewriteCommand(IChangeTracker changeTracker, ITypeService typeService) :
-            base(changeTracker, typeService)
+        public UseMethodAnyRewriter(IChangeTracker changeTracker, ITypeService typeService,
+            IRewriteService rewriteService) :
+            base(changeTracker, typeService, rewriteService)
         {
         }
 
@@ -28,7 +29,7 @@ namespace EagleRepair.Ast.RewriteCommand
                 return resultNode;
             }
 
-            return InjectUtils.InjectUsingDirective((CompilationUnitSyntax)resultNode, "System.Linq");
+            return _rewriteService.InjectUsingDirective((CompilationUnitSyntax)resultNode, "System.Linq");
         }
 
         public override SyntaxNode VisitBinaryExpression(BinaryExpressionSyntax node)
@@ -79,7 +80,7 @@ namespace EagleRepair.Ast.RewriteCommand
             {
                 var leftNode = VisitBinaryExpression(left);
                 var rightNode = VisitBinaryExpression(right);
-                return InjectUtils.ConnectBinaryExpr(node, leftNode, rightNode, node.OperatorToken.ValueText);
+                return _rewriteService.ConnectBinaryExpr(node, leftNode, rightNode, node.OperatorToken.ValueText);
             }
 
             var countNode = node.DescendantNodes().OfType<IdentifierNameSyntax>()

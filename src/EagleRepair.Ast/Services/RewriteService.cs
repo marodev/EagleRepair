@@ -6,11 +6,11 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace EagleRepair.Ast.RewriteCommand
+namespace EagleRepair.Ast.Services
 {
-    public static class InjectUtils
+    public class RewriteService : IRewriteService
     {
-        public static CompilationUnitSyntax InjectUsingDirective(CompilationUnitSyntax compilation,
+        public CompilationUnitSyntax InjectUsingDirective(CompilationUnitSyntax compilation,
             string usingDirective)
         {
             var namespaces = usingDirective.Split(".");
@@ -51,49 +51,8 @@ namespace EagleRepair.Ast.RewriteCommand
             return compilation.WithUsings(allUsings);
         }
 
-        private static UsingDirectiveSyntax CreateUsingDirective(string firstIdentifier, string secondIdentifier)
-        {
-            var usingDirective = UsingDirective
-                (
-                    QualifiedName
-                        (
-                            IdentifierName(firstIdentifier),
-                            IdentifierName(secondIdentifier)
-                        )
-                        .WithDotToken
-                        (
-                            Token(SyntaxKind.DotToken)
-                        )
-                )
-                .WithUsingKeyword
-                (
-                    Token
-                    (
-                        TriviaList(),
-                        SyntaxKind.UsingKeyword,
-                        TriviaList
-                        (
-                            Space
-                        )
-                    )
-                ).WithSemicolonToken
-                (
-                    Token
-                    (
-                        TriviaList(),
-                        SyntaxKind.SemicolonToken,
-                        TriviaList
-                        (
-                            LineFeed
-                        )
-                    )
-                );
 
-            return usingDirective;
-        }
-
-
-        public static BinaryExpressionSyntax ConnectBinaryExpr(BinaryExpressionSyntax root, SyntaxNode left,
+        public BinaryExpressionSyntax ConnectBinaryExpr(BinaryExpressionSyntax root, SyntaxNode left,
             SyntaxNode right, string op)
         {
             SyntaxKind parsedOp;
@@ -102,7 +61,7 @@ namespace EagleRepair.Ast.RewriteCommand
             {
                 parsedOp = ParseOp(op);
             }
-            catch (ArgumentException ae)
+            catch (ArgumentException _)
             {
                 // TODO: log exception
                 return root;
@@ -116,22 +75,7 @@ namespace EagleRepair.Ast.RewriteCommand
             return root;
         }
 
-        private static SyntaxKind ParseOp(string op)
-        {
-            return op switch
-            {
-                "&&" => SyntaxKind.LogicalAndExpression,
-                "||" => SyntaxKind.LogicalOrExpression,
-                _ => throw new ArgumentException(nameof(op))
-            };
-        }
-
-        public static SyntaxToken CreateIdentifier(string identifier)
-        {
-            return Identifier(identifier);
-        }
-
-        public static MemberAccessExpressionSyntax CreateMemberAccess(string variable, string methodName)
+        public MemberAccessExpressionSyntax CreateMemberAccess(string variable, string methodName)
         {
             return MemberAccessExpression(
                 SyntaxKind.SimpleMemberAccessExpression,
@@ -139,7 +83,7 @@ namespace EagleRepair.Ast.RewriteCommand
                 IdentifierName(methodName));
         }
 
-        public static InvocationExpressionSyntax CreateInvocation(string variable, string methodName,
+        public InvocationExpressionSyntax CreateInvocation(string variable, string methodName,
             ArgumentListSyntax arguments = null)
         {
             var invocation = InvocationExpression(
@@ -156,7 +100,7 @@ namespace EagleRepair.Ast.RewriteCommand
             return invocation.WithArgumentList(arguments);
         }
 
-        public static IsPatternExpressionSyntax CreateIsPattern(string identifierName, string type, string designation)
+        public IsPatternExpressionSyntax CreateIsPattern(string identifierName, string type, string designation)
         {
             return IsPatternExpression(
                 IdentifierName(identifierName),
@@ -166,7 +110,7 @@ namespace EagleRepair.Ast.RewriteCommand
                         Identifier(designation)))).NormalizeWhitespace();
         }
 
-        public static InvocationExpressionSyntax CreateOfTypeT(string variable, string type)
+        public InvocationExpressionSyntax CreateOfTypeT(string variable, string type)
         {
             return InvocationExpression(MemberAccessExpression(
                 SyntaxKind.SimpleMemberAccessExpression, IdentifierName(variable),
@@ -178,7 +122,7 @@ namespace EagleRepair.Ast.RewriteCommand
                                 IdentifierName(type))))));
         }
 
-        public static ExpressionStatementSyntax CreateNullPropagation(string variableName, string methodName,
+        public ExpressionStatementSyntax CreateNullPropagation(string variableName, string methodName,
             ArgumentListSyntax arguments = null)
         {
             var invocationExpr = InvocationExpression(
@@ -198,24 +142,7 @@ namespace EagleRepair.Ast.RewriteCommand
             return expr.NormalizeWhitespace();
         }
 
-        private static InterpolatedStringTextSyntax CreateInterpolatedText(string text)
-        {
-            return InterpolatedStringText()
-                .WithTextToken(
-                    Token(
-                        TriviaList(),
-                        SyntaxKind.InterpolatedStringTextToken,
-                        text,
-                        text,
-                        TriviaList()));
-        }
-
-        private static InterpolationSyntax CreateInterpolation(ExpressionSyntax argument)
-        {
-            return Interpolation(argument);
-        }
-
-        public static InterpolatedStringExpressionSyntax CreateInterpolatedString(
+        public InterpolatedStringExpressionSyntax CreateInterpolatedString(
             SeparatedSyntaxList<ArgumentSyntax> allArguments)
         {
             // first argument contains the full string
@@ -268,7 +195,7 @@ namespace EagleRepair.Ast.RewriteCommand
             return expressionStmt;
         }
 
-        public static PrefixUnaryExpressionSyntax CreateIsNotNullOrEmpty(string variableName)
+        public PrefixUnaryExpressionSyntax CreateIsNotNullOrEmpty(string variableName)
         {
             return PrefixUnaryExpression(
                 SyntaxKind.LogicalNotExpression,
@@ -285,7 +212,7 @@ namespace EagleRepair.Ast.RewriteCommand
                                     IdentifierName(variableName))))));
         }
 
-        public static ExpressionSyntax ConvertUnaryToIsNotPattern(PrefixUnaryExpressionSyntax unaryExpr)
+        public ExpressionSyntax ConvertUnaryToIsNotPattern(PrefixUnaryExpressionSyntax unaryExpr)
         {
             var binaryExpr = unaryExpr.DescendantNodes().OfType<BinaryExpressionSyntax>().FirstOrDefault();
 
@@ -307,7 +234,7 @@ namespace EagleRepair.Ast.RewriteCommand
             ).NormalizeWhitespace();
         }
 
-        public static ExpressionSyntax CreateConditionalAccess(string variableName, string memberName)
+        public ExpressionSyntax CreateConditionalAccess(string variableName, string memberName)
         {
             return ConditionalAccessExpression
             (
@@ -317,6 +244,118 @@ namespace EagleRepair.Ast.RewriteCommand
                     IdentifierName(memberName)
                 )
             );
+        }
+
+        public IsPatternExpressionSyntax CreateNullPatternExprWithConditionalMemberAccess(string variableName,
+            string op, string memberName)
+        {
+            return IsPatternExpression
+            (
+                CreateConditionalAccess(variableName, memberName),
+                CreateNullPattern(op)
+            ).NormalizeWhitespace();
+        }
+
+        public IsPatternExpressionSyntax CreateIsPatternExprWithConditionalMemberAccessAndDeclaration(
+            string variableName, string op, string memberName, string targetTypeName, string declarationName)
+        {
+            return IsPatternExpression(
+                CreateConditionalAccess(variableName, memberName),
+                CreateDeclarationPattern(targetTypeName, declarationName, op));
+        }
+
+        public IsPatternExpressionSyntax CreateIsTypePatternExprWithConditionalMemberAccess(string variableName,
+            string memberName, string op, string targetTypeName)
+        {
+            return IsPatternExpression(
+                CreateConditionalAccess(variableName, memberName),
+                CreateConstant(targetTypeName, op)).NormalizeWhitespace();
+        }
+
+        public SyntaxNode AddSealedKeyword(ClassDeclarationSyntax classDecl)
+        {
+            var modifiers = classDecl.Modifiers;
+            var firstModifier = modifiers.FirstOrDefault();
+            var sealedToken = Token(SyntaxKind.SealedKeyword)
+                .WithTrailingTrivia(firstModifier.TrailingTrivia);
+
+            modifiers = modifiers.Add(sealedToken);
+            var newClass = classDecl.WithModifiers(modifiers);
+            return newClass;
+        }
+
+        ClassDeclarationSyntax IRewriteService.ModifyDisposeAndAddProtectedDispose(ClassDeclarationSyntax classDecl,
+            MethodDeclarationSyntax disposeMethodDecl)
+        {
+            return ModifyDisposeAndAddProtectedDispose(classDecl, disposeMethodDecl);
+        }
+
+        private UsingDirectiveSyntax CreateUsingDirective(string firstIdentifier, string secondIdentifier)
+        {
+            var usingDirective = UsingDirective
+                (
+                    QualifiedName
+                        (
+                            IdentifierName(firstIdentifier),
+                            IdentifierName(secondIdentifier)
+                        )
+                        .WithDotToken
+                        (
+                            Token(SyntaxKind.DotToken)
+                        )
+                )
+                .WithUsingKeyword
+                (
+                    Token
+                    (
+                        TriviaList(),
+                        SyntaxKind.UsingKeyword,
+                        TriviaList
+                        (
+                            Space
+                        )
+                    )
+                ).WithSemicolonToken
+                (
+                    Token
+                    (
+                        TriviaList(),
+                        SyntaxKind.SemicolonToken,
+                        TriviaList
+                        (
+                            LineFeed
+                        )
+                    )
+                );
+
+            return usingDirective;
+        }
+
+        private static SyntaxKind ParseOp(string op)
+        {
+            return op switch
+            {
+                "&&" => SyntaxKind.LogicalAndExpression,
+                "||" => SyntaxKind.LogicalOrExpression,
+                _ => throw new ArgumentException(nameof(op))
+            };
+        }
+
+        private static InterpolatedStringTextSyntax CreateInterpolatedText(string text)
+        {
+            return InterpolatedStringText()
+                .WithTextToken(
+                    Token(
+                        TriviaList(),
+                        SyntaxKind.InterpolatedStringTextToken,
+                        text,
+                        text,
+                        TriviaList()));
+        }
+
+        private static InterpolationSyntax CreateInterpolation(ExpressionSyntax argument)
+        {
+            return Interpolation(argument);
         }
 
         private static PatternSyntax CreateNullLiteral()
@@ -343,16 +382,6 @@ namespace EagleRepair.Ast.RewriteCommand
             return CreateNullLiteral();
         }
 
-        public static IsPatternExpressionSyntax CreateNullPatternExprWithConditionalMemberAccess(string variableName,
-            string op, string memberName)
-        {
-            return IsPatternExpression
-            (
-                CreateConditionalAccess(variableName, memberName),
-                CreateNullPattern(op)
-            ).NormalizeWhitespace();
-        }
-
         private static PatternSyntax CreateDeclarationPattern(string targetTypeName, string declarationName, string op)
         {
             var declaration = DeclarationPattern(
@@ -368,14 +397,6 @@ namespace EagleRepair.Ast.RewriteCommand
             return UnaryPattern(declaration);
         }
 
-        public static IsPatternExpressionSyntax CreateIsPatternExprWithConditionalMemberAccessAndDeclaration(
-            string variableName, string op, string memberName, string targetTypeName, string declarationName)
-        {
-            return IsPatternExpression(
-                CreateConditionalAccess(variableName, memberName),
-                CreateDeclarationPattern(targetTypeName, declarationName, op));
-        }
-
         private static PatternSyntax CreateConstant(string variableName, string op)
         {
             var constPattern = ConstantPattern(IdentifierName(variableName));
@@ -386,26 +407,6 @@ namespace EagleRepair.Ast.RewriteCommand
             }
 
             return constPattern;
-        }
-
-        public static IsPatternExpressionSyntax CreateIsTypePatternExprWithConditionalMemberAccess(string variableName,
-            string memberName, string op, string targetTypeName)
-        {
-            return IsPatternExpression(
-                CreateConditionalAccess(variableName, memberName),
-                CreateConstant(targetTypeName, op)).NormalizeWhitespace();
-        }
-
-        public static SyntaxNode AddSealedKeyword(ClassDeclarationSyntax classDecl)
-        {
-            var modifiers = classDecl.Modifiers;
-            var firstModifier = modifiers.FirstOrDefault();
-            var sealedToken = Token(SyntaxKind.SealedKeyword)
-                .WithTrailingTrivia(firstModifier.TrailingTrivia);
-
-            modifiers = modifiers.Add(sealedToken);
-            var newClass = classDecl.WithModifiers(modifiers);
-            return newClass;
         }
 
         private static MethodDeclarationSyntax CreateVoidMethod(SyntaxTokenList modifiers, string methodName,
@@ -501,7 +502,7 @@ namespace EagleRepair.Ast.RewriteCommand
             ).NormalizeWhitespace();
         }
 
-        private static ExpressionStatementSyntax? GetGcInvocation(SyntaxNode disposeMethodDecl)
+        private static ExpressionStatementSyntax GetGcInvocation(SyntaxNode disposeMethodDecl)
         {
             return disposeMethodDecl
                 .DescendantNodes()
@@ -611,7 +612,7 @@ namespace EagleRepair.Ast.RewriteCommand
             return firstExpr;
         }
 
-        public static ClassDeclarationSyntax ModifyDisposeAndAddProtectedDispose(ClassDeclarationSyntax classDecl,
+        public ClassDeclarationSyntax ModifyDisposeAndAddProtectedDispose(ClassDeclarationSyntax classDecl,
             MethodDeclarationSyntax disposeMethodDecl)
         {
             var gcInvocation = GetGcInvocation(disposeMethodDecl);
