@@ -21,5 +21,13 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree);
         }
+        
+        [Theory]
+        [MemberData(nameof(DisposePatternAlreadySealedDataProvider.TestCases),
+            MemberType = typeof(DisposePatternAlreadySealedDataProvider))]
+        public async Task FindDispose_IsAlreadySealed_ReturnsInput(string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree, false);
+        }
     }
 }

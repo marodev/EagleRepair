@@ -70,7 +70,7 @@ namespace EagleRepair.Ast.Rewriter
             newCompilation = (CompilationUnitSyntax)Formatter.Format(newCompilation, Workspace);
             return newCompilation;
         }
-
+        
         private IDictionary<ClassDeclarationSyntax, ClassDeclarationSyntax> AddSealedModifier(
             IEnumerable<ClassDeclarationSyntax> nonSealedClasses)
         {
@@ -85,7 +85,7 @@ namespace EagleRepair.Ast.Rewriter
         }
 
         private bool CanBeSealed(IEnumerable<ClassDeclarationSyntax> allClasses,
-            ClassDeclarationSyntax iDisposableClass)
+            BaseTypeDeclarationSyntax iDisposableClass)
         {
             var iDisposableClassName = iDisposableClass.Identifier.ValueText;
             var inheritedClasses = allClasses.Where(
@@ -153,7 +153,7 @@ namespace EagleRepair.Ast.Rewriter
             IEnumerable<ClassDeclarationSyntax> classes)
         {
             return classes
-                .Where(c => c.Modifiers.Any(m => !m.ToString().Equals("Sealed")))
+                .Where(c => c.Modifiers.All(m => !m.ToString().Equals("sealed")))
                 .ToImmutableList();
         }
 
