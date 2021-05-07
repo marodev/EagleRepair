@@ -21,7 +21,7 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree);
         }
-        
+
         [Theory]
         [MemberData(nameof(DisposePatternAlreadySealedDataProvider.TestCases),
             MemberType = typeof(DisposePatternAlreadySealedDataProvider))]

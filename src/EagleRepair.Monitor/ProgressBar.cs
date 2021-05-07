@@ -54,6 +54,7 @@ namespace EagleRepair.Monitor
             {
                 text += $" {message}";
             }
+
             UpdateText(text);
         }
 

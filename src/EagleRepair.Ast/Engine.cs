@@ -12,8 +12,8 @@ namespace EagleRepair.Ast
     public class Engine : IEngine
     {
         private readonly ICollection<AbstractRewriter> _commands;
-        private readonly ISolutionParser _solutionParser;
         private readonly IProgressBar _progressBar;
+        private readonly ISolutionParser _solutionParser;
 
         public Engine(ICollection<AbstractRewriter> commands, ISolutionParser solutionParser, IProgressBar progressBar)
         {
@@ -32,7 +32,7 @@ namespace EagleRepair.Ast
             // rewrite the syntax tree
             var newSolution = await VisitNodes(solution, files);
             // apply the changes (if any) to the solution
-            return ReferenceEquals(newSolution, _solutionParser.Workspace().CurrentSolution) || 
+            return ReferenceEquals(newSolution, _solutionParser.Workspace().CurrentSolution) ||
                    _solutionParser.Workspace().TryApplyChanges(newSolution);
         }
 
@@ -43,7 +43,7 @@ namespace EagleRepair.Ast
             foreach (var document in documents)
             {
                 // report progress to console
-                _progressBar.Report((double) counter / totalDocuments, document.Name);
+                _progressBar.Report((double)counter / totalDocuments, document.Name);
                 foreach (var rewriter in _commands)
                 {
                     // Selects the syntax tree
@@ -75,7 +75,7 @@ namespace EagleRepair.Ast
 
                 counter++;
             }
-            
+
             _progressBar.Report(100.0, "Done.");
 
             return solution;

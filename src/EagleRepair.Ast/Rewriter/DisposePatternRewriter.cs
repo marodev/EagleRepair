@@ -70,7 +70,7 @@ namespace EagleRepair.Ast.Rewriter
             newCompilation = (CompilationUnitSyntax)Formatter.Format(newCompilation, Workspace);
             return newCompilation;
         }
-        
+
         private IDictionary<ClassDeclarationSyntax, ClassDeclarationSyntax> AddSealedModifier(
             IEnumerable<ClassDeclarationSyntax> nonSealedClasses)
         {
