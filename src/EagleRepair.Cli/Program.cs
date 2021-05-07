@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Autofac;
+using EagleRepair.Monitor;
 
 namespace EagleRepair.Cli
 {
@@ -20,8 +22,18 @@ namespace EagleRepair.Cli
             var app = scope.Resolve<IApplication>();
             // start our app
             var succeeded = await app.Run(commandLineArgs);
+            
+            // print console message
+            var changeTracker = scope.Resolve<IChangeTracker>();
+            PrintFixMessages(changeTracker);
 
             return succeeded ? 0 : 1;
+        }
+
+        private static void PrintFixMessages(IChangeTracker changeTracker)
+        {
+            var report = changeTracker.ToDisplayString();
+            Console.WriteLine(report);
         }
     }
 }

@@ -19,7 +19,7 @@ namespace EagleRepair.IntegrationTests.Cli
             MemberType = typeof(TypeCheckAndCastToNullDataProvider))]
         public async Task UseTypeCheck_ChecksToNull_ReturnsNotRefactored(string inputTree, string expectedTree)
         {
-            await TestExecutor.Run(inputTree, expectedTree);
+            await TestExecutor.Run(inputTree, expectedTree, false);
         }
     }
 }

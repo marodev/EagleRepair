@@ -84,7 +84,7 @@ namespace EagleRepair.Ast.Rewriter
             if (!invokedMethodName.Equals("Select"))
             {
                 var lineNumber = $"{DisplayService.GetLineNumber(node)}";
-                var message = ReSharper.ReplaceWith(invokedMethodName) + "/n" + SonarQube.RuleSpecification2971Message;
+                var message = ReSharper.ReplaceWith(invokedMethodName) + " / " + SonarQube.RuleSpecification2971Message;
                 ChangeTracker.Add(new Message() { Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message});
                 
                 var newNode =

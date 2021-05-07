@@ -27,8 +27,6 @@ namespace EagleRepair.Ast
         public async Task<bool> RunAsync(string solutionFilePath, IEnumerable<Rule> rules)
         {
             var solution = await _solutionParser.OpenSolutionAsync(solutionFilePath);
-            var diagnostics =
-                solution.Projects.First().GetCompilationAsync().Result.GetDiagnostics();
             // select all files
             var files = solution.Projects.SelectMany(p => p.Documents).ToList();
             // rewrite the syntax tree
@@ -53,11 +51,10 @@ namespace EagleRepair.Ast
                 var syntaxTree = await document.GetSyntaxTreeAsync();
                 if (syntaxTree is null)
                 {
-                    Console.WriteLine($"Unable to parse SyntaxTree for document: {document.Name}");
+                    Console.WriteLine($"Error: Unable to parse SyntaxTree for document: {document.Name}");
                     continue;
                 }
 
-                Console.WriteLine("Document.FilePath --> " + document.FilePath);
                 var root = await syntaxTree.GetRootAsync();
                 var semanticModel = await document.GetSemanticModelAsync();
 
@@ -73,7 +70,6 @@ namespace EagleRepair.Ast
                     continue;
                 }
 
-                Console.WriteLine("!newRoot.IsEquivalentTo(root)");
                 // Exchanges the document in the solution by the newly generated document
                 solution = solution.WithDocumentSyntaxRoot(document.Id, newRoot);
             }

@@ -116,7 +116,7 @@ namespace EagleRepair.Ast.Rewriter
             var newNode = RewriteService.CreateIsNotNullOrEmpty(leftIdentifierName.ToString());
             
             var lineNumber = $"{DisplayService.GetLineNumber(node)}";
-            var message = ReSharper.ReplaceWithStringIsNullOrEmptyMessage + "/n" +
+            var message = ReSharper.ReplaceWithStringIsNullOrEmptyMessage + " / " + 
                           SonarQube.RuleSpecification3256Message;
             
             ChangeTracker.Add(new Message { Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message});

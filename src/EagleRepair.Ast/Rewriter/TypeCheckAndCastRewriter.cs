@@ -84,7 +84,7 @@ namespace EagleRepair.Ast.Rewriter
             newIfNode = newIfNode.ReplaceNode(newIfNode.Condition, patternExpr);
 
             var lineNumber = $"{DisplayService.GetLineNumber(node)}";
-            var message = ReSharper.MergeCastWithTypeCheckMessage + "/n" + SonarQube.RuleSpecification3247Message;
+            var message = ReSharper.MergeCastWithTypeCheckMessage + " / " + SonarQube.RuleSpecification3247Message;
             ChangeTracker.Add(new Message { Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message});
             
             // visit children of newIfNode

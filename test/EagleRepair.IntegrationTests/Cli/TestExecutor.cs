@@ -7,6 +7,7 @@ using Autofac;
 using EagleRepair.Ast.Parser;
 using EagleRepair.Cli;
 using EagleRepair.IntegrationTests.Mock;
+using EagleRepair.Monitor;
 using Microsoft.CodeAnalysis;
 using Xunit;
 
@@ -14,7 +15,7 @@ namespace EagleRepair.IntegrationTests.Cli
 {
     public static class TestExecutor
     {
-        public static async Task Run(string inputTree, string expectedTree)
+        public static async Task Run(string inputTree, string expectedTree, bool hasMessage = true)
         {
             // Arrange
             var diBuilder = DiContainerTestConfig.Builder();
@@ -29,10 +30,21 @@ namespace EagleRepair.IntegrationTests.Cli
             var succeeded = await app.Run(cmdArgs);
             var resultNode = await ExtractRootAsync(solutionParserMock);
             var actualTree = resultNode!.ToFullString();
+            var changeTracker = scope.Resolve<IChangeTracker>();
+            var messages = changeTracker.All();
 
             // Assert
             Assert.True(succeeded);
 
+            if (hasMessage)
+            {
+                Assert.True(messages.Any());
+            }
+            else
+            {
+                Assert.False(messages.Any());
+            }
+            
             expectedTree = UnifyNewLineCharacters(expectedTree);
             actualTree = UnifyNewLineCharacters(actualTree);
             Assert.Equal(expectedTree, actualTree);

@@ -5,6 +5,8 @@ namespace EagleRepair.Monitor
     public interface IChangeTracker
     {
         public void Add(Message message);
-        public ICollection<Message> All();
+        public Dictionary<string, IList<Message>> All();
+
+        public string ToDisplayString();
     }
 }

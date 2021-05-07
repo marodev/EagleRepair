@@ -25,7 +25,7 @@ namespace EagleRepair.IntegrationTests.Cli
         [MemberData(nameof(AnyNegativeDataProvider.TestCases), MemberType = typeof(AnyNegativeDataProvider))]
         public async Task UseCount_NoIEnumerableImplemented_ReturnsCount(string inputTree, string expectedTree)
         {
-            await TestExecutor.Run(inputTree, expectedTree);
+            await TestExecutor.Run(inputTree, expectedTree, false);
         }
 
         [Theory]

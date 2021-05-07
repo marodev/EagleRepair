@@ -1,6 +1,7 @@
 using System.Linq;
 using EagleRepair.Ast.ReservedToken;
 using EagleRepair.Ast.Services;
+using EagleRepair.Ast.Url;
 using EagleRepair.Monitor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -74,6 +75,13 @@ namespace EagleRepair.Ast.Rewriter
             return ReplaceCountWithAny(node);
         }
 
+        private void TrackChanges(SyntaxNode node)
+        {
+            var lineNumber = $"{DisplayService.GetLineNumber(node)}";
+            var message = ReSharper.UseMethodAnyMessage + " / " + SonarQube.RuleSpecification1155Message;
+            ChangeTracker.Add(new Message { Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message});
+        }
+
         private ExpressionSyntax ReplaceCountWithAny(BinaryExpressionSyntax node)
         {
             if (node.Left is BinaryExpressionSyntax left && node.Right is BinaryExpressionSyntax right)
@@ -110,7 +118,7 @@ namespace EagleRepair.Ast.Rewriter
                 case OperatorToken.GreaterThan when "0".Equals(rightValue):
                 case OperatorToken.GreaterThanOrEqual when "1".Equals(rightValue):
                     _usesLinqDirective = true;
-                    ChangeTracker.Add(new Message() {});
+                    TrackChanges(node);
                     return invocationNode;
                 case OperatorToken.Equal when "0".Equals(rightValue):
                 case OperatorToken.LessThanOrEqual when "0".Equals(rightValue):
@@ -122,6 +130,8 @@ namespace EagleRepair.Ast.Rewriter
                         ).NormalizeWhitespace();
 
                         _usesLinqDirective = true;
+                        TrackChanges(node);
+                        
                         return invertedFix;
                     }
                 default:
