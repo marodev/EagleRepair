@@ -7,7 +7,8 @@ namespace EagleRepair.Ast.Services
         public int GetLineNumber(SyntaxNode node)
         {
             var span = node.SyntaxTree.GetLineSpan(node.Span);
-            var lineNumber = span.StartLinePosition.Line;
+            // StartLinePosition is zero based
+            var lineNumber = span.StartLinePosition.Line + 1;
             return lineNumber;
         }
     }

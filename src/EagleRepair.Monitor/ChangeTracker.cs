@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -30,33 +31,36 @@ namespace EagleRepair.Monitor
 
         public string ToDisplayString()
         {
-            var consoleMessage = "";
+            var consoleMessage = string.Empty;
             const string Offset = "    ";
 
             var totalFixedReSharperIssues = 0;
             var totalFixedSonarQubeIssues = 0;
             var totalFixedIssues = 0;
             var number = 1;
-            foreach (var projectNameMessages in _messages)
+            foreach (var (projectName, messages) in _messages)
             {
-                consoleMessage += $"Project: {projectNameMessages.Key}\n";
+                consoleMessage += $"Project: {projectName}{Environment.NewLine}";;
                 var messagesPerProject =
-                    projectNameMessages.Value.OrderBy(m => m.Path).ThenBy(m => m.Line).ToImmutableList();
+                    messages.OrderBy(m => m.Path).ThenBy(m => m.Line).ToImmutableList();
+                
                 totalFixedReSharperIssues += messagesPerProject.Count(m => m.Text.Contains("ReSharper"));
                 totalFixedSonarQubeIssues += messagesPerProject.Count(m => m.Text.Contains("SonarQube"));
                 totalFixedIssues += messagesPerProject.Count;
 
                 foreach (var message in messagesPerProject)
                 {
-                    consoleMessage += consoleMessage + $"{Offset}#{number} Path: {message.Path}, Line: {message.Line}, Message: {message.Text}\n";
+                    consoleMessage +=  $"{Offset}#{number} Path: {message.Path}, Line: {message.Line}, Message: {message.Text}{Environment.NewLine}";;
                     number++;
                 }
+
+                consoleMessage += "\n";
             }
 
-            consoleMessage += "\n\n\n" + "--- Summary ---\n";
-            consoleMessage += "Fixed ReSharper: " + totalFixedReSharperIssues + "\n";
-            consoleMessage += "Fixed SonarQube: " + totalFixedSonarQubeIssues + "\n";
-            consoleMessage += "Fixed Total: " + totalFixedIssues + "\n";
+            consoleMessage += $"{Environment.NewLine}--- Summary ---{Environment.NewLine}";
+            consoleMessage += $"Fixed ReSharper issues: {totalFixedReSharperIssues}{Environment.NewLine}";
+            consoleMessage += $"Fixed SonarQube issues: {totalFixedSonarQubeIssues}{Environment.NewLine}";
+            consoleMessage += $"Total fixed issues: {totalFixedIssues}{Environment.NewLine}";
 
             return consoleMessage;
         }
