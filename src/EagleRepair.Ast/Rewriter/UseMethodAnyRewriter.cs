@@ -72,7 +72,9 @@ namespace EagleRepair.Ast.Rewriter
                 return base.VisitBinaryExpression(node);
             }
 
-            return ReplaceCountWithAny(node);
+            var newNode = ReplaceCountWithAny(node);
+
+            return newNode ?? base.VisitBinaryExpression(node);
         }
 
         private void TrackChanges(SyntaxNode node)
@@ -93,8 +95,12 @@ namespace EagleRepair.Ast.Rewriter
 
             var countNode = node.DescendantNodes().OfType<IdentifierNameSyntax>()
                 .First(n => n.Identifier.ValueText.Equals("Count"));
-
-            var rightExpr = (LiteralExpressionSyntax)node.Right;
+            
+            if (node.Right is not LiteralExpressionSyntax rightExpr)
+            {
+                return null;
+            }
+            
             var rightValue = rightExpr.Token.Text;
 
             var op = node.OperatorToken.ValueText;
@@ -134,7 +140,7 @@ namespace EagleRepair.Ast.Rewriter
                         return invertedFix;
                     }
                 default:
-                    return node;
+                    return null;
             }
         }
     }

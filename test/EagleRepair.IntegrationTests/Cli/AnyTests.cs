@@ -42,5 +42,13 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree);
         }
+        
+        [Theory]
+        [MemberData(nameof(AnyLoopDataProvider.TestCases),
+            MemberType = typeof(AnyLoopDataProvider))]
+        public async Task UseCount_UsesLoop_ReturnsCount(string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree, false);
+        }
     }
 }

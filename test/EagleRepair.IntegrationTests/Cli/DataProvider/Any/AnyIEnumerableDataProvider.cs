@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace EagleRepair.IntegrationTests.Cli.DataProvider.Any
 {
-    public class AnyIEnumerableDataProvider
+    public static class AnyIEnumerableDataProvider
     {
         private const string Input = @"
 using System.Collections.Generic;
