@@ -1,15 +1,16 @@
 using EagleRepair.Ast.Services;
+using EagleRepair.Ast.Url;
 using EagleRepair.Monitor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace EagleRepair.Ast.RewriteCommand
+namespace EagleRepair.Ast.Rewriter
 {
-    public class NullChecksShouldNotBeUsedWithIsRewriteCommand : AbstractRewriteCommand
+    public class NullChecksShouldNotBeUsedWithIsRewriter : AbstractRewriter
     {
-        public NullChecksShouldNotBeUsedWithIsRewriteCommand(IChangeTracker changeTracker, ITypeService typeService,
-            IRewriteService rewriteService) :
-            base(changeTracker, typeService, rewriteService)
+        public NullChecksShouldNotBeUsedWithIsRewriter(IChangeTracker changeTracker, ITypeService typeService,
+            IRewriteService rewriteService, IDisplayService displayService) :
+            base(changeTracker, typeService, rewriteService, displayService)
         {
         }
 
@@ -86,7 +87,12 @@ namespace EagleRepair.Ast.RewriteCommand
             }
 
             // use C# 9 !(s is string) --> s is not string
-            var newNode = _rewriteService.ConvertUnaryToIsNotPattern(unaryExpr);
+            var newNode = RewriteService.ConvertUnaryToIsNotPattern(unaryExpr);
+            
+            var lineNumber = $"{DisplayService.GetLineNumber(node)}";
+            var message = SonarQube.RuleSpecification4201Message + "\n" + ReSharper.MergeSequentialChecksMessage;
+            ChangeTracker.Add(new Message { Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message});
+            
             return newNode;
         }
 

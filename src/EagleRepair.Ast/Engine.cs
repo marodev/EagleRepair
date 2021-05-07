@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EagleRepair.Ast.Parser;
-using EagleRepair.Ast.RewriteCommand;
+using EagleRepair.Ast.Rewriter;
 using EagleRepair.Monitor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -13,10 +13,10 @@ namespace EagleRepair.Ast
     public class Engine : IEngine
     {
         private readonly IChangeTracker _changeTracker;
-        private readonly ICollection<AbstractRewriteCommand> _commands;
+        private readonly ICollection<AbstractRewriter> _commands;
         private readonly ISolutionParser _solutionParser;
 
-        public Engine(ICollection<AbstractRewriteCommand> commands, IChangeTracker changeTracker,
+        public Engine(ICollection<AbstractRewriter> commands, IChangeTracker changeTracker,
             ISolutionParser solutionParser)
         {
             _commands = commands;
@@ -63,6 +63,8 @@ namespace EagleRepair.Ast
 
                 rewriter.SemanticModel = semanticModel;
                 rewriter.Workspace = solution.Workspace;
+                rewriter.FilePath = document.FilePath;
+                rewriter.ProjectName = document.Project.Name;
 
                 var newRoot = rewriter.Visit(root);
 

@@ -1,16 +1,17 @@
 using System.Linq;
 using EagleRepair.Ast.Services;
+using EagleRepair.Ast.Url;
 using EagleRepair.Monitor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace EagleRepair.Ast.RewriteCommand
+namespace EagleRepair.Ast.Rewriter
 {
-    public class UseStringInterpolationRewriter : AbstractRewriteCommand
+    public class UseStringInterpolationRewriter : AbstractRewriter
     {
         public UseStringInterpolationRewriter(IChangeTracker changeTracker, ITypeService typeService,
-            IRewriteService rewriteService) : base(
-            changeTracker, typeService, rewriteService)
+            IRewriteService rewriteService, IDisplayService displayService) : base(
+            changeTracker, typeService, rewriteService, displayService)
         {
         }
 
@@ -33,9 +34,19 @@ namespace EagleRepair.Ast.RewriteCommand
                 return base.VisitInvocationExpression(node);
             }
 
-            var newStringInterpolationNode = _rewriteService.CreateInterpolatedString(node.ArgumentList.Arguments);
+            var newStringInterpolationNode = RewriteService.CreateInterpolatedString(node.ArgumentList.Arguments);
 
-            return newStringInterpolationNode ?? base.VisitInvocationExpression(node);
+            if (newStringInterpolationNode == null)
+            {
+                return base.VisitInvocationExpression(node);
+            }
+
+            var lineNumber = $"{DisplayService.GetLineNumber(node)}";
+            var message = ReSharper.UseStringInterpolationMessage;
+            ChangeTracker.Add(new Message { Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message});
+         
+            return newStringInterpolationNode;
+
         }
     }
 }

@@ -1,17 +1,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using EagleRepair.Ast.Services;
+using EagleRepair.Ast.Url;
 using EagleRepair.Monitor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace EagleRepair.Ast.RewriteCommand
+namespace EagleRepair.Ast.Rewriter
 {
-    public class UsePatternMatchingRewriter : AbstractRewriteCommand
+    public class UsePatternMatchingRewriter : AbstractRewriter
     {
         public UsePatternMatchingRewriter(IChangeTracker changeTracker, ITypeService typeService,
-            IRewriteService rewriteService) : base(
-            changeTracker, typeService, rewriteService)
+            IRewriteService rewriteService, IDisplayService displayService) : base(
+            changeTracker, typeService, rewriteService, displayService)
         {
         }
 
@@ -59,7 +60,7 @@ namespace EagleRepair.Ast.RewriteCommand
                     continue;
                 }
 
-                var newConditionExpr = _rewriteService.CreateIsPattern(left, right, identifierName);
+                var newConditionExpr = RewriteService.CreateIsPattern(left, right, identifierName);
                 var newIfStatementNode = ifStatementToReplace.WithCondition(newConditionExpr);
 
                 oldNewNodeDict.Add(localDeclaration, null); // null -> remove node
@@ -74,6 +75,13 @@ namespace EagleRepair.Ast.RewriteCommand
             var newMethod = node.ReplaceNodes(oldNewNodeDict.Keys.AsEnumerable(),
                 (n1, n2) => oldNewNodeDict[n1]);
 
+            foreach (var nodeToUpdate in oldNewNodeDict)
+            {
+                var lineNumber = $"{DisplayService.GetLineNumber(nodeToUpdate.Key)}";
+                var message = ReSharper.UsePatternMatchingMessage;
+                ChangeTracker.Add(new Message { Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message});
+            }
+            
             return base.VisitMethodDeclaration(newMethod);
         }
 

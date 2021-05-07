@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using EagleRepair.Monitor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -10,6 +11,13 @@ namespace EagleRepair.Ast.Services
 {
     public class RewriteService : IRewriteService
     {
+        private readonly IChangeTracker _monitor;
+
+        public RewriteService(IChangeTracker monitor)
+        {
+            _monitor = monitor;
+        }
+
         public CompilationUnitSyntax InjectUsingDirective(CompilationUnitSyntax compilation,
             string usingDirective)
         {

@@ -1,20 +1,22 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using EagleRepair.Ast.Extensions;
 using EagleRepair.Ast.Services;
+using EagleRepair.Ast.Url;
 using EagleRepair.Monitor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
 
-namespace EagleRepair.Ast.RewriteCommand
+namespace EagleRepair.Ast.Rewriter
 {
-    public class DisposePatternRewriter : AbstractRewriteCommand
+    public class DisposePatternRewriter : AbstractRewriter
     {
         public DisposePatternRewriter(IChangeTracker changeTracker, ITypeService typeService,
-            IRewriteService rewriteService) : base(
-            changeTracker, typeService, rewriteService)
+            IRewriteService rewriteService, IDisplayService displayService) : base(
+            changeTracker, typeService, rewriteService, displayService)
         {
         }
 
@@ -53,7 +55,15 @@ namespace EagleRepair.Ast.RewriteCommand
 
             var newCompilation = node.ReplaceNodes(changes.Keys.AsEnumerable(),
                 (n1, n2) => changes[n1]);
-
+            
+            foreach (var change in changes)
+            {
+                var nodeToMonitor = change.Key;
+                var lineNumber = $"{DisplayService.GetLineNumber(nodeToMonitor)}";
+                var message = SonarQube.RuleSpecification3881Message;
+                ChangeTracker.Add(new Message() { Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message});
+            }
+            
             // reformat code
             newCompilation = (CompilationUnitSyntax)Formatter.Format(newCompilation, Workspace);
             return newCompilation;
@@ -130,7 +140,7 @@ namespace EagleRepair.Ast.RewriteCommand
                 }
 
                 var newNode =
-                    _rewriteService.ModifyDisposeAndAddProtectedDispose(classDecl, disposeMethods.FirstOrDefault());
+                    RewriteService.ModifyDisposeAndAddProtectedDispose(classDecl, disposeMethods.FirstOrDefault());
                 nodesToUpdate.Add(classDecl, newNode);
             }
 
@@ -161,7 +171,7 @@ namespace EagleRepair.Ast.RewriteCommand
 
         private SyntaxNode AddSealedModifier(ClassDeclarationSyntax classDecl)
         {
-            var newNode = _rewriteService.AddSealedKeyword(classDecl);
+            var newNode = RewriteService.AddSealedKeyword(classDecl);
             return newNode;
         }
     }

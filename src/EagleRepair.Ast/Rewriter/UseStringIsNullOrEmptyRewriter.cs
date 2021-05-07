@@ -1,15 +1,16 @@
 using EagleRepair.Ast.Services;
+using EagleRepair.Ast.Url;
 using EagleRepair.Monitor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace EagleRepair.Ast.RewriteCommand
+namespace EagleRepair.Ast.Rewriter
 {
-    public class UseStringIsNullOrEmptyRewriter : AbstractRewriteCommand
+    public class UseStringIsNullOrEmptyRewriter : AbstractRewriter
     {
         public UseStringIsNullOrEmptyRewriter(IChangeTracker changeTracker, ITypeService typeService,
-            IRewriteService rewriteService) : base(
-            changeTracker, typeService, rewriteService)
+            IRewriteService rewriteService, IDisplayService displayService) : base(
+            changeTracker, typeService, rewriteService, displayService)
         {
         }
 
@@ -112,8 +113,14 @@ namespace EagleRepair.Ast.RewriteCommand
                 return base.VisitBinaryExpression(node);
             }
 
-            var newNode = _rewriteService.CreateIsNotNullOrEmpty(leftIdentifierName.ToString());
-
+            var newNode = RewriteService.CreateIsNotNullOrEmpty(leftIdentifierName.ToString());
+            
+            var lineNumber = $"{DisplayService.GetLineNumber(node)}";
+            var message = ReSharper.ReplaceWithStringIsNullOrEmptyMessage + "/n" +
+                          SonarQube.RuleSpecification3256Message;
+            
+            ChangeTracker.Add(new Message { Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message});
+            
             // keep original space after node
             newNode = newNode.WithTrailingTrivia(node.GetTrailingTrivia());
             return newNode;

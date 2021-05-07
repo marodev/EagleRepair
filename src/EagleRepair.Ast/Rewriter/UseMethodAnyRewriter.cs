@@ -7,15 +7,15 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace EagleRepair.Ast.RewriteCommand
+namespace EagleRepair.Ast.Rewriter
 {
-    public class UseMethodAnyRewriter : AbstractRewriteCommand
+    public class UseMethodAnyRewriter : AbstractRewriter
     {
         private bool _usesLinqDirective;
 
         public UseMethodAnyRewriter(IChangeTracker changeTracker, ITypeService typeService,
-            IRewriteService rewriteService) :
-            base(changeTracker, typeService, rewriteService)
+            IRewriteService rewriteService, IDisplayService displayService) :
+            base(changeTracker, typeService, rewriteService, displayService)
         {
         }
 
@@ -29,7 +29,7 @@ namespace EagleRepair.Ast.RewriteCommand
                 return resultNode;
             }
 
-            return _rewriteService.InjectUsingDirective((CompilationUnitSyntax)resultNode, "System.Linq");
+            return RewriteService.InjectUsingDirective((CompilationUnitSyntax)resultNode, "System.Linq");
         }
 
         public override SyntaxNode VisitBinaryExpression(BinaryExpressionSyntax node)
@@ -66,7 +66,7 @@ namespace EagleRepair.Ast.RewriteCommand
                 return base.VisitBinaryExpression(node);
             }
 
-            if (!_typeService.InheritsFromIEnumerable(containingNamespace))
+            if (!TypeService.InheritsFromIEnumerable(containingNamespace))
             {
                 return base.VisitBinaryExpression(node);
             }
@@ -80,7 +80,7 @@ namespace EagleRepair.Ast.RewriteCommand
             {
                 var leftNode = VisitBinaryExpression(left);
                 var rightNode = VisitBinaryExpression(right);
-                return _rewriteService.ConnectBinaryExpr(node, leftNode, rightNode, node.OperatorToken.ValueText);
+                return RewriteService.ConnectBinaryExpr(node, leftNode, rightNode, node.OperatorToken.ValueText);
             }
 
             var countNode = node.DescendantNodes().OfType<IdentifierNameSyntax>()
@@ -97,13 +97,10 @@ namespace EagleRepair.Ast.RewriteCommand
             var newAnyNode = newNode.DescendantNodes().OfType<IdentifierNameSyntax>()
                 .FirstOrDefault(n => n.Identifier.ValueText.Equals("Any"));
 
-            if (newAnyNode!.Parent is MemberAccessExpressionSyntax memberAccess)
+            if (newAnyNode!.Parent is MemberAccessExpressionSyntax {Parent: not InvocationExpressionSyntax} memberAccess)
             {
-                if (!(memberAccess.Parent is InvocationExpressionSyntax))
-                {
-                    newNode = newNode.ReplaceNode(memberAccess,
-                        InvocationExpression(memberAccess).NormalizeWhitespace());
-                }
+                newNode = newNode.ReplaceNode(memberAccess,
+                    InvocationExpression(memberAccess).NormalizeWhitespace());
             }
 
             var invocationNode = newNode.Left.NormalizeWhitespace();
@@ -113,6 +110,7 @@ namespace EagleRepair.Ast.RewriteCommand
                 case OperatorToken.GreaterThan when "0".Equals(rightValue):
                 case OperatorToken.GreaterThanOrEqual when "1".Equals(rightValue):
                     _usesLinqDirective = true;
+                    ChangeTracker.Add(new Message() {});
                     return invocationNode;
                 case OperatorToken.Equal when "0".Equals(rightValue):
                 case OperatorToken.LessThanOrEqual when "0".Equals(rightValue):

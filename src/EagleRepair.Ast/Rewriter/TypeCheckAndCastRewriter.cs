@@ -1,18 +1,19 @@
 using System.Linq;
 using EagleRepair.Ast.Extensions;
 using EagleRepair.Ast.Services;
+using EagleRepair.Ast.Url;
 using EagleRepair.Monitor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace EagleRepair.Ast.RewriteCommand
+namespace EagleRepair.Ast.Rewriter
 {
-    public class TypeCheckAndCastRewriter : AbstractRewriteCommand
+    public class TypeCheckAndCastRewriter : AbstractRewriter
     {
         public TypeCheckAndCastRewriter(IChangeTracker changeTracker, ITypeService typeService,
-            IRewriteService rewriteService) : base(
-            changeTracker, typeService, rewriteService)
+            IRewriteService rewriteService, IDisplayService displayService) : base(
+            changeTracker, typeService, rewriteService, displayService)
         {
         }
 
@@ -73,15 +74,19 @@ namespace EagleRepair.Ast.RewriteCommand
                 : targetType.FirstCharToLowerCase();
 
             var targetMethodName = memberAccessExpr.Name.Identifier.ValueText;
-            var newMethodInvocation = _rewriteService.CreateMemberAccess(patternVariableName, targetMethodName);
+            var newMethodInvocation = RewriteService.CreateMemberAccess(patternVariableName, targetMethodName);
 
             var newIfNode = node.ReplaceNode(memberAccessExpr, newMethodInvocation);
 
-            var patternExpr = _rewriteService.CreateIsPattern(variableName, targetType,
+            var patternExpr = RewriteService.CreateIsPattern(variableName, targetType,
                 patternVariableName);
 
             newIfNode = newIfNode.ReplaceNode(newIfNode.Condition, patternExpr);
 
+            var lineNumber = $"{DisplayService.GetLineNumber(node)}";
+            var message = ReSharper.MergeCastWithTypeCheckMessage + "/n" + SonarQube.RuleSpecification3247Message;
+            ChangeTracker.Add(new Message { Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message});
+            
             // visit children of newIfNode
             return base.VisitIfStatement(newIfNode);
         }

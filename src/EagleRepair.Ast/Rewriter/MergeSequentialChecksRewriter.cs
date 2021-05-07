@@ -1,16 +1,17 @@
 using System.Linq;
 using EagleRepair.Ast.Services;
+using EagleRepair.Ast.Url;
 using EagleRepair.Monitor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace EagleRepair.Ast.RewriteCommand
+namespace EagleRepair.Ast.Rewriter
 {
-    public class MergeSequentialChecksRewriter : AbstractRewriteCommand
+    public class MergeSequentialChecksRewriter : AbstractRewriter
     {
         public MergeSequentialChecksRewriter(IChangeTracker changeTracker, ITypeService typeService,
-            IRewriteService rewriteService) : base(
-            changeTracker, typeService, rewriteService)
+            IRewriteService rewriteService, IDisplayService displayService) : base(
+            changeTracker, typeService, rewriteService, displayService)
         {
         }
 
@@ -41,12 +42,12 @@ namespace EagleRepair.Ast.RewriteCommand
                 case LiteralExpressionSyntax literalExpr when !literalExpr.ToString().Equals("null"):
                     return null;
                 case LiteralExpressionSyntax:
-                    return _rewriteService.CreateNullPatternExprWithConditionalMemberAccess(variableName,
+                    return RewriteService.CreateNullPatternExprWithConditionalMemberAccess(variableName,
                         op, invokedMemberName);
                 case IdentifierNameSyntax rightIdentifierName:
                     {
                         var targetType = rightIdentifierName.Identifier.ToString();
-                        return _rewriteService.CreateIsTypePatternExprWithConditionalMemberAccess(variableName,
+                        return RewriteService.CreateIsTypePatternExprWithConditionalMemberAccess(variableName,
                             invokedMemberName, op, targetType);
                     }
                 default:
@@ -97,7 +98,7 @@ namespace EagleRepair.Ast.RewriteCommand
             switch (declarationOrConstNullPattern)
             {
                 case DeclarationPatternSyntax declPattern:
-                    newNode = _rewriteService.CreateIsPatternExprWithConditionalMemberAccessAndDeclaration(variableName,
+                    newNode = RewriteService.CreateIsPatternExprWithConditionalMemberAccessAndDeclaration(variableName,
                         opKeyword,
                         invokedMemberName.ToString(), declPattern.Type.ToString(),
                         declPattern.Designation.ToString()).NormalizeWhitespace();
@@ -114,7 +115,7 @@ namespace EagleRepair.Ast.RewriteCommand
                             return null;
                         }
 
-                        newNode = _rewriteService.CreateNullPatternExprWithConditionalMemberAccess(variableName,
+                        newNode = RewriteService.CreateNullPatternExprWithConditionalMemberAccess(variableName,
                             opKeyword,
                             invokedMemberName.ToString());
                         break;
@@ -158,6 +159,10 @@ namespace EagleRepair.Ast.RewriteCommand
 
             // keep original space
             newNode = newNode.WithTrailingTrivia(node.Right.GetTrailingTrivia());
+            
+            var lineNumber = $"{DisplayService.GetLineNumber(node)}";
+            var message = ReSharper.MergeSequentialChecksUrl;
+            ChangeTracker.Add(new Message { Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message});
 
             return newNode;
         }

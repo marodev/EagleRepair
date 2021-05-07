@@ -1,17 +1,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using EagleRepair.Ast.Services;
+using EagleRepair.Ast.Url;
 using EagleRepair.Monitor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace EagleRepair.Ast.RewriteCommand
+namespace EagleRepair.Ast.Rewriter
 {
-    public class UseNullPropagationRewriter : AbstractRewriteCommand
+    public class UseNullPropagationRewriter : AbstractRewriter
     {
         public UseNullPropagationRewriter(IChangeTracker changeTracker, ITypeService typeService,
-            IRewriteService rewriteService) : base(changeTracker,
-            typeService, rewriteService)
+            IRewriteService rewriteService, IDisplayService displayService) : base(changeTracker,
+            typeService, rewriteService, displayService)
         {
         }
 
@@ -50,6 +51,13 @@ namespace EagleRepair.Ast.RewriteCommand
             }
 
             var newMethodNode = node.ReplaceNodes(nodesToUpdate.Keys.AsEnumerable(), (n1, n2) => nodesToUpdate[n1]);
+
+            foreach (var nodeToUpdate in nodesToUpdate)
+            {
+                var lineNumber = $"{DisplayService.GetLineNumber(nodeToUpdate.Key)}";
+                var message = ReSharper.UseNullPropagationMessage;
+                ChangeTracker.Add(new Message { Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message});
+            }
 
             return base.VisitMethodDeclaration(newMethodNode);
         }
@@ -108,7 +116,7 @@ namespace EagleRepair.Ast.RewriteCommand
             var methodName = memberAccessExpr.Name.Identifier.ToString();
 
             var newNullPropagationNode =
-                _rewriteService.CreateNullPropagation(variableName, methodName, argsPassedToMethod);
+                RewriteService.CreateNullPropagation(variableName, methodName, argsPassedToMethod);
 
             return newNullPropagationNode;
         }

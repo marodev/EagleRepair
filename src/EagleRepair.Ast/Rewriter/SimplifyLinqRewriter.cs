@@ -1,17 +1,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using EagleRepair.Ast.Services;
+using EagleRepair.Ast.Url;
 using EagleRepair.Monitor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace EagleRepair.Ast.RewriteCommand
+namespace EagleRepair.Ast.Rewriter
 {
-    public class SimplifyLinqRewriter : AbstractRewriteCommand
+    public class SimplifyLinqRewriter : AbstractRewriter
     {
         public SimplifyLinqRewriter(IChangeTracker changeTracker, ITypeService typeService,
-            IRewriteService rewriteService) : base(changeTracker,
-            typeService, rewriteService)
+            IRewriteService rewriteService, IDisplayService displayService) : base(changeTracker,
+            typeService, rewriteService, displayService)
         {
         }
 
@@ -48,7 +49,7 @@ namespace EagleRepair.Ast.RewriteCommand
             var nameSpace = SemanticModel.GetTypeInfo(invocationExpr).Type?.ContainingNamespace
                 .ToString();
 
-            if (!_typeService.InheritsFromIEnumerable(nameSpace))
+            if (!TypeService.InheritsFromIEnumerable(nameSpace))
             {
                 return base.VisitInvocationExpression(node);
             }
@@ -68,7 +69,7 @@ namespace EagleRepair.Ast.RewriteCommand
                 .Type
                 ?.ContainingNamespace?.ToString();
 
-            if (!_typeService.InheritsFromIEnumerable(whereNameSpace))
+            if (!TypeService.InheritsFromIEnumerable(whereNameSpace))
             {
                 return base.VisitInvocationExpression(node);
             }
@@ -82,8 +83,12 @@ namespace EagleRepair.Ast.RewriteCommand
 
             if (!invokedMethodName.Equals("Select"))
             {
+                var lineNumber = $"{DisplayService.GetLineNumber(node)}";
+                var message = ReSharper.ReplaceWith(invokedMethodName) + "/n" + SonarQube.RuleSpecification2971Message;
+                ChangeTracker.Add(new Message() { Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message});
+                
                 var newNode =
-                    _rewriteService.CreateInvocation(variableName, invokedMethodName, invocationExpr.ArgumentList);
+                    RewriteService.CreateInvocation(variableName, invokedMethodName, invocationExpr.ArgumentList);
                 return base.VisitInvocationExpression(newNode);
             }
 
@@ -161,7 +166,11 @@ namespace EagleRepair.Ast.RewriteCommand
                     return base.VisitInvocationExpression(node);
             }
 
-            var newOfTypeNode = _rewriteService.CreateOfTypeT(variableName, castedTypeInWhereCondition);
+            var lineNr = $"{DisplayService.GetLineNumber(node)}";
+            var msg = ReSharper.ReplaceWithOfType2Message + "/n" + SonarQube.RuleSpecification2971Message;
+            ChangeTracker.Add(new Message() { Line = lineNr, Path = FilePath, Project = ProjectName, Text = msg});
+            
+            var newOfTypeNode = RewriteService.CreateOfTypeT(variableName, castedTypeInWhereCondition);
 
             return base.VisitInvocationExpression(newOfTypeNode);
         }
