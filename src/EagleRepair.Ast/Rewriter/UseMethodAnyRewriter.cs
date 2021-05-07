@@ -60,7 +60,7 @@ namespace EagleRepair.Ast.Rewriter
 
             var containingNamespace = typeSymbol
                 .ContainingNamespace
-                .ToDisplayString();
+                ?.ToDisplayString();
 
             if (string.IsNullOrEmpty(containingNamespace))
             {

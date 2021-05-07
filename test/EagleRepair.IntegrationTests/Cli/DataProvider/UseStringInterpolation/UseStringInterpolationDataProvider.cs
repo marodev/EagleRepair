@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace EagleRepair.IntegrationTests.Cli.DataProvider.UseStringInterpolation
 {
-    public class UseStringInterpolationDataProvider
+    public static class UseStringInterpolationDataProvider
     {
         private const string Input = @"
 using System;

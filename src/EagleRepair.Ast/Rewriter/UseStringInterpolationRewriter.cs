@@ -34,6 +34,14 @@ namespace EagleRepair.Ast.Rewriter
                 return base.VisitInvocationExpression(node);
             }
 
+            var firstArgument = node.ArgumentList.Arguments.FirstOrDefault()?.ToString();
+
+            if (firstArgument is null || firstArgument.StartsWith("CultureInfo."))
+            {
+                // method is used with additional parameters --> string.Format(CultureInfo.CurrentCulture, ...)
+                return base.VisitInvocationExpression(node);
+            }
+
             var newStringInterpolationNode = RewriteService.CreateInterpolatedString(node.ArgumentList.Arguments);
 
             if (newStringInterpolationNode == null)
