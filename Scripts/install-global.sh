@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # uninstall
-dotnet tool uninstall cli --global
+dotnet tool uninstall EagleRepair.Cli --global
 
 # pack
 dotnet pack

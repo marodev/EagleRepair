@@ -39,7 +39,7 @@ namespace EagleRepair.Ast.Url
             $"{ToolName}: Use 'String.IsNullOrEmpty'. See {ReplaceWithStringIsNullOrEmptyUrl}";
 
         public static readonly string UseMethodAnyMessage =
-            $"{ToolName}: Use '.Any() to test whether this IEnumerable is empty or not.";
+            $"{ToolName}: Use '.Any()' to test whether this IEnumerable is empty or not.";
 
         // ReplaceWithSingleCallToAny
         // ReplaceWithSingleCallToCount

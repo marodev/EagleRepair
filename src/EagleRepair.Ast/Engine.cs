@@ -12,15 +12,12 @@ namespace EagleRepair.Ast
 {
     public class Engine : IEngine
     {
-        private readonly IChangeTracker _changeTracker;
         private readonly ICollection<AbstractRewriter> _commands;
         private readonly ISolutionParser _solutionParser;
 
-        public Engine(ICollection<AbstractRewriter> commands, IChangeTracker changeTracker,
-            ISolutionParser solutionParser)
+        public Engine(ICollection<AbstractRewriter> commands, ISolutionParser solutionParser)
         {
             _commands = commands;
-            _changeTracker = changeTracker;
             _solutionParser = solutionParser;
         }
 
@@ -31,15 +28,9 @@ namespace EagleRepair.Ast
             var files = solution.Projects.SelectMany(p => p.Documents).ToList();
             // rewrite the syntax tree
             var newSolution = await VisitNodes(solution, files);
-            if (ReferenceEquals(newSolution, _solutionParser.Workspace().CurrentSolution))
-            {
-                Console.WriteLine("ReferenceEquals(newSolution, solutionParser.Workspace.CurrentSolution)");
-                return true;
-            }
-
-            Console.WriteLine("solutionParser.Workspace.TryApplyChanges(solution)");
-            // apply the changes to the solution
-            return _solutionParser.Workspace().TryApplyChanges(newSolution);
+            // apply the changes (if any) to the solution
+            return ReferenceEquals(newSolution, _solutionParser.Workspace().CurrentSolution) || 
+                   _solutionParser.Workspace().TryApplyChanges(newSolution);
         }
 
         private async Task<Solution> VisitNodes(Solution solution, ICollection<Document> documents)
@@ -75,14 +66,6 @@ namespace EagleRepair.Ast
             }
 
             return solution;
-        }
-
-        public static async Task<string> ModifySyntaxTree(string sourceCode, CSharpSyntaxRewriter rewriter)
-        {
-            var syntaxTree = CSharpSyntaxTree.ParseText(sourceCode);
-            var root = await syntaxTree.GetRootAsync();
-            var newRoot = rewriter.Visit(root);
-            return newRoot.ToFullString();
         }
     }
 }

@@ -36,6 +36,7 @@ namespace EagleRepair.Monitor
             var totalFixedReSharperIssues = 0;
             var totalFixedSonarQubeIssues = 0;
             var totalFixedIssues = 0;
+            var number = 1;
             foreach (var projectNameMessages in _messages)
             {
                 consoleMessage += $"Project: {projectNameMessages.Key}\n";
@@ -45,9 +46,11 @@ namespace EagleRepair.Monitor
                 totalFixedSonarQubeIssues += messagesPerProject.Count(m => m.Text.Contains("SonarQube"));
                 totalFixedIssues += messagesPerProject.Count;
 
-                consoleMessage = messagesPerProject.Aggregate(consoleMessage,
-                    (current, message) =>
-                        current + $"{Offset}Path: {message.Path}, Line: {message.Line}, Message: {message.Text}\n");
+                foreach (var message in messagesPerProject)
+                {
+                    consoleMessage += consoleMessage + $"{Offset}#{number} Path: {message.Path}, Line: {message.Line}, Message: {message.Text}\n";
+                    number++;
+                }
             }
 
             consoleMessage += "\n\n\n" + "--- Summary ---\n";

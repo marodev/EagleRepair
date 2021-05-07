@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.MSBuild;
 
 namespace EagleRepair.Ast.Parser
 {
-    public class SolutionParser : IDisposable, ISolutionParser
+    public sealed class SolutionParser : IDisposable, ISolutionParser
     {
         private readonly MSBuildWorkspace _workspace;
 
@@ -19,7 +19,6 @@ namespace EagleRepair.Ast.Parser
 
         public void Dispose()
         {
-            Console.WriteLine("SolutionParser.Dispose() called.");
             ReleaseUnmanagedResources();
             GC.SuppressFinalize(this);
         }
@@ -32,7 +31,6 @@ namespace EagleRepair.Ast.Parser
                     $"Path {solutionFilePath} provided for {nameof(solutionFilePath)} does not exist.");
             }
 
-            Console.WriteLine($"await Workspace.OpenSolutionAsync({solutionFilePath})");
             return await _workspace.OpenSolutionAsync(solutionFilePath);
         }
 

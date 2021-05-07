@@ -69,7 +69,7 @@ namespace EagleRepair.Ast.Services
             {
                 parsedOp = ParseOp(op);
             }
-            catch (ArgumentException _)
+            catch (ArgumentException)
             {
                 // TODO: log exception
                 return root;

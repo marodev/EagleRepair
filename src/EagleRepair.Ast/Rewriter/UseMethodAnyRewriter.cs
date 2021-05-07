@@ -92,14 +92,12 @@ namespace EagleRepair.Ast.Rewriter
             }
 
             var countNode = node.DescendantNodes().OfType<IdentifierNameSyntax>()
-                .FirstOrDefault(n => n.Identifier.ValueText.Equals("Count"));
+                .First(n => n.Identifier.ValueText.Equals("Count"));
 
             var rightExpr = (LiteralExpressionSyntax)node.Right;
             var rightValue = rightExpr.Token.Text;
 
             var op = node.OperatorToken.ValueText;
-            // var op = condition.OperatorToken.ValueText;
-            var location = countNode.GetLocation();
 
             var newNode = node.ReplaceNode(countNode, IdentifierName("Any").NormalizeWhitespace());
             var newAnyNode = newNode.DescendantNodes().OfType<IdentifierNameSyntax>()

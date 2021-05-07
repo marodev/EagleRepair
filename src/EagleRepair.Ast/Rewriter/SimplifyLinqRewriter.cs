@@ -170,7 +170,7 @@ namespace EagleRepair.Ast.Rewriter
             }
 
             var lineNr = $"{DisplayService.GetLineNumber(node)}";
-            var msg = ReSharper.ReplaceWithOfType2Message + "/n" + SonarQube.RuleSpecification2971Message;
+            var msg = ReSharper.ReplaceWithOfType2Message + " / " + SonarQube.RuleSpecification2971Message;
             ChangeTracker.Add(new Message {Line = lineNr, Path = FilePath, Project = ProjectName, Text = msg});
 
             var newOfTypeNode = RewriteService.CreateOfTypeT(variableName, castedTypeInWhereCondition);
