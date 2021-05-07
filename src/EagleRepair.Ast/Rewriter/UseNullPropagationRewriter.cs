@@ -56,7 +56,10 @@ namespace EagleRepair.Ast.Rewriter
             {
                 var lineNumber = $"{DisplayService.GetLineNumber(nodeToUpdate.Key)}";
                 var message = ReSharper.UseNullPropagationMessage;
-                ChangeTracker.Add(new Message { Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message});
+                ChangeTracker.Add(new Message
+                {
+                    Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message
+                });
             }
 
             return base.VisitMethodDeclaration(newMethodNode);

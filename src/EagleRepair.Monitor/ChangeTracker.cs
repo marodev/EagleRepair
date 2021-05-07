@@ -39,12 +39,15 @@ namespace EagleRepair.Monitor
             foreach (var projectNameMessages in _messages)
             {
                 consoleMessage += $"Project: {projectNameMessages.Key}\n";
-                var messagesPerProject = projectNameMessages.Value.OrderBy(m => m.Path).ThenBy(m => m.Line).ToImmutableList();
+                var messagesPerProject =
+                    projectNameMessages.Value.OrderBy(m => m.Path).ThenBy(m => m.Line).ToImmutableList();
                 totalFixedReSharperIssues += messagesPerProject.Count(m => m.Text.Contains("ReSharper"));
                 totalFixedSonarQubeIssues += messagesPerProject.Count(m => m.Text.Contains("SonarQube"));
                 totalFixedIssues += messagesPerProject.Count;
 
-                consoleMessage = messagesPerProject.Aggregate(consoleMessage, (current, message) => current + $"{Offset}Path: {message.Path}, Line: {message.Line}, Message: {message.Text}\n");
+                consoleMessage = messagesPerProject.Aggregate(consoleMessage,
+                    (current, message) =>
+                        current + $"{Offset}Path: {message.Path}, Line: {message.Line}, Message: {message.Text}\n");
             }
 
             consoleMessage += "\n\n\n" + "--- Summary ---\n";

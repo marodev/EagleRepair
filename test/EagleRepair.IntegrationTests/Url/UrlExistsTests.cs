@@ -11,7 +11,7 @@ namespace EagleRepair.IntegrationTests.Url
         {
             TestExecutor.Run(url);
         }
-        
+
         [Theory]
         [MemberData(nameof(SonarQubeUrlDataProvider.TestCases), MemberType = typeof(SonarQubeUrlDataProvider))]
         public void SonarQubeBaseUrl_Exists(string url)

@@ -79,7 +79,7 @@ namespace EagleRepair.Ast.Rewriter
         {
             var lineNumber = $"{DisplayService.GetLineNumber(node)}";
             var message = ReSharper.UseMethodAnyMessage + " / " + SonarQube.RuleSpecification1155Message;
-            ChangeTracker.Add(new Message { Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message});
+            ChangeTracker.Add(new Message {Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message});
         }
 
         private ExpressionSyntax ReplaceCountWithAny(BinaryExpressionSyntax node)
@@ -105,7 +105,8 @@ namespace EagleRepair.Ast.Rewriter
             var newAnyNode = newNode.DescendantNodes().OfType<IdentifierNameSyntax>()
                 .FirstOrDefault(n => n.Identifier.ValueText.Equals("Any"));
 
-            if (newAnyNode!.Parent is MemberAccessExpressionSyntax {Parent: not InvocationExpressionSyntax} memberAccess)
+            if (newAnyNode!.Parent is MemberAccessExpressionSyntax
+                {Parent: not InvocationExpressionSyntax} memberAccess)
             {
                 newNode = newNode.ReplaceNode(memberAccess,
                     InvocationExpression(memberAccess).NormalizeWhitespace());
@@ -131,7 +132,7 @@ namespace EagleRepair.Ast.Rewriter
 
                         _usesLinqDirective = true;
                         TrackChanges(node);
-                        
+
                         return invertedFix;
                     }
                 default:

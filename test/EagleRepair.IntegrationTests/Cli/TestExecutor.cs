@@ -44,7 +44,7 @@ namespace EagleRepair.IntegrationTests.Cli
             {
                 Assert.False(messages.Any());
             }
-            
+
             expectedTree = UnifyNewLineCharacters(expectedTree);
             actualTree = UnifyNewLineCharacters(actualTree);
             Assert.Equal(expectedTree, actualTree);

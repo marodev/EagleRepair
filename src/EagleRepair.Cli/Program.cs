@@ -22,7 +22,7 @@ namespace EagleRepair.Cli
             var app = scope.Resolve<IApplication>();
             // start our app
             var succeeded = await app.Run(commandLineArgs);
-            
+
             // print console message
             var changeTracker = scope.Resolve<IChangeTracker>();
             PrintFixMessages(changeTracker);

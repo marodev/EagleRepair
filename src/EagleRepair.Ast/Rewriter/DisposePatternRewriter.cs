@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -55,15 +54,18 @@ namespace EagleRepair.Ast.Rewriter
 
             var newCompilation = node.ReplaceNodes(changes.Keys.AsEnumerable(),
                 (n1, n2) => changes[n1]);
-            
+
             foreach (var change in changes)
             {
                 var nodeToMonitor = change.Key;
                 var lineNumber = $"{DisplayService.GetLineNumber(nodeToMonitor)}";
                 var message = SonarQube.RuleSpecification3881Message;
-                ChangeTracker.Add(new Message() { Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message});
+                ChangeTracker.Add(new Message
+                {
+                    Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message
+                });
             }
-            
+
             // reformat code
             newCompilation = (CompilationUnitSyntax)Formatter.Format(newCompilation, Workspace);
             return newCompilation;

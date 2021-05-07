@@ -1,6 +1,3 @@
-using System;
-using System.Runtime.InteropServices;
-
 namespace EagleRepair.Ast.Url
 {
     public static class SonarQube
@@ -27,14 +24,14 @@ namespace EagleRepair.Ast.Url
 
         public static readonly string RuleSpecification3247Message =
             @$"{ToolName}: Duplicate casts should not be made. See {RuleSpecification3247Url}";
-        
+
         public static readonly string RuleSpecification3256Url = $"{BaseUrl}3256";
 
         public static readonly string RuleSpecification3256Message =
             @$"{ToolName}: ""string.IsNullOrEmpty"" should be used. See {RuleSpecification3256Url}";
-        
+
         public static readonly string RuleSpecification1155Url = $"{BaseUrl}1155";
-        
+
         public static readonly string RuleSpecification1155Message =
             @$"{ToolName}: ""Any()"" should be used to test for emptiness. See {RuleSpecification1155Url}";
     }

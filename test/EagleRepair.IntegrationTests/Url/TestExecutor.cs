@@ -15,7 +15,7 @@ namespace EagleRepair.IntegrationTests.Url
             // Assert
             Assert.True(exists);
         }
-        
+
         private static bool EndpointExists(Uri address)
         {
             try

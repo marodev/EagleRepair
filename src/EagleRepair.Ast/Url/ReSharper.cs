@@ -10,18 +10,6 @@ namespace EagleRepair.Ast.Url
         public static readonly string MergeSequentialChecksMessage =
             $"{ToolName}: Merge sequential checks in && or || expressions. See {MergeSequentialChecksUrl}";
 
-        // ReplaceWithSingleCallToAny
-        // ReplaceWithSingleCallToCount
-        // ReplaceWithSingleCallToFirstOrDefault
-        // ReplaceWithSingleCallToSingleOrDefault
-        // ReplaceWithSingleCallToFirst
-        // ReplaceWithSingleCallToSingle
-        // ReplaceWithSingleCallToLast
-        public static string ReplaceWith(string invokedMethodName)
-        {
-            return $"{ToolName}: ReplaceWithSingleCallTo{invokedMethodName}.";
-        }
-
         public static readonly string ReplaceWithOfType2Message = $"{ToolName}: ReplaceWithOfType.2.";
 
         public static readonly string MergeCastWithTypeCheckUrl = $"{BaseUrl}/MergeCastWithTypeCheck.html";
@@ -50,6 +38,19 @@ namespace EagleRepair.Ast.Url
         public static readonly string ReplaceWithStringIsNullOrEmptyMessage =
             $"{ToolName}: Use 'String.IsNullOrEmpty'. See {ReplaceWithStringIsNullOrEmptyUrl}";
 
-        public static readonly string UseMethodAnyMessage = $"{ToolName}: Use '.Any() to test whether this IEnumerable is empty or not.";
+        public static readonly string UseMethodAnyMessage =
+            $"{ToolName}: Use '.Any() to test whether this IEnumerable is empty or not.";
+
+        // ReplaceWithSingleCallToAny
+        // ReplaceWithSingleCallToCount
+        // ReplaceWithSingleCallToFirstOrDefault
+        // ReplaceWithSingleCallToSingleOrDefault
+        // ReplaceWithSingleCallToFirst
+        // ReplaceWithSingleCallToSingle
+        // ReplaceWithSingleCallToLast
+        public static string ReplaceWith(string invokedMethodName)
+        {
+            return $"{ToolName}: ReplaceWithSingleCallTo{invokedMethodName}.";
+        }
     }
 }

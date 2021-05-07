@@ -114,13 +114,13 @@ namespace EagleRepair.Ast.Rewriter
             }
 
             var newNode = RewriteService.CreateIsNotNullOrEmpty(leftIdentifierName.ToString());
-            
+
             var lineNumber = $"{DisplayService.GetLineNumber(node)}";
-            var message = ReSharper.ReplaceWithStringIsNullOrEmptyMessage + " / " + 
+            var message = ReSharper.ReplaceWithStringIsNullOrEmptyMessage + " / " +
                           SonarQube.RuleSpecification3256Message;
-            
-            ChangeTracker.Add(new Message { Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message});
-            
+
+            ChangeTracker.Add(new Message {Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message});
+
             // keep original space after node
             newNode = newNode.WithTrailingTrivia(node.GetTrailingTrivia());
             return newNode;

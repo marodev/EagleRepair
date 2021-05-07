@@ -43,10 +43,9 @@ namespace EagleRepair.Ast.Rewriter
 
             var lineNumber = $"{DisplayService.GetLineNumber(node)}";
             var message = ReSharper.UseStringInterpolationMessage;
-            ChangeTracker.Add(new Message { Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message});
-         
-            return newStringInterpolationNode;
+            ChangeTracker.Add(new Message {Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message});
 
+            return newStringInterpolationNode;
         }
     }
 }

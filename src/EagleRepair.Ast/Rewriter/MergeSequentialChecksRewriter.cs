@@ -159,10 +159,10 @@ namespace EagleRepair.Ast.Rewriter
 
             // keep original space
             newNode = newNode.WithTrailingTrivia(node.Right.GetTrailingTrivia());
-            
+
             var lineNumber = $"{DisplayService.GetLineNumber(node)}";
             var message = ReSharper.MergeSequentialChecksUrl;
-            ChangeTracker.Add(new Message { Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message});
+            ChangeTracker.Add(new Message {Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message});
 
             return newNode;
         }

@@ -85,17 +85,20 @@ namespace EagleRepair.Ast.Rewriter
             {
                 var lineNumber = $"{DisplayService.GetLineNumber(node)}";
                 var message = SonarQube.RuleSpecification4201Message + " / " + ReSharper.MergeSequentialChecksMessage;
-                ChangeTracker.Add(new Message { Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message});
+                ChangeTracker.Add(new Message
+                {
+                    Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message
+                });
                 return node.Right;
             }
 
             // use C# 9 !(s is string) --> s is not string
             var newNode = RewriteService.ConvertUnaryToIsNotPattern(unaryExpr);
-            
+
             var lineNr = $"{DisplayService.GetLineNumber(node)}";
             var msg = SonarQube.RuleSpecification4201Message + " / " + ReSharper.MergeSequentialChecksMessage;
-            ChangeTracker.Add(new Message { Line = lineNr, Path = FilePath, Project = ProjectName, Text = msg});
-            
+            ChangeTracker.Add(new Message {Line = lineNr, Path = FilePath, Project = ProjectName, Text = msg});
+
             return newNode;
         }
 

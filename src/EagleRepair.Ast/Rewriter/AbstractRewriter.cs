@@ -8,9 +8,9 @@ namespace EagleRepair.Ast.Rewriter
     public abstract class AbstractRewriter : CSharpSyntaxRewriter
     {
         protected readonly IChangeTracker ChangeTracker;
+        protected readonly IDisplayService DisplayService;
         protected readonly IRewriteService RewriteService;
         protected readonly ITypeService TypeService;
-        protected readonly IDisplayService DisplayService;
 
         protected AbstractRewriter(IChangeTracker changeTracker, ITypeService typeService,
             IRewriteService rewriteService, IDisplayService displayService)
@@ -24,9 +24,9 @@ namespace EagleRepair.Ast.Rewriter
         public Workspace Workspace { get; set; }
 
         public SemanticModel SemanticModel { get; set; }
-        
+
         public string ProjectName { get; set; }
-        
+
         public string FilePath { get; set; }
     }
 }
