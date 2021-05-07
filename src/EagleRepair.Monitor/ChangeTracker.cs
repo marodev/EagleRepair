@@ -40,7 +40,7 @@ namespace EagleRepair.Monitor
             var number = 1;
             foreach (var (projectName, messages) in _messages)
             {
-                consoleMessage += $"Project: {projectName}{Environment.NewLine}";;
+                consoleMessage += $"{Environment.NewLine}{Environment.NewLine}Project: {projectName}{Environment.NewLine}";;
                 var messagesPerProject =
                     messages.OrderBy(m => m.Path).ThenBy(m => m.Line).ToImmutableList();
                 
@@ -54,7 +54,7 @@ namespace EagleRepair.Monitor
                     number++;
                 }
 
-                consoleMessage += "\n";
+                consoleMessage += Environment.NewLine;
             }
 
             consoleMessage += $"{Environment.NewLine}--- Summary ---{Environment.NewLine}";

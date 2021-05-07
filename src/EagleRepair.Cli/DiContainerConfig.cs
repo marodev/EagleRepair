@@ -15,6 +15,7 @@ namespace EagleRepair.Cli
         {
             var builder = new ContainerBuilder();
 
+            builder.RegisterType<ProgressBar>().As<IProgressBar>().SingleInstance();
             builder.RegisterType<DisplayService>().As<IDisplayService>();
             builder.RegisterType<RewriteService>().As<IRewriteService>();
             builder.RegisterType<TypeService>().As<ITypeService>();
