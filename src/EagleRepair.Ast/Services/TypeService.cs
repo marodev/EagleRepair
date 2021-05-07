@@ -4,7 +4,7 @@ namespace EagleRepair.Ast.Services
     {
         public bool InheritsFromIEnumerable(string typeSymbol)
         {
-            return typeSymbol.StartsWith("System.Collections.");
+            return typeSymbol is not null && typeSymbol.StartsWith("System.Collections.");
         }
 
         public bool IsBuiltInType(string containingNamespace)
