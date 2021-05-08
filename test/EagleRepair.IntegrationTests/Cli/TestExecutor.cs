@@ -36,6 +36,10 @@ namespace EagleRepair.IntegrationTests.Cli
             // Assert
             Assert.True(succeeded);
 
+            expectedTree = UnifyNewLineCharacters(expectedTree);
+            actualTree = UnifyNewLineCharacters(actualTree);
+            Assert.Equal(expectedTree, actualTree);
+
             if (hasMessage)
             {
                 Assert.True(messages.Any());
@@ -44,10 +48,6 @@ namespace EagleRepair.IntegrationTests.Cli
             {
                 Assert.False(messages.Any());
             }
-
-            expectedTree = UnifyNewLineCharacters(expectedTree);
-            actualTree = UnifyNewLineCharacters(actualTree);
-            Assert.Equal(expectedTree, actualTree);
         }
 
         private static string UnifyNewLineCharacters(string text)

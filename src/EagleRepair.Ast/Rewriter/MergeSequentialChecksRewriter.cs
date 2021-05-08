@@ -59,8 +59,11 @@ namespace EagleRepair.Ast.Rewriter
                         return RewriteService.CreateConditionalBinaryExpr(variableName, invokedMemberName, op,
                             binaryExpr.Right);
                     }
+                
                 default:
-                    return null;
+                    return RewriteService.CreateConditionalBinaryExpr(variableName, invokedMemberName, op,
+                        binaryExpr.Right);
+                    // return null;
             }
         }
 
@@ -150,6 +153,26 @@ namespace EagleRepair.Ast.Rewriter
 
             if (leftBinaryExpr.Left is not IdentifierNameSyntax leftLeftIdentifierName)
             {
+                return base.VisitBinaryExpression(node);
+            }
+
+            var symbol = SemanticModel.GetSymbolInfo(leftLeftIdentifierName).Symbol;
+
+            if (symbol is null)
+            {
+                return base.VisitBinaryExpression(node);
+            }
+
+            var typeSymbol = symbol switch
+            {
+                ILocalSymbol iLocalSymbol => iLocalSymbol.Type,
+                IParameterSymbol iParameterSymbol => iParameterSymbol.Type,
+                _ => null
+            };
+
+            if (typeSymbol is null || typeSymbol.NullableAnnotation == NullableAnnotation.Annotated)
+            {
+                // we can't use the conditional operator ? (e.g, s?.Value) for nullable types
                 return base.VisitBinaryExpression(node);
             }
 
