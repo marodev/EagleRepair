@@ -29,6 +29,8 @@ namespace EagleRepair.Ast.Rewriter
             {
                 return resultNode;
             }
+            // reset state
+            _usesLinqDirective = false;
 
             return RewriteService.InjectUsingDirective((CompilationUnitSyntax)resultNode, "System.Linq");
         }
