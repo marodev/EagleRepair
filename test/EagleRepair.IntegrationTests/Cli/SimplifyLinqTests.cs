@@ -69,6 +69,14 @@ namespace EagleRepair.IntegrationTests.Cli
         public async Task SimplifyLinq_WhereLast_ReturnsLast(string inputTree, string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree);
+        }        
+        
+        [Theory]
+        [MemberData(nameof(SimplifyIEnumerableLinqWhereNotPossible.TestCases),
+            MemberType = typeof(SimplifyIEnumerableLinqWhereNotPossible))]
+        public async Task SimplifyLinq_WhereFuncThreeAny_ReturnsOriginal(string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree, false);
         }
     }
 }
