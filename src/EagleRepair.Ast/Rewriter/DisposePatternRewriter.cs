@@ -88,9 +88,19 @@ namespace EagleRepair.Ast.Rewriter
             BaseTypeDeclarationSyntax iDisposableClass)
         {
             var isAbstract = iDisposableClass.Modifiers.Any(m => m.ToString().Equals("abstract"));
-
+            
             if (isAbstract)
             {
+                // abstract classes can't be sealed.
+                return false;
+            }
+
+            var hasVirtualMethods = iDisposableClass.DescendantNodes().OfType<MethodDeclarationSyntax>()
+                .Any(methodDecl => methodDecl.Modifiers.Any(modifier => modifier.ToString().Equals("virtual")));
+
+            if (hasVirtualMethods)
+            {
+                // classes that have virtual methods can't be sealed.
                 return false;
             }
             
@@ -133,14 +143,19 @@ namespace EagleRepair.Ast.Rewriter
             return true;
         }
 
+        private IList<MethodDeclarationSyntax> GetDisposeMethods(ClassDeclarationSyntax classDecl)
+        {
+            return classDecl.DescendantNodes().OfType<MethodDeclarationSyntax>()
+                .Where(m => m.Identifier.ToString().Equals("Dispose")).ToList();
+        }
+
         private Dictionary<ClassDeclarationSyntax, ClassDeclarationSyntax> FixDisposePattern(
             IEnumerable<ClassDeclarationSyntax> nonSealedClassesThatImplementIDisposable)
         {
             var nodesToUpdate = new Dictionary<ClassDeclarationSyntax, ClassDeclarationSyntax>();
             foreach (var classDecl in nonSealedClassesThatImplementIDisposable)
             {
-                var disposeMethods = classDecl.DescendantNodes().OfType<MethodDeclarationSyntax>()
-                    .Where(m => m.Identifier.ToString().Equals("Dispose")).ToList();
+                var disposeMethods = GetDisposeMethods(classDecl);
 
                 if (disposeMethods.Count == 2)
                 {

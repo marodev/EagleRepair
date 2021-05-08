@@ -36,6 +36,14 @@ namespace EagleRepair.IntegrationTests.Cli
         public async Task FindDispose_IsAbstract_ReturnsInput(string inputTree, string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree, false);
+        }        
+        
+        [Theory]
+        [MemberData(nameof(DisposePatternNegativeDataProvider.TestCases),
+            MemberType = typeof(DisposePatternNegativeDataProvider))]
+        public async Task FindDispose_ImplementedCorrectly_ReturnsInput(string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree, false);
         }
     }
 }
