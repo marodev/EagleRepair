@@ -37,19 +37,28 @@ namespace EagleRepair.Ast.Rewriter
 
             var invokedMemberName = memberAccessExpr.Name.ToString();
 
-            var op = binaryExpr.OperatorToken.ToString();
+            var op = binaryExpr.OperatorToken;
             switch (binaryExpr.Right)
             {
                 case LiteralExpressionSyntax literalExpr when !literalExpr.ToString().Equals("null"):
                     return null;
                 case LiteralExpressionSyntax:
                     return RewriteService.CreateNullPatternExprWithConditionalMemberAccess(variableName,
-                        op, invokedMemberName);
+                        op.ValueText, invokedMemberName);
                 case IdentifierNameSyntax rightIdentifierName:
                     {
                         var targetType = rightIdentifierName.Identifier.ToString();
-                        return RewriteService.CreateIsTypePatternExprWithConditionalMemberAccess(variableName,
-                            invokedMemberName, op, targetType);
+                        
+                        // s.X is Foo
+                        if (binaryExpr.OperatorToken.IsKind(SyntaxKind.IsKeyword))
+                        {
+                            return RewriteService.CreateIsTypePatternExprWithConditionalMemberAccess(variableName,
+                                invokedMemberName, op.ValueText, targetType);
+                        }
+                        
+                        return RewriteService.CreateConditionalBinaryExpr(variableName, invokedMemberName, op,
+                            binaryExpr.Right);
+                        
                     }
                 default:
                     return null;

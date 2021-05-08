@@ -44,5 +44,8 @@ namespace EagleRepair.Ast.Services
 
         public ClassDeclarationSyntax ModifyDisposeAndAddProtectedDispose(ClassDeclarationSyntax classDecl,
             MethodDeclarationSyntax disposeMethodDecl);
+
+        public ExpressionSyntax CreateConditionalBinaryExpr(string variableName, string memberName, SyntaxToken op,
+            ExpressionSyntax rightExpr);
     }
 }

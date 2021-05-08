@@ -34,6 +34,11 @@ namespace EagleRepair.Ast.Rewriter
                 return base.VisitBinaryExpression(node);
             }
 
+            if (subRightBinaryExpr.Right is not LiteralExpressionSyntax subRightNumericLiteralExpr)
+            {
+                return base.VisitBinaryExpression(node);
+            }
+            
             // check if first (left) expression is s != null
             if (subLeftBinaryExpr.Left is not IdentifierNameSyntax leftIdentifierName)
             {
@@ -54,8 +59,7 @@ namespace EagleRepair.Ast.Rewriter
             {
                 return base.VisitBinaryExpression(node);
             }
-
-
+            
             var rightIdentifier = subRightBinaryExpr.Left;
             IdentifierNameSyntax rightIdentifierName;
 
@@ -104,8 +108,8 @@ namespace EagleRepair.Ast.Rewriter
                 return base.VisitBinaryExpression(node);
             }
 
-            var leftSymbol = SemanticModel.GetSymbolInfo(leftIdentifierName).Symbol?.ToString();
-            var rightSymbol = SemanticModel.GetSymbolInfo(rightIdentifierName).Symbol?.ToString();
+            var leftSymbol = ModelExtensions.GetSymbolInfo(SemanticModel, leftIdentifierName).Symbol?.ToString();
+            var rightSymbol = ModelExtensions.GetSymbolInfo(SemanticModel, rightIdentifierName).Symbol?.ToString();
 
             // must be of type string, otherwise string.IsNullOrEmpty(..) can't be used.
             if (!"string".Equals(leftSymbol) || !leftSymbol.Equals(rightSymbol))

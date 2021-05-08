@@ -4,6 +4,7 @@ namespace EagleRepair.IntegrationTests.Cli.DataProvider.MergeSequentialChecks
 {
     public class MergeSequentialChecksNullOrSmallerDataProvider
     {
+        // TODO: might consider new C# 9 syntax:   if (s is not {Length: count})
         private const string InputAndExpectedOutput = @"
 namespace Entry
 {

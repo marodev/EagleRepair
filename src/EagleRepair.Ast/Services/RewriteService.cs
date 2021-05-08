@@ -298,6 +298,18 @@ namespace EagleRepair.Ast.Services
             return ModifyDisposeAndAddProtectedDispose(classDecl, disposeMethodDecl);
         }
 
+        public ExpressionSyntax CreateConditionalBinaryExpr(string variableName, string memberName, SyntaxToken op,
+            ExpressionSyntax rightExpr)
+        {
+            return BinaryExpression(
+                SyntaxFacts.GetBinaryExpression(op.Kind()),
+                ConditionalAccessExpression(
+                    IdentifierName(variableName),
+                    MemberBindingExpression(
+                        IdentifierName(memberName))),
+                rightExpr).NormalizeWhitespace();
+        }
+
         private UsingDirectiveSyntax CreateUsingDirective(string firstIdentifier, string secondIdentifier)
         {
             var usingDirective = UsingDirective
@@ -409,7 +421,7 @@ namespace EagleRepair.Ast.Services
         {
             var constPattern = ConstantPattern(IdentifierName(variableName));
 
-            if (op.Equals("!=") || op.Equals("is not"))
+            if (op.Equals("is not"))
             {
                 return UnaryPattern(constPattern);
             }
