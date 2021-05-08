@@ -44,7 +44,7 @@ namespace EagleRepair.Ast.Rewriter
                 {
                     continue;
                 }
-                
+
                 var left = binaryExpr.Left.ToString();
                 var right = binaryExpr.Right.ToString();
                 var op = binaryExpr.OperatorToken.ToString();
@@ -53,9 +53,10 @@ namespace EagleRepair.Ast.Rewriter
                 {
                     continue;
                 }
-                
+
                 var declaredSymbol = SemanticModel.GetDeclaredSymbol(declaration);
-                var symbolReferences = SymbolFinder.FindReferencesAsync(declaredSymbol, Workspace.CurrentSolution).Result;
+                var symbolReferences =
+                    SymbolFinder.FindReferencesAsync(declaredSymbol, Workspace.CurrentSolution).Result;
                 var localReferences = symbolReferences.First().Locations;
 
                 var count = localReferences.Count();
