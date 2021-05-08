@@ -87,6 +87,13 @@ namespace EagleRepair.Ast.Rewriter
         private bool CanBeSealed(IEnumerable<ClassDeclarationSyntax> allClasses,
             BaseTypeDeclarationSyntax iDisposableClass)
         {
+            var isAbstract = iDisposableClass.Modifiers.Any(m => m.ToString().Equals("abstract"));
+
+            if (isAbstract)
+            {
+                return false;
+            }
+            
             var iDisposableClassName = iDisposableClass.Identifier.ValueText;
             var inheritedClasses = allClasses.Where(
                 c => c.BaseList is not null &&
@@ -138,6 +145,14 @@ namespace EagleRepair.Ast.Rewriter
                 if (disposeMethods.Count == 2)
                 {
                     // probably implements the dispose pattern correctly
+                    continue;
+                }
+
+                var firstDisposeMethod = disposeMethods.FirstOrDefault();
+
+                if (firstDisposeMethod is null || firstDisposeMethod.Modifiers.Any(m => m.ToString().Equals("abstract")))
+                {
+                    // dispose() method is abstract
                     continue;
                 }
 
