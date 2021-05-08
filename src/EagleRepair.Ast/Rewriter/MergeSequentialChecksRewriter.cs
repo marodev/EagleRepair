@@ -3,6 +3,7 @@ using EagleRepair.Ast.Services;
 using EagleRepair.Ast.Url;
 using EagleRepair.Monitor;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EagleRepair.Ast.Rewriter
@@ -142,6 +143,21 @@ namespace EagleRepair.Ast.Rewriter
             if (leftBinaryExpr.Left is not IdentifierNameSyntax leftLeftIdentifierName)
             {
                 return base.VisitBinaryExpression(node);
+            }
+
+            if (leftBinaryExpr.OperatorToken.ToString().Equals("=="))
+            {
+                if (node.Right is not IsPatternExpressionSyntax)
+                {
+                    if (node.Right is BinaryExpressionSyntax rightBinaryExpr)
+                    {
+                        if (!rightBinaryExpr.OperatorToken.IsKind(SyntaxKind.IsKeyword))
+                        {
+                            // we can't fix something like if (s == null || s.Length != count)
+                            return base.VisitBinaryExpression(node);
+                        }
+                    }
+                }
             }
 
             var leftExprVariableName = leftLeftIdentifierName.ToString();

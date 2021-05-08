@@ -39,6 +39,15 @@ namespace EagleRepair.IntegrationTests.Cli
             string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree);
+        }        
+        
+        [Theory]
+        [MemberData(nameof(MergeSequentialChecksNullOrSmallerDataProvider.TestCases),
+            MemberType = typeof(MergeSequentialChecksNullOrSmallerDataProvider))]
+        public async Task IfNull_OrMemberAccessIsSmaller_ReturnsOriginal(string inputTree,
+            string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree, false);
         }
     }
 }
