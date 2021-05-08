@@ -36,7 +36,7 @@ namespace EagleRepair.Ast.Rewriter
 
             var firstArgument = node.ArgumentList.Arguments.FirstOrDefault()?.ToString();
 
-            if (firstArgument is null || firstArgument.StartsWith("CultureInfo."))
+            if (firstArgument is null || !firstArgument.StartsWith("\""))
             {
                 // method is used with additional parameters --> string.Format(CultureInfo.CurrentCulture, ...)
                 return base.VisitInvocationExpression(node);
