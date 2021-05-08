@@ -53,25 +53,36 @@ namespace EagleRepair.Ast.Rewriter
                     continue;
                 }
 
-                var ifStatementToReplace = FindIfStatement(identifierName, ifStatements);
+                var ifStatementsToReplace = FindIfStatements(identifierName, ifStatements);
 
-                if (ifStatementToReplace is null)
+                if (!ifStatementsToReplace.Any())
                 {
                     continue;
                 }
+                
+                foreach (var ifStatementToReplace in ifStatementsToReplace)
+                {
+                    var newConditionExpr = RewriteService.CreateIsPattern(left, right, identifierName);
+                    var newIfStatementNode = ifStatementToReplace.WithCondition(newConditionExpr);
+                    
+                    if (!oldNewNodeDict.ContainsKey(localDeclaration))
+                    {
+                        oldNewNodeDict.Add(localDeclaration, null); // null -> remove node
+                    }
 
-                var newConditionExpr = RewriteService.CreateIsPattern(left, right, identifierName);
-                var newIfStatementNode = ifStatementToReplace.WithCondition(newConditionExpr);
-
-                oldNewNodeDict.Add(localDeclaration, null); // null -> remove node
-                oldNewNodeDict.Add(ifStatementToReplace, newIfStatementNode);
+                    if (!oldNewNodeDict.ContainsKey(ifStatementToReplace))
+                    {
+                        oldNewNodeDict.Add(ifStatementToReplace, newIfStatementNode);
+                    }
+        
+                }
             }
 
             if (!oldNewNodeDict.Any())
             {
                 return base.VisitMethodDeclaration(node);
             }
-
+            
             var newMethod = node.ReplaceNodes(oldNewNodeDict.Keys.AsEnumerable(),
                 (n1, n2) => oldNewNodeDict[n1]);
 
@@ -88,9 +99,11 @@ namespace EagleRepair.Ast.Rewriter
             return base.VisitMethodDeclaration(newMethod);
         }
 
-        private static IfStatementSyntax FindIfStatement(string variableName,
+        private static List<IfStatementSyntax> FindIfStatements(string variableName,
             IEnumerable<IfStatementSyntax> ifStatements)
         {
+            var found = new List<IfStatementSyntax>();
+            
             foreach (var ifStatement in ifStatements)
             {
                 if (ifStatement.Condition is not BinaryExpressionSyntax binaryExpr)
@@ -107,10 +120,10 @@ namespace EagleRepair.Ast.Rewriter
                     continue;
                 }
 
-                return ifStatement;
+                found.Add(ifStatement);
             }
 
-            return null;
+            return found;
         }
     }
 }
