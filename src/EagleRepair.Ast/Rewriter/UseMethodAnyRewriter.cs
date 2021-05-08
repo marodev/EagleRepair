@@ -75,6 +75,12 @@ namespace EagleRepair.Ast.Rewriter
                 return base.VisitBinaryExpression(node);
             }
 
+            if (node.Left is ConditionalAccessExpressionSyntax)
+            {
+                // n?.PeriodicBackups.Count > 0 --> can't be transformed to n?.PeriodicBackups.Any() (System.Nullable<boolean>)
+                return base.VisitBinaryExpression(node);
+            }
+
             var newNode = ReplaceCountWithAny(node);
 
             return newNode ?? base.VisitBinaryExpression(node);

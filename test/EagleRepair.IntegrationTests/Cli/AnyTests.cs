@@ -49,6 +49,14 @@ namespace EagleRepair.IntegrationTests.Cli
         public async Task UseCount_UsesLoop_ReturnsCount(string inputTree, string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree, false);
+        }        
+        
+        [Theory]
+        [MemberData(nameof(AnyNullableDataProvider.TestCases),
+            MemberType = typeof(AnyNullableDataProvider))]
+        public async Task UseCount_WithinConditionalAccess_ReturnsCount(string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree, false);
         }
     }
 }
