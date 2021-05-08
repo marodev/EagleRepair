@@ -29,6 +29,15 @@ namespace EagleRepair.IntegrationTests.Cli
             string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree);
+        }        
+        
+        [Theory]
+        [MemberData(nameof(UsePatternMatchingMultipleAccessDataProvider.TestCases),
+            MemberType = typeof(UsePatternMatchingMultipleAccessDataProvider))]
+        public async Task UseAsType_VariableAccessedMultipleTimesNotInCondition_ReturnsOriginal(string inputTree,
+            string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree, false);
         }
     }
 }

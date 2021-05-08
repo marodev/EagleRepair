@@ -5,6 +5,7 @@ using EagleRepair.Ast.Url;
 using EagleRepair.Monitor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.FindSymbols;
 
 namespace EagleRepair.Ast.Rewriter
 {
@@ -43,13 +44,24 @@ namespace EagleRepair.Ast.Rewriter
                 {
                     continue;
                 }
-
+                
                 var left = binaryExpr.Left.ToString();
                 var right = binaryExpr.Right.ToString();
                 var op = binaryExpr.OperatorToken.ToString();
 
                 if (!"as".Equals(op))
                 {
+                    continue;
+                }
+                
+                var declaredSymbol = SemanticModel.GetDeclaredSymbol(declaration);
+                var symbolReferences = SymbolFinder.FindReferencesAsync(declaredSymbol, Workspace.CurrentSolution).Result;
+                var localReferences = symbolReferences.First().Locations;
+
+                var count = localReferences.Count();
+                if (count > 2)
+                {
+                    // we can't refactor it with a high probability
                     continue;
                 }
 
