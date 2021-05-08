@@ -86,24 +86,24 @@ namespace EagleRepair.Ast.Rewriter
                 var lambdaExpr =
                     invocationExpr.ArgumentList.Arguments.FirstOrDefault()?.Expression as
                         ParenthesizedLambdaExpressionSyntax;
-                
+
                 if (lambdaExpr?.ParameterList.Parameters.Count > 1)
                 {
                     // .Any() takes only a Func<T, bool> as parameter,
                     // .Where has Func<T, T, bool> as well, e.g.  numbers.Where((t, i) => true).Any();
                     return base.VisitInvocationExpression(node);
                 }
-                
+
                 var newNode =
                     RewriteService.CreateInvocation(variableName, invokedMethodName, invocationExpr.ArgumentList);
-                
+
                 var lineNumber = $"{DisplayService.GetLineNumber(node)}";
                 var message = ReSharper.ReplaceWith(invokedMethodName) + " / " + SonarQube.RuleSpecification2971Message;
                 ChangeTracker.Add(new Message
                 {
                     Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message
                 });
-                
+
                 return base.VisitInvocationExpression(newNode);
             }
 

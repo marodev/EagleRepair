@@ -59,11 +59,11 @@ namespace EagleRepair.Ast.Rewriter
                         return RewriteService.CreateConditionalBinaryExpr(variableName, invokedMemberName, op,
                             binaryExpr.Right);
                     }
-                
+
                 default:
                     return RewriteService.CreateConditionalBinaryExpr(variableName, invokedMemberName, op,
                         binaryExpr.Right);
-                    // return null;
+                // return null;
             }
         }
 

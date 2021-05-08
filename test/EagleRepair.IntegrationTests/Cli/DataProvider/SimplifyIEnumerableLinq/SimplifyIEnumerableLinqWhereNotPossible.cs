@@ -19,7 +19,7 @@ namespace Entry
         }
     }
 }";
-        
+
 
         public static IEnumerable<object[]> TestCases()
         {
@@ -27,5 +27,3 @@ namespace Entry
         }
     }
 }
-
-
