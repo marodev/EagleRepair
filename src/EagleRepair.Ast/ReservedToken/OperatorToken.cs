@@ -7,5 +7,6 @@ namespace EagleRepair.Ast.ReservedToken
         public const string LessThan = "<";
         public const string LessThanOrEqual = "<=";
         public const string Equal = "==";
+        public const string NotEqual = "!=";
     }
 }

@@ -95,11 +95,18 @@ namespace EagleRepair.Ast.Rewriter
 
         private ExpressionSyntax ReplaceCountWithAny(BinaryExpressionSyntax node)
         {
-            if (node.Left is BinaryExpressionSyntax left && node.Right is BinaryExpressionSyntax right)
+            switch (node.Left)
             {
-                var leftNode = VisitBinaryExpression(left);
-                var rightNode = VisitBinaryExpression(right);
-                return RewriteService.ConnectBinaryExpr(node, leftNode, rightNode, node.OperatorToken.ValueText);
+                case BinaryExpressionSyntax left when node.Right is BinaryExpressionSyntax right:
+                    {
+                        var leftNode = VisitBinaryExpression(left);
+                        var rightNode = VisitBinaryExpression(right);
+                        return RewriteService.ConnectBinaryExpr(node, leftNode, rightNode,
+                            node.OperatorToken.ValueText);
+                    }
+                case BinaryExpressionSyntax:
+                    // Visit node.left at a later point
+                    return null;
             }
 
             var countNode = node.DescendantNodes().OfType<IdentifierNameSyntax>()
@@ -131,6 +138,7 @@ namespace EagleRepair.Ast.Rewriter
             {
                 case OperatorToken.GreaterThan when "0".Equals(rightValue):
                 case OperatorToken.GreaterThanOrEqual when "1".Equals(rightValue):
+                case OperatorToken.NotEqual when "0".Equals(rightValue):
                     _usesLinqDirective = true;
                     TrackChanges(node);
                     return invocationNode;
@@ -148,6 +156,7 @@ namespace EagleRepair.Ast.Rewriter
 
                         return invertedFix;
                     }
+
                 default:
                     return null;
             }

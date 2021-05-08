@@ -63,7 +63,6 @@ namespace EagleRepair.Ast.Rewriter
                 default:
                     return RewriteService.CreateConditionalBinaryExpr(variableName, invokedMemberName, op,
                         binaryExpr.Right);
-                // return null;
             }
         }
 

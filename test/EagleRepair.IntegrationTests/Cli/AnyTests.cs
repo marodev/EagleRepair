@@ -58,5 +58,13 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree, false);
         }
+
+        [Theory]
+        [MemberData(nameof(AnyCountNotNullDataProvider.TestCases),
+            MemberType = typeof(AnyCountNotNullDataProvider))]
+        public async Task UseCount_NotZero_ReturnsAny(string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree);
+        }
     }
 }
