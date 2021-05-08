@@ -28,16 +28,16 @@ namespace EagleRepair.IntegrationTests.Cli
         public async Task FindDispose_IsAlreadySealed_ReturnsInput(string inputTree, string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree, false);
-        }        
-        
+        }
+
         [Theory]
         [MemberData(nameof(DisposePatternAbstractDataProvider.TestCases),
             MemberType = typeof(DisposePatternAbstractDataProvider))]
         public async Task FindDispose_IsAbstract_ReturnsInput(string inputTree, string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree, false);
-        }        
-        
+        }
+
         [Theory]
         [MemberData(nameof(DisposePatternNegativeDataProvider.TestCases),
             MemberType = typeof(DisposePatternNegativeDataProvider))]

@@ -20,12 +20,13 @@ namespace EagleRepair.IntegrationTests.Cli
         public async Task UseDifferentVariableInNullCheck_ReturnsOriginal(string inputTree, string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree, false);
-        }        
-        
+        }
+
         [Theory]
         [MemberData(nameof(UsePatternMatchingComplexDataProvider.TestCases),
             MemberType = typeof(UsePatternMatchingComplexDataProvider))]
-        public async Task UseMethodAccess_ExplicitlyConvertAs_ReturnsPatternMatching(string inputTree, string expectedTree)
+        public async Task UseMethodAccess_ExplicitlyConvertAs_ReturnsPatternMatching(string inputTree,
+            string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree);
         }

@@ -59,12 +59,12 @@ namespace EagleRepair.Ast.Rewriter
                 {
                     continue;
                 }
-                
+
                 foreach (var ifStatementToReplace in ifStatementsToReplace)
                 {
                     var newConditionExpr = RewriteService.CreateIsPattern(left, right, identifierName);
                     var newIfStatementNode = ifStatementToReplace.WithCondition(newConditionExpr);
-                    
+
                     if (!oldNewNodeDict.ContainsKey(localDeclaration))
                     {
                         oldNewNodeDict.Add(localDeclaration, null); // null -> remove node
@@ -74,7 +74,6 @@ namespace EagleRepair.Ast.Rewriter
                     {
                         oldNewNodeDict.Add(ifStatementToReplace, newIfStatementNode);
                     }
-        
                 }
             }
 
@@ -82,7 +81,7 @@ namespace EagleRepair.Ast.Rewriter
             {
                 return base.VisitMethodDeclaration(node);
             }
-            
+
             var newMethod = node.ReplaceNodes(oldNewNodeDict.Keys.AsEnumerable(),
                 (n1, n2) => oldNewNodeDict[n1]);
 
@@ -103,7 +102,7 @@ namespace EagleRepair.Ast.Rewriter
             IEnumerable<IfStatementSyntax> ifStatements)
         {
             var found = new List<IfStatementSyntax>();
-            
+
             foreach (var ifStatement in ifStatements)
             {
                 if (ifStatement.Condition is not BinaryExpressionSyntax binaryExpr)

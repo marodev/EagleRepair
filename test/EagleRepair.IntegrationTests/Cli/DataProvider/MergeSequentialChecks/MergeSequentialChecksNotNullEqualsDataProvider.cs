@@ -19,7 +19,7 @@ namespace Entry
         }
     }
 }";
-        
+
         private const string ExpectedOutput = @"
 namespace Entry
 {
@@ -35,7 +35,7 @@ namespace Entry
         }
     }
 }";
-        
+
         public static IEnumerable<object[]> TestCases()
         {
             yield return new object[] {Input, ExpectedOutput};

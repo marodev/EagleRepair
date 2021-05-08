@@ -42,7 +42,7 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree);
         }
-        
+
         [Theory]
         [MemberData(nameof(AnyLoopDataProvider.TestCases),
             MemberType = typeof(AnyLoopDataProvider))]

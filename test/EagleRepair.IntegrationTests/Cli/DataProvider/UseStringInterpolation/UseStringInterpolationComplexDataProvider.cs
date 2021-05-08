@@ -17,6 +17,7 @@ namespace Entry
         }
     }
 }";
+
         public static IEnumerable<object[]> TestCases()
         {
             yield return new object[] {InputAndExpectedOutput, InputAndExpectedOutput};

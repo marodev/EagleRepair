@@ -48,17 +48,16 @@ namespace EagleRepair.Ast.Rewriter
                 case IdentifierNameSyntax rightIdentifierName:
                     {
                         var targetType = rightIdentifierName.Identifier.ToString();
-                        
+
                         // s.X is Foo
                         if (binaryExpr.OperatorToken.IsKind(SyntaxKind.IsKeyword))
                         {
                             return RewriteService.CreateIsTypePatternExprWithConditionalMemberAccess(variableName,
                                 invokedMemberName, op.ValueText, targetType);
                         }
-                        
+
                         return RewriteService.CreateConditionalBinaryExpr(variableName, invokedMemberName, op,
                             binaryExpr.Right);
-                        
                     }
                 default:
                     return null;

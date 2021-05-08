@@ -39,8 +39,8 @@ namespace EagleRepair.IntegrationTests.Cli
             string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree);
-        }        
-        
+        }
+
         [Theory]
         [MemberData(nameof(MergeSequentialChecksNullOrSmallerDataProvider.TestCases),
             MemberType = typeof(MergeSequentialChecksNullOrSmallerDataProvider))]
@@ -48,8 +48,8 @@ namespace EagleRepair.IntegrationTests.Cli
             string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree, false);
-        }        
-        
+        }
+
         [Theory]
         [MemberData(nameof(MergeSequentialChecksNotNullEqualsDataProvider.TestCases),
             MemberType = typeof(MergeSequentialChecksNotNullEqualsDataProvider))]

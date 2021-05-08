@@ -29,6 +29,7 @@ namespace EagleRepair.Ast.Rewriter
             {
                 return resultNode;
             }
+
             // reset state
             _usesLinqDirective = false;
 
@@ -97,12 +98,12 @@ namespace EagleRepair.Ast.Rewriter
 
             var countNode = node.DescendantNodes().OfType<IdentifierNameSyntax>()
                 .First(n => n.Identifier.ValueText.Equals("Count"));
-            
+
             if (node.Right is not LiteralExpressionSyntax rightExpr)
             {
                 return null;
             }
-            
+
             var rightValue = rightExpr.Token.Text;
 
             var op = node.OperatorToken.ValueText;

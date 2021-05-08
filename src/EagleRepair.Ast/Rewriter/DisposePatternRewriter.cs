@@ -88,7 +88,7 @@ namespace EagleRepair.Ast.Rewriter
             BaseTypeDeclarationSyntax iDisposableClass)
         {
             var isAbstract = iDisposableClass.Modifiers.Any(m => m.ToString().Equals("abstract"));
-            
+
             if (isAbstract)
             {
                 // abstract classes can't be sealed.
@@ -103,7 +103,7 @@ namespace EagleRepair.Ast.Rewriter
                 // classes that have virtual methods can't be sealed.
                 return false;
             }
-            
+
             var iDisposableClassName = iDisposableClass.Identifier.ValueText;
             var inheritedClasses = allClasses.Where(
                 c => c.BaseList is not null &&
@@ -165,7 +165,8 @@ namespace EagleRepair.Ast.Rewriter
 
                 var firstDisposeMethod = disposeMethods.FirstOrDefault();
 
-                if (firstDisposeMethod is null || firstDisposeMethod.Modifiers.Any(m => m.ToString().Equals("abstract")))
+                if (firstDisposeMethod is null ||
+                    firstDisposeMethod.Modifiers.Any(m => m.ToString().Equals("abstract")))
                 {
                     // dispose() method is abstract
                     continue;
