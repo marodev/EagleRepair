@@ -76,7 +76,17 @@ namespace EagleRepair.Ast.Rewriter
 
                 foreach (var binaryExprToReplace in binaryExpressionsToReplace)
                 {
-                    var newConditionExpr = RewriteService.CreateIsPattern(left, right, identifierName);
+                    TypeSyntax s;
+                    if (binaryExpr.Right is PredefinedTypeSyntax predefinedTypeSyntax)
+                    {
+                        s = predefinedTypeSyntax;
+                    }
+                    else
+                    {
+                        s = SyntaxFactory.IdentifierName(SyntaxFactory.Identifier(right));
+                    }
+                        
+                    var newConditionExpr = RewriteService.CreateIsPattern(binaryExpr.Left, s, identifierName);
 
                     if (!oldNewNodeDict.ContainsKey(localDeclaration))
                     {

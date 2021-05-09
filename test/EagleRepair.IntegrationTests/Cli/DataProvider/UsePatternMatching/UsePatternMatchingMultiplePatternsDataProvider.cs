@@ -5,6 +5,8 @@ namespace EagleRepair.IntegrationTests.Cli.DataProvider.UsePatternMatching
     public static class UsePatternMatchingMultiplePatternsDataProvider
     {
         private const string Input = @"
+using System;
+
 namespace Entry
 {
     public class C1
@@ -38,6 +40,8 @@ namespace Entry
 
         // TODO: we might consider using a switch statement in a future release
         private const string ExpectedOutput = @"
+using System;
+
 namespace Entry
 {
     public class C1

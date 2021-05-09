@@ -28,10 +28,6 @@ namespace Entry
             {
                 Console.WriteLine(""It's a NestedClass!"");
                 return ((NestedClass) o).StringValue.Length;
-            } else if (o is int)
-            {
-                Console.WriteLine(""It's an int!"");
-                return i;
             }
 
             return 0;
@@ -64,10 +60,6 @@ namespace Entry
             {
                 Console.WriteLine(""It's a NestedClass!"");
                 return nestedClass.StringValue.Length;
-            } else if (o is int)
-            {
-                Console.WriteLine(""It's an int!"");
-                return i;
             }
 
             return 0;

@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EagleRepair.Ast.Rewriter
 {
+    // TODO: needs improvement, i.e., doesn't cover all cases
     public class TypeCheckAndCastRewriter : AbstractRewriter
     {
         public TypeCheckAndCastRewriter(IChangeTracker changeTracker, ITypeService typeService,
@@ -77,8 +78,8 @@ namespace EagleRepair.Ast.Rewriter
             var newMethodInvocation = RewriteService.CreateMemberAccess(patternVariableName, targetMethodName);
 
             var newIfNode = node.ReplaceNode(memberAccessExpr, newMethodInvocation);
-
-            var patternExpr = RewriteService.CreateIsPattern(variableName, targetType,
+            
+            var patternExpr = RewriteService.CreateIsPattern(left, targetCastExpr.Type,
                 patternVariableName);
 
             newIfNode = newIfNode.ReplaceNode(newIfNode.Condition, patternExpr);

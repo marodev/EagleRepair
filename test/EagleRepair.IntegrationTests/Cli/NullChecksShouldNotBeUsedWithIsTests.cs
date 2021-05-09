@@ -20,6 +20,14 @@ namespace EagleRepair.IntegrationTests.Cli
         public async Task UseNullCheckOrNotIs_ReturnsNotIs(string inputTree, string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree);
+        }        
+        
+        [Theory]
+        [MemberData(nameof(NullChecksShouldNotBeUsedWithIsCustomTypeDataProvider.TestCases),
+            MemberType = typeof(NullChecksShouldNotBeUsedWithIsCustomTypeDataProvider))]
+        public async Task UseNullCheck_AndCustomType_ReturnsIs(string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree);
         }
     }
 }

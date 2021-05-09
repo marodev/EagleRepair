@@ -2,26 +2,26 @@ using System.Collections.Generic;
 
 namespace EagleRepair.IntegrationTests.Cli.DataProvider.UsePatternMatching
 {
-    public static class UsePatternMatchingMultipleAccessDataProvider
+    public static class UsePatternMatchingNotInConditionDataProvider
     {
         private const string InputAndExpectedOutput = @"
+using System.Collections.Generic;
 using System;
+using System.Diagnostics;
 
 namespace Entry
 {
-    public class UsePatternMatchingMultipleAccessDataProvider
+    public class C
     {
-        public int M(object o)
+        public void M(object o)
         {
-            var s = o as string;
-            var newValue = s == null ? ""null"" : s.Substring(0);
+            var list = o as List<string>;
+            Debug.Assert(list != null);
             
-            if (s != null)
+            foreach (var s in list)
             {
-                return s.Length;
+                // do something
             }
-            
-            return 0;
         }
     }
 }";
