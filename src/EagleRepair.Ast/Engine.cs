@@ -70,10 +70,6 @@ namespace EagleRepair.Ast
                         continue;
                     }
 
-                    // TODO: remove me
-                    var n = solution.GetProject(document.Project.Id).Documents.FirstOrDefault().GetSemanticModelAsync()
-                        .Result.GetDiagnostics();
-
                     var diagnosticsForDocBeforeChanges = await GetDiagnostics(solution, document);
 
                     // Exchanges the document in the solution by the newly generated document
