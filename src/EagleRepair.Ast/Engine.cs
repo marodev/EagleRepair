@@ -112,9 +112,8 @@ namespace EagleRepair.Ast
                 return new ImmutableArray<Diagnostic>();
             }
 
-            var model = await foundDocument.GetSemanticModelAsync();
-
-            return model?.Compilation.GetDiagnostics() ?? new ImmutableArray<Diagnostic>();
+            var semanticModel = await foundDocument.GetSemanticModelAsync();
+            return semanticModel?.GetDiagnostics() ?? new ImmutableArray<Diagnostic>();
         }
     }
 }
