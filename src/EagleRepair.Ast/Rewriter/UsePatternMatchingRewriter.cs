@@ -4,6 +4,7 @@ using EagleRepair.Ast.Services;
 using EagleRepair.Ast.Url;
 using EagleRepair.Monitor;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.FindSymbols;
 
@@ -20,14 +21,14 @@ namespace EagleRepair.Ast.Rewriter
         public override SyntaxNode VisitMethodDeclaration(MethodDeclarationSyntax node)
         {
             var localDeclarationStatements = node.DescendantNodes().OfType<LocalDeclarationStatementSyntax>().ToList();
-            var ifStatements = node.DescendantNodes().OfType<IfStatementSyntax>().ToList();
+            var binaryExprStmts = node.DescendantNodes().OfType<BinaryExpressionSyntax>().ToList();
 
-            if (!localDeclarationStatements.Any() || !ifStatements.Any())
+            if (!localDeclarationStatements.Any() || !binaryExprStmts.Any())
             {
                 return base.VisitMethodDeclaration(node);
             }
 
-            var oldNewNodeDict = new Dictionary<StatementSyntax, StatementSyntax>();
+            var oldNewNodeDict = new Dictionary<CSharpSyntaxNode, CSharpSyntaxNode>();
             foreach (var localDeclaration in localDeclarationStatements)
             {
                 var declaration = localDeclaration.Declaration.Variables.FirstOrDefault();
@@ -54,7 +55,7 @@ namespace EagleRepair.Ast.Rewriter
                     continue;
                 }
 
-                var declaredSymbol = SemanticModel.GetDeclaredSymbol(declaration);
+                var declaredSymbol = ModelExtensions.GetDeclaredSymbol(SemanticModel, declaration);
                 var symbolReferences =
                     SymbolFinder.FindReferencesAsync(declaredSymbol, Workspace.CurrentSolution).Result;
                 var localReferences = symbolReferences.First().Locations;
@@ -66,26 +67,25 @@ namespace EagleRepair.Ast.Rewriter
                     continue;
                 }
 
-                var ifStatementsToReplace = FindIfStatements(identifierName, ifStatements);
+                var binaryExpressionsToReplace = FindBinaryExprToReplace(identifierName, binaryExprStmts);
 
-                if (!ifStatementsToReplace.Any())
+                if (!binaryExpressionsToReplace.Any())
                 {
                     continue;
                 }
 
-                foreach (var ifStatementToReplace in ifStatementsToReplace)
+                foreach (var binaryExprToReplace in binaryExpressionsToReplace)
                 {
                     var newConditionExpr = RewriteService.CreateIsPattern(left, right, identifierName);
-                    var newIfStatementNode = ifStatementToReplace.WithCondition(newConditionExpr);
 
                     if (!oldNewNodeDict.ContainsKey(localDeclaration))
                     {
                         oldNewNodeDict.Add(localDeclaration, null); // null -> remove node
                     }
 
-                    if (!oldNewNodeDict.ContainsKey(ifStatementToReplace))
+                    if (!oldNewNodeDict.ContainsKey(binaryExprToReplace))
                     {
-                        oldNewNodeDict.Add(ifStatementToReplace, newIfStatementNode);
+                        oldNewNodeDict.Add(binaryExprToReplace, newConditionExpr);
                     }
                 }
             }
@@ -111,18 +111,13 @@ namespace EagleRepair.Ast.Rewriter
             return base.VisitMethodDeclaration(newMethod);
         }
 
-        private static List<IfStatementSyntax> FindIfStatements(string variableName,
-            IEnumerable<IfStatementSyntax> ifStatements)
+        private static List<BinaryExpressionSyntax> FindBinaryExprToReplace(string variableName,
+            IEnumerable<BinaryExpressionSyntax> binaryExprStmts)
         {
-            var found = new List<IfStatementSyntax>();
+            var found = new List<BinaryExpressionSyntax>();
 
-            foreach (var ifStatement in ifStatements)
+            foreach (var binaryExpr in binaryExprStmts)
             {
-                if (ifStatement.Condition is not BinaryExpressionSyntax binaryExpr)
-                {
-                    continue;
-                }
-
                 var left = binaryExpr.Left.ToString();
                 var op = binaryExpr.OperatorToken.ValueText;
                 var right = binaryExpr.Right.ToString();
@@ -132,7 +127,7 @@ namespace EagleRepair.Ast.Rewriter
                     continue;
                 }
 
-                found.Add(ifStatement);
+                found.Add(binaryExpr);
             }
 
             return found;
