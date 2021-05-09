@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using EagleRepair.Ast.Parser;
 using EagleRepair.Ast.Rewriter;
 using EagleRepair.Monitor;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 
 namespace EagleRepair.Ast
 {
@@ -74,27 +74,18 @@ namespace EagleRepair.Ast
                     var n = solution.GetProject(document.Project.Id).Documents.FirstOrDefault().GetSemanticModelAsync()
                         .Result.GetDiagnostics();
 
-                    var diagnosticsForDocBeforeChanges = solution.GetProject(document.Project.Id).Documents
-                        .First(d => d.Id == document.Id).GetSemanticModelAsync().Result
-                        .Compilation.GetDiagnostics();
-         
-                    var diagnostics = CSharpSyntaxTree.ParseText(newRoot.ToString()).GetDiagnostics();
-                    // END remove
-                    
-                    
+                    var diagnosticsForDocBeforeChanges = await GetDiagnostics(solution, document);
+
                     // Exchanges the document in the solution by the newly generated document
                     solution = solution.WithDocumentSyntaxRoot(document.Id, newRoot);
-                    
-                    var diagnosticsForDocAfterChanges = solution.GetProject(document.Project.Id).Documents
-                        .First(d => d.Id == document.Id).GetSemanticModelAsync().Result
-                        .Compilation.GetDiagnostics();
+
+                    var diagnosticsForDocAfterChanges = await GetDiagnostics(solution, document);
 
                     if (diagnosticsForDocBeforeChanges.Length < diagnosticsForDocAfterChanges.Length)
                     {
                         // something went wrong, revert changes!
                         solution = solution.WithDocumentSyntaxRoot(document.Id, root);
                     }
-                    
                 }
 
                 counter++;
@@ -103,6 +94,22 @@ namespace EagleRepair.Ast
             _progressBar.Report(100.0, "Done.");
 
             return solution;
+        }
+
+        private static async Task<ImmutableArray<Diagnostic>> GetDiagnostics(Solution solution, TextDocument document)
+        {
+            var documents = solution.GetProject(document.Project.Id)?.Documents;
+
+            var foundDocument = documents?.FirstOrDefault(d => d.Id == document.Id);
+
+            if (foundDocument == null)
+            {
+                return new ImmutableArray<Diagnostic>();
+            }
+
+            var model = await foundDocument.GetSemanticModelAsync();
+
+            return model?.Compilation.GetDiagnostics() ?? new ImmutableArray<Diagnostic>();
         }
     }
 }

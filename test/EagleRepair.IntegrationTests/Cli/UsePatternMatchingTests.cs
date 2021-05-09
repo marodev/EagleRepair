@@ -47,8 +47,8 @@ namespace EagleRepair.IntegrationTests.Cli
             string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree);
-        }        
-        
+        }
+
         [Theory]
         [MemberData(nameof(UsePatternMatchingNotInConditionDataProvider.TestCases),
             MemberType = typeof(UsePatternMatchingNotInConditionDataProvider))]

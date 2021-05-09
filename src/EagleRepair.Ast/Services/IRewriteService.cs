@@ -15,7 +15,8 @@ namespace EagleRepair.Ast.Services
         public InvocationExpressionSyntax CreateInvocation(string variable, string methodName,
             ArgumentListSyntax arguments = null);
 
-        public IsPatternExpressionSyntax CreateIsPattern(ExpressionSyntax identifierName, TypeSyntax type, string designation);
+        public IsPatternExpressionSyntax CreateIsPattern(ExpressionSyntax identifierName, TypeSyntax type,
+            string designation);
 
         public InvocationExpressionSyntax CreateOfTypeT(string variable, string type);
 

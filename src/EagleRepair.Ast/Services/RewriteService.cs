@@ -108,10 +108,11 @@ namespace EagleRepair.Ast.Services
             return invocation.WithArgumentList(arguments);
         }
 
-        public IsPatternExpressionSyntax CreateIsPattern(ExpressionSyntax identifierName, TypeSyntax type, string designation)
+        public IsPatternExpressionSyntax CreateIsPattern(ExpressionSyntax identifierName, TypeSyntax type,
+            string designation)
         {
             // var identifier = IdentifierName(Identifier(identifierName));
-            
+
             return IsPatternExpression(
                 identifierName,
                 DeclarationPattern(
@@ -230,7 +231,7 @@ namespace EagleRepair.Ast.Services
             {
                 return unaryExpr;
             }
-            
+
             return IsPatternExpression
             (
                 binaryExpr.Left,

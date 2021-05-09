@@ -85,7 +85,7 @@ namespace EagleRepair.Ast.Rewriter
                     {
                         s = SyntaxFactory.IdentifierName(SyntaxFactory.Identifier(right));
                     }
-                        
+
                     var newConditionExpr = RewriteService.CreateIsPattern(binaryExpr.Left, s, identifierName);
 
                     if (!oldNewNodeDict.ContainsKey(localDeclaration))
