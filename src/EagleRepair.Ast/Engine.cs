@@ -73,14 +73,16 @@ namespace EagleRepair.Ast
                         continue;
                     }
 
-                    var diagnosticsForDocBeforeChanges = await GetDiagnostics(solution, document);
+                    var diagnosticsForDocBeforeChanges = semanticModel?.Compilation.GetDiagnostics();
 
                     // Exchanges the document in the solution by the newly generated document
                     solution = solution.WithDocumentSyntaxRoot(document.Id, newRoot);
 
-                    var diagnosticsForDocAfterChanges = await GetDiagnostics(solution, document);
+                    // Note: This operation is very expensive
+                    var diagnosticsForDocAfterChanges = await GetDiagnostics(solution, document.Id);
 
-                    if (diagnosticsForDocBeforeChanges.Length < diagnosticsForDocAfterChanges.Length)
+                    if (diagnosticsForDocBeforeChanges is null || diagnosticsForDocBeforeChanges.Value.Length <
+                        diagnosticsForDocAfterChanges.Length)
                     {
                         // something went wrong, revert changes!
                         solution = solution.WithDocumentSyntaxRoot(document.Id, root);
@@ -101,11 +103,9 @@ namespace EagleRepair.Ast
             return solution;
         }
 
-        private static async Task<ImmutableArray<Diagnostic>> GetDiagnostics(Solution solution, TextDocument document)
+        private static async Task<ImmutableArray<Diagnostic>> GetDiagnostics(Solution solution, DocumentId documentId)
         {
-            var documents = solution.GetProject(document.Project.Id)?.Documents;
-
-            var foundDocument = documents?.FirstOrDefault(d => d.Id == document.Id);
+            var foundDocument = solution.GetDocument(documentId);
 
             if (foundDocument == null)
             {

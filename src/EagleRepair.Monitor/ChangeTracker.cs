@@ -35,8 +35,7 @@ namespace EagleRepair.Monitor
 
         public void Stage(Message message)
         {
-            var changes = new List<Message> {message};
-            Add(changes, _stagedChanges);
+            Add(message, _stagedChanges);
         }
 
         public Dictionary<string, IList<Message>> All()
@@ -88,13 +87,18 @@ namespace EagleRepair.Monitor
         {
             foreach (var message in messages)
             {
-                var msgList = changes.ContainsKey(message.Project)
-                    ? changes[message.Project]
-                    : new List<Message>();
-
-                msgList.Add(message);
-                changes[message.Project] = msgList;
+                Add(message, changes);
             }
+        }
+
+        private static void Add(Message message, IDictionary<string, IList<Message>> changes)
+        {
+            var messages = changes.ContainsKey(message.Project)
+                ? changes[message.Project]
+                : new List<Message>();
+
+            messages.Add(message);
+            changes[message.Project] = messages;
         }
     }
 }
