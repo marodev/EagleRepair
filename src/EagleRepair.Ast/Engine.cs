@@ -12,15 +12,18 @@ namespace EagleRepair.Ast
 {
     public class Engine : IEngine
     {
+        private readonly IChangeTracker _changeTracker;
         private readonly ICollection<AbstractRewriter> _commands;
         private readonly IProgressBar _progressBar;
         private readonly ISolutionParser _solutionParser;
 
-        public Engine(ICollection<AbstractRewriter> commands, ISolutionParser solutionParser, IProgressBar progressBar)
+        public Engine(ICollection<AbstractRewriter> commands, ISolutionParser solutionParser, IProgressBar progressBar,
+            IChangeTracker changeTracker)
         {
             _commands = commands;
             _solutionParser = solutionParser;
             _progressBar = progressBar;
+            _changeTracker = changeTracker;
         }
 
         public async Task<bool> RunAsync(string solutionFilePath, IEnumerable<Rule> rules)
@@ -81,6 +84,12 @@ namespace EagleRepair.Ast
                     {
                         // something went wrong, revert changes!
                         solution = solution.WithDocumentSyntaxRoot(document.Id, root);
+                        _changeTracker.Revert();
+                    }
+                    else
+                    {
+                        // confirm reported changes that will be displayed to the user
+                        _changeTracker.Confirm();
                     }
                 }
 

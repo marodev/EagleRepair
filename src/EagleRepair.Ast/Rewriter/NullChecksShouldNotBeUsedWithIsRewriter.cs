@@ -85,7 +85,7 @@ namespace EagleRepair.Ast.Rewriter
             {
                 var lineNumber = $"{DisplayService.GetLineNumber(node)}";
                 var message = SonarQube.RuleSpecification4201Message + " / " + ReSharper.MergeSequentialChecksMessage;
-                ChangeTracker.Add(new Message
+                ChangeTracker.Stage(new Message
                 {
                     Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message
                 });
@@ -97,7 +97,7 @@ namespace EagleRepair.Ast.Rewriter
 
             var lineNr = $"{DisplayService.GetLineNumber(node)}";
             var msg = SonarQube.RuleSpecification4201Message + " / " + ReSharper.MergeSequentialChecksMessage;
-            ChangeTracker.Add(new Message {Line = lineNr, Path = FilePath, Project = ProjectName, Text = msg});
+            ChangeTracker.Stage(new Message {Line = lineNr, Path = FilePath, Project = ProjectName, Text = msg});
 
             return newNode;
         }

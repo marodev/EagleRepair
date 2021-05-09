@@ -208,7 +208,10 @@ namespace EagleRepair.Ast.Rewriter
 
             var lineNumber = $"{DisplayService.GetLineNumber(node)}";
             var message = ReSharper.MergeSequentialChecksUrl;
-            ChangeTracker.Add(new Message {Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message});
+            ChangeTracker.Stage(new Message
+            {
+                Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message
+            });
 
             return newNode;
         }

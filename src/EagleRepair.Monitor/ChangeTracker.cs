@@ -7,26 +7,41 @@ namespace EagleRepair.Monitor
 {
     public class ChangeTracker : IChangeTracker
     {
+        // applied changes
+        private readonly Dictionary<string, IList<Message>> _appliedChanges;
+
         // <projectName, messages>
-        private readonly Dictionary<string, IList<Message>> _messages;
+        // reported changes before we know the syntax tree was created correctly
+        private readonly Dictionary<string, IList<Message>> _stagedChanges;
 
         public ChangeTracker()
         {
-            _messages = new Dictionary<string, IList<Message>>();
+            _stagedChanges = new Dictionary<string, IList<Message>>();
+            _appliedChanges = new Dictionary<string, IList<Message>>();
         }
 
-        public void Add(Message message)
+        public void Confirm()
         {
-            var messages = _messages.ContainsKey(message.Project)
-                ? _messages[message.Project]
-                : new List<Message>();
-            messages.Add(message);
-            _messages[message.Project] = messages;
+            foreach (var (_, messages) in _stagedChanges)
+            {
+                Add(messages, _appliedChanges);
+            }
+        }
+
+        public void Revert()
+        {
+            _stagedChanges.Clear();
+        }
+
+        public void Stage(Message message)
+        {
+            var changes = new List<Message> {message};
+            Add(changes, _stagedChanges);
         }
 
         public Dictionary<string, IList<Message>> All()
         {
-            return _messages;
+            return _stagedChanges;
         }
 
         public string ToDisplayString()
@@ -38,7 +53,7 @@ namespace EagleRepair.Monitor
             var totalFixedSonarQubeIssues = 0;
             var totalFixedIssues = 0;
             var number = 1;
-            foreach (var (projectName, messages) in _messages)
+            foreach (var (projectName, messages) in _appliedChanges)
             {
                 consoleMessage +=
                     $"{Environment.NewLine}{Environment.NewLine}Project: {projectName}{Environment.NewLine}";
@@ -67,6 +82,19 @@ namespace EagleRepair.Monitor
             consoleMessage += $"Total fixed issues: {totalFixedIssues}{Environment.NewLine}";
 
             return consoleMessage;
+        }
+
+        private static void Add(IEnumerable<Message> messages, IDictionary<string, IList<Message>> changes)
+        {
+            foreach (var message in messages)
+            {
+                var msgList = changes.ContainsKey(message.Project)
+                    ? changes[message.Project]
+                    : new List<Message>();
+
+                msgList.Add(message);
+                changes[message.Project] = msgList;
+            }
         }
     }
 }

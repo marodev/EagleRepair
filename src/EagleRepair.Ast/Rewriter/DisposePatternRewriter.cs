@@ -60,7 +60,7 @@ namespace EagleRepair.Ast.Rewriter
                 var nodeToMonitor = change.Key;
                 var lineNumber = $"{DisplayService.GetLineNumber(nodeToMonitor)}";
                 var message = SonarQube.RuleSpecification3881Message;
-                ChangeTracker.Add(new Message
+                ChangeTracker.Stage(new Message
                 {
                     Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message
                 });

@@ -90,7 +90,10 @@ namespace EagleRepair.Ast.Rewriter
         {
             var lineNumber = $"{DisplayService.GetLineNumber(node)}";
             var message = ReSharper.UseMethodAnyMessage + " / " + SonarQube.RuleSpecification1155Message;
-            ChangeTracker.Add(new Message {Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message});
+            ChangeTracker.Stage(new Message
+            {
+                Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message
+            });
         }
 
         private ExpressionSyntax ReplaceCountWithAny(BinaryExpressionSyntax node)
