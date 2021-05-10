@@ -90,7 +90,7 @@ namespace EagleRepair.Ast
                         continue;
                     }
 
-                    var diagnosticsForDocBeforeChanges = semanticModel?.Compilation.GetDiagnostics();
+                    var diagnosticsForDocBeforeChanges = semanticModel?.GetDiagnostics();
 
                     // Exchanges the document in the solution by the newly generated document
                     solution = solution.WithDocumentSyntaxRoot(document.Id, newRoot);
@@ -119,7 +119,7 @@ namespace EagleRepair.Ast
 
             return solution;
         }
-
+        
         private static async Task<ImmutableArray<Diagnostic>> GetDiagnostics(Solution solution, DocumentId documentId)
         {
             var foundDocument = solution.GetDocument(documentId);
@@ -130,7 +130,7 @@ namespace EagleRepair.Ast
             }
 
             var semanticModel = await foundDocument.GetSemanticModelAsync();
-            return semanticModel?.Compilation.GetDiagnostics() ?? new ImmutableArray<Diagnostic>();
+            return semanticModel?.GetDiagnostics() ?? new ImmutableArray<Diagnostic>();
         }
     }
 }
