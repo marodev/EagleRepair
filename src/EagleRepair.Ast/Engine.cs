@@ -81,8 +81,8 @@ namespace EagleRepair.Ast
                     // Note: This operation is very expensive
                     var diagnosticsForDocAfterChanges = await GetDiagnostics(solution, document.Id);
 
-                    if (diagnosticsForDocBeforeChanges is null || diagnosticsForDocBeforeChanges.Value.Length <
-                        diagnosticsForDocAfterChanges.Length)
+                    if (diagnosticsForDocBeforeChanges is null ||
+                        diagnosticsForDocBeforeChanges.Value.Length < diagnosticsForDocAfterChanges.Length)
                     {
                         // something went wrong, revert changes!
                         solution = solution.WithDocumentSyntaxRoot(document.Id, root);
@@ -113,7 +113,7 @@ namespace EagleRepair.Ast
             }
 
             var semanticModel = await foundDocument.GetSemanticModelAsync();
-            return semanticModel?.GetDiagnostics() ?? new ImmutableArray<Diagnostic>();
+            return semanticModel?.Compilation.GetDiagnostics() ?? new ImmutableArray<Diagnostic>();
         }
     }
 }

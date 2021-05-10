@@ -11,7 +11,7 @@ using EagleRepair.Monitor;
 using Microsoft.CodeAnalysis;
 using Xunit;
 
-namespace EagleRepair.IntegrationTests.Cli
+namespace EagleRepair.IntegrationTests
 {
     public static class TestExecutor
     {

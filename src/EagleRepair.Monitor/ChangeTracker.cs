@@ -26,7 +26,7 @@ namespace EagleRepair.Monitor
             {
                 Add(messages, _appliedChanges);
             }
-            
+
             _stagedChanges.Clear();
         }
 
@@ -42,7 +42,7 @@ namespace EagleRepair.Monitor
 
         public Dictionary<string, IList<Message>> All()
         {
-            return _stagedChanges;
+            return _appliedChanges;
         }
 
         public string ToDisplayString()

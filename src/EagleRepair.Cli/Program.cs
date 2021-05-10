@@ -10,7 +10,6 @@ namespace EagleRepair.Cli
     {
         public static int Main(string[] args)
         {
-            args = new[] {"-p", "/Users/martinodermatt/repos/thesis/ravendb/RavenDB.sln"};
             return StartApp(args).Result;
         }
 
