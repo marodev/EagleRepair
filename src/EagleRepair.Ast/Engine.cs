@@ -73,7 +73,16 @@ namespace EagleRepair.Ast
                     rewriter.FilePath = modifiedDoc.FilePath;
                     rewriter.ProjectName = modifiedDoc.Project.Name;
 
-                    var newRoot = rewriter.Visit(root);
+                    SyntaxNode newRoot;
+                    try
+                    {
+                        newRoot = rewriter.Visit(root);
+                    }
+                    catch (Exception e)
+                    {
+                        // TODO: we might log the exception at a later point and offer a verbose mode
+                        continue;
+                    }
 
                     if (root.IsEquivalentTo(newRoot))
                     {
