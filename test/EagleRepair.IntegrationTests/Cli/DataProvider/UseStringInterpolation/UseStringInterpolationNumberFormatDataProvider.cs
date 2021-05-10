@@ -13,7 +13,10 @@ namespace Entry
     {        
         public void M()
         {
-            var str = string.Format(""{0:N2}%"", 42.5555555);
+            var str1 = string.Format(""{0:0.##}"", 123.4567);
+            var str2 = string.Format(""{0:N2}%"", 42.5555555);
+            var str3 = string.Format(""{0,-35}"", ""hello"");
+            var str4 = string.Format(""---> {0,-10} | {1,5} <---"", ""James Bond"", 007);
         }
     }
 }";
@@ -27,7 +30,10 @@ namespace Entry
     {        
         public void M()
         {
-            var str = $""{42.5555555:N2}%"";
+            var str1 = $""{123.4567:0.##}"";
+            var str2 = $""{42.5555555:N2}%"";
+            var str3 = $""{""hello"", -35}"";
+            var str4 = $""---> {""James Bond"", -10} | {007, 5} <---"";
         }
     }
 }";
