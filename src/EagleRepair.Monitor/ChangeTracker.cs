@@ -26,6 +26,8 @@ namespace EagleRepair.Monitor
             {
                 Add(messages, _appliedChanges);
             }
+            
+            _stagedChanges.Clear();
         }
 
         public void Revert()
