@@ -50,26 +50,34 @@ namespace EagleRepair.Ast
                 _progressBar.Report((double)counter / totalDocuments, document.Name);
                 foreach (var rewriter in _commands)
                 {
+                    // Fetch document in solution
+                    var modifiedDoc = solution.GetDocument(document.Id);
+                    if (modifiedDoc is null)
+                    {
+                        continue;
+                    }
+
                     // Selects the syntax tree
-                    var syntaxTree = await document.GetSyntaxTreeAsync();
+                    var syntaxTree = await modifiedDoc.GetSyntaxTreeAsync();
                     if (syntaxTree is null)
                     {
-                        Console.WriteLine($"Error: Unable to parse SyntaxTree for document: {document.Name}");
+                        Console.WriteLine($"Error: Unable to parse SyntaxTree for document: {modifiedDoc.Name}");
                         continue;
                     }
 
                     var root = await syntaxTree.GetRootAsync();
-                    var semanticModel = await document.GetSemanticModelAsync();
+                    var semanticModel = await modifiedDoc.GetSemanticModelAsync();
 
                     rewriter.SemanticModel = semanticModel;
                     rewriter.Workspace = solution.Workspace;
-                    rewriter.FilePath = document.FilePath;
-                    rewriter.ProjectName = document.Project.Name;
+                    rewriter.FilePath = modifiedDoc.FilePath;
+                    rewriter.ProjectName = modifiedDoc.Project.Name;
 
                     var newRoot = rewriter.Visit(root);
 
                     if (root.IsEquivalentTo(newRoot))
                     {
+                        // no changes
                         continue;
                     }
 

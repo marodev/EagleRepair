@@ -108,8 +108,8 @@ namespace EagleRepair.Ast.Rewriter
                 return base.VisitBinaryExpression(node);
             }
 
-            var leftSymbol = SemanticModel.GetSymbolInfo(leftIdentifierName).Symbol?.ToString();
-            var rightSymbol = SemanticModel.GetSymbolInfo(rightIdentifierName).Symbol?.ToString();
+            var leftSymbol = SemanticModel.GetTypeInfo(leftIdentifierName).Type?.ToString();
+            var rightSymbol = SemanticModel.GetTypeInfo(rightIdentifierName).Type?.ToString();
 
             // must be of type string, otherwise string.IsNullOrEmpty(..) can't be used.
             if (!"string".Equals(leftSymbol) || !leftSymbol.Equals(rightSymbol))
