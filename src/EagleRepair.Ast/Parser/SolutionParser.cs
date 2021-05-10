@@ -19,7 +19,7 @@ namespace EagleRepair.Ast.Parser
 
         public void Dispose()
         {
-            ReleaseUnmanagedResources();
+            _workspace?.Dispose();
             GC.SuppressFinalize(this);
         }
 
@@ -37,16 +37,6 @@ namespace EagleRepair.Ast.Parser
         public Workspace Workspace()
         {
             return _workspace;
-        }
-
-        private void ReleaseUnmanagedResources()
-        {
-            _workspace?.Dispose();
-        }
-
-        ~SolutionParser()
-        {
-            ReleaseUnmanagedResources();
         }
     }
 }

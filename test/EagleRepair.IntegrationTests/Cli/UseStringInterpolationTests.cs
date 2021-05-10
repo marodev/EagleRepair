@@ -31,5 +31,14 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree, false);
         }
+
+        [Theory]
+        [MemberData(nameof(UseStringInterpolationNumberFormatDataProvider.TestCases),
+            MemberType = typeof(UseStringInterpolationNumberFormatDataProvider))]
+        public async Task UseStringFormat_UsesFormatOptions_ReturnsInterpolatedString(string inputTree,
+            string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree);
+        }
     }
 }

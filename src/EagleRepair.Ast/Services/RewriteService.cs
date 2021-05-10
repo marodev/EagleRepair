@@ -169,6 +169,7 @@ namespace EagleRepair.Ast.Services
             // member accesses and method invocations
             var interpolationArguments = allArguments.Skip(1).ToList();
             var texts = new List<string>();
+            var interpolationFormats = new List<InterpolationFormatClauseSyntax>();
             var textParts = text.Split('{', '}');
 
             var position = 0;
@@ -178,6 +179,13 @@ namespace EagleRepair.Ast.Services
                 if (position == 0 || position % 2 == 0 || position == part.Length - 1)
                 {
                     texts.Add(part);
+                }
+                else
+                {
+                    // something in braces {0}
+                    // Try to get format, e.g. {0:2N}
+                    var format = GetInterpolatedFormat(part);
+                    interpolationFormats.Add(format);
                 }
 
                 position++;
@@ -191,6 +199,14 @@ namespace EagleRepair.Ast.Services
                 interpolationContents.Add(interpolatedString);
 
                 var memberOrMethodCall = CreateInterpolation(interpolationArgument.Expression);
+
+                var format = interpolationFormats[index];
+
+                if (format != null)
+                {
+                    memberOrMethodCall = memberOrMethodCall.WithFormatClause(format);
+                }
+
                 interpolationContents.Add(memberOrMethodCall);
                 index++;
             }
@@ -311,6 +327,39 @@ namespace EagleRepair.Ast.Services
                     MemberBindingExpression(
                         IdentifierName(memberName))),
                 rightExpr).NormalizeWhitespace();
+        }
+
+        private static InterpolationFormatClauseSyntax GetInterpolatedFormat(string part)
+        {
+            InterpolationFormatClauseSyntax interpolationFormat;
+
+            var formats = part.Split(":");
+            if (formats.Length > 1)
+            {
+                interpolationFormat = InterpolationFormatClause(
+                    Token(SyntaxKind.ColonToken));
+            }
+            else
+            {
+                formats = part.Split(",");
+                interpolationFormat = InterpolationFormatClause(
+                    Token(SyntaxKind.CommaToken));
+            }
+
+            if (formats.Length <= 1)
+            {
+                return null;
+            }
+
+            var formatString = string.Join("", formats.Skip(1).ToArray());
+            interpolationFormat = interpolationFormat.WithFormatStringToken(Token(
+                TriviaList(),
+                SyntaxKind.InterpolatedStringTextToken,
+                formatString,
+                formatString,
+                TriviaList()));
+
+            return interpolationFormat;
         }
 
         private UsingDirectiveSyntax CreateUsingDirective(string firstIdentifier, string secondIdentifier)

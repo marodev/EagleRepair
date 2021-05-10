@@ -1,9 +1,9 @@
-using System.Linq;
 using EagleRepair.Ast.Services;
 using EagleRepair.Ast.Url;
 using EagleRepair.Monitor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Formatting;
 
 namespace EagleRepair.Ast.Rewriter
 {
@@ -17,7 +17,7 @@ namespace EagleRepair.Ast.Rewriter
 
         public override SyntaxNode VisitInvocationExpression(InvocationExpressionSyntax node)
         {
-            if (node.ArgumentList.Arguments.Count() < 2)
+            if (node.ArgumentList.Arguments.Count < 2)
             {
                 // string.format has at least 2 arguments
                 return base.VisitInvocationExpression(node);
@@ -48,6 +48,9 @@ namespace EagleRepair.Ast.Rewriter
             {
                 return base.VisitInvocationExpression(node);
             }
+
+            newStringInterpolationNode = (InterpolatedStringExpressionSyntax)Formatter
+                .Format(newStringInterpolationNode, Workspace);
 
             var lineNumber = $"{DisplayService.GetLineNumber(node)}";
             var message = ReSharper.UseStringInterpolationMessage;
