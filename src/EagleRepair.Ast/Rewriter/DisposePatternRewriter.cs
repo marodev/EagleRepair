@@ -1,12 +1,14 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Threading.Tasks;
 using EagleRepair.Ast.Extensions;
 using EagleRepair.Ast.Services;
 using EagleRepair.Ast.Url;
 using EagleRepair.Monitor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.FindSymbols;
 using Microsoft.CodeAnalysis.Formatting;
 
 namespace EagleRepair.Ast.Rewriter
@@ -30,7 +32,7 @@ namespace EagleRepair.Ast.Rewriter
 
             foreach (var nonSealedClass in nonSealedClassesThatImplementIDisposable)
             {
-                if (CanBeSealed(allClasses, nonSealedClass))
+                if (CanBeSealed(nonSealedClass).Result)
                 {
                     classesToBeSealed.Add(nonSealedClass);
                 }
@@ -84,8 +86,7 @@ namespace EagleRepair.Ast.Rewriter
             return sealedClassPairs;
         }
 
-        private bool CanBeSealed(IEnumerable<ClassDeclarationSyntax> allClasses,
-            BaseTypeDeclarationSyntax iDisposableClass)
+        private async Task<bool> CanBeSealed(BaseTypeDeclarationSyntax iDisposableClass)
         {
             var isAbstractOrPartial = iDisposableClass.Modifiers.Any(m =>
             {
@@ -108,46 +109,21 @@ namespace EagleRepair.Ast.Rewriter
                 return false;
             }
 
-            var iDisposableClassName = iDisposableClass.Identifier.ValueText;
-            var inheritedClasses = allClasses.Where(
-                c => c.BaseList is not null &&
-                     c.BaseList.Types.Any(t => t.ToString().Equals(iDisposableClassName))).ToImmutableList();
-
-            if (!inheritedClasses.Any())
+            var symbol = SemanticModel.GetDeclaredSymbol((ClassDeclarationSyntax)iDisposableClass);
+            if (symbol is not INamedTypeSymbol iNamedTypeSymbol)
             {
-                return true;
+                return false;
             }
 
-            var iDisposableNamespaceClassName = SemanticModel.GetDeclaredSymbol(iDisposableClass)?.ToString();
-            foreach (var inheritedClass in inheritedClasses)
-            {
-                var types = inheritedClass.BaseList?.Types;
+            // find all derived classes. Note: this operation is expensive but Roslyn uses a cache internally
+            var derivedClasses = await SymbolFinder
+                .FindDerivedClassesAsync(iNamedTypeSymbol, Workspace.CurrentSolution);
 
-                if (types is null)
-                {
-                    continue;
-                }
-
-                foreach (var type in types)
-                {
-                    var namespaceType = SemanticModel.GetTypeInfo(type.Type).Type?.ToString();
-
-                    if (namespaceType is null)
-                    {
-                        continue;
-                    }
-
-                    if (namespaceType.Equals(iDisposableNamespaceClassName))
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
+            // if there is at least one derived class, this class declaration can not have the 'sealed' modifier 
+            return !derivedClasses.Any();
         }
 
-        private IList<MethodDeclarationSyntax> GetDisposeMethods(ClassDeclarationSyntax classDecl)
+        private static IList<MethodDeclarationSyntax> GetDisposeMethods(SyntaxNode classDecl)
         {
             return classDecl.DescendantNodes().OfType<MethodDeclarationSyntax>()
                 .Where(m => m.Identifier.ToString().Equals("Dispose")).ToList();
