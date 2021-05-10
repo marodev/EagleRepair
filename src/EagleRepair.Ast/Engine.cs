@@ -119,7 +119,7 @@ namespace EagleRepair.Ast
 
             return solution;
         }
-        
+
         private static async Task<ImmutableArray<Diagnostic>> GetDiagnostics(Solution solution, DocumentId documentId)
         {
             var foundDocument = solution.GetDocument(documentId);
