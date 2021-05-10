@@ -44,6 +44,14 @@ namespace EagleRepair.IntegrationTests.Cli
         public async Task FindDispose_ImplementedCorrectly_ReturnsInput(string inputTree, string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree, false);
+        }        
+        
+        [Theory]
+        [MemberData(nameof(DisposePatternPartialDataProvider.TestCases),
+            MemberType = typeof(DisposePatternPartialDataProvider))]
+        public async Task FindDispose_IsPartial_ReturnsDisposePattern(string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree);
         }
     }
 }

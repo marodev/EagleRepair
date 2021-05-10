@@ -87,11 +87,15 @@ namespace EagleRepair.Ast.Rewriter
         private bool CanBeSealed(IEnumerable<ClassDeclarationSyntax> allClasses,
             BaseTypeDeclarationSyntax iDisposableClass)
         {
-            var isAbstract = iDisposableClass.Modifiers.Any(m => m.ToString().Equals("abstract"));
-
-            if (isAbstract)
+            var isAbstractOrPartial = iDisposableClass.Modifiers.Any(m =>
             {
-                // abstract classes can't be sealed.
+                var modifier = m.ToString();
+                return modifier.Equals("abstract") || modifier.Equals("partial");
+            });
+
+            if (isAbstractOrPartial)
+            {
+                // abstract class or partial class can't be sealed.
                 return false;
             }
 
