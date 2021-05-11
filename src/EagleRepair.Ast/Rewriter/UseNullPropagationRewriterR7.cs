@@ -58,7 +58,11 @@ namespace EagleRepair.Ast.Rewriter
                 var message = ReSharper.UseNullPropagationMessage;
                 ChangeTracker.Stage(new Message
                 {
-                    Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message
+                    RuleId = nameof(Rule.R7),
+                    LineNr = lineNumber,
+                    FilePath = FilePath,
+                    ProjectName = ProjectName,
+                    Text = message
                 });
             }
 

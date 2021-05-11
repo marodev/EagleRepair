@@ -101,7 +101,11 @@ namespace EagleRepair.Ast.Rewriter
                 var message = ReSharper.ReplaceWith(invokedMethodName) + " / " + SonarQube.RuleSpecification2971Message;
                 ChangeTracker.Stage(new Message
                 {
-                    Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message
+                    RuleId = nameof(Rule.R4),
+                    LineNr = lineNumber,
+                    FilePath = FilePath,
+                    ProjectName = ProjectName,
+                    Text = message
                 });
 
                 return base.VisitInvocationExpression(newNode);
@@ -183,7 +187,14 @@ namespace EagleRepair.Ast.Rewriter
 
             var lineNr = $"{DisplayService.GetLineNumber(node)}";
             var msg = ReSharper.ReplaceWithOfType2Message + " / " + SonarQube.RuleSpecification2971Message;
-            ChangeTracker.Stage(new Message {Line = lineNr, Path = FilePath, Project = ProjectName, Text = msg});
+            ChangeTracker.Stage(new Message
+            {
+                RuleId = nameof(Rule.R4),
+                LineNr = lineNr,
+                FilePath = FilePath,
+                ProjectName = ProjectName,
+                Text = msg
+            });
 
             var newOfTypeNode = RewriteService.CreateOfTypeT(variableName, castedTypeInWhereCondition);
 

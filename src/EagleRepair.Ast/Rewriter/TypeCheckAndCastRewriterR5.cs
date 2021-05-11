@@ -88,7 +88,11 @@ namespace EagleRepair.Ast.Rewriter
             var message = ReSharper.MergeCastWithTypeCheckMessage + " / " + SonarQube.RuleSpecification3247Message;
             ChangeTracker.Stage(new Message
             {
-                Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message
+                RuleId = nameof(Rule.R5),
+                LineNr = lineNumber,
+                FilePath = FilePath,
+                ProjectName = ProjectName,
+                Text = message
             });
 
             // visit children of newIfNode

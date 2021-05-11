@@ -64,7 +64,11 @@ namespace EagleRepair.Ast.Rewriter
                 var message = SonarQube.RuleSpecification3881Message;
                 ChangeTracker.Stage(new Message
                 {
-                    Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message
+                    RuleId = nameof(Rule.R1),
+                    LineNr = lineNumber,
+                    FilePath = FilePath,
+                    ProjectName = ProjectName,
+                    Text = message
                 });
             }
 

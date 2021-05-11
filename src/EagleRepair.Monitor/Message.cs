@@ -2,28 +2,34 @@ namespace EagleRepair.Monitor
 {
     public class Message
     {
-        public string Project
+        public string RuleId
         {
             get;
-            set;
+            init;
         }
 
-        public string Path
+        public string ProjectName
         {
             get;
-            set;
+            init;
         }
 
-        public string Line
+        public string FilePath
         {
             get;
-            set;
+            init;
+        }
+
+        public string LineNr
+        {
+            get;
+            init;
         }
 
         public string Text
         {
             get;
-            set;
+            init;
         }
     }
 }

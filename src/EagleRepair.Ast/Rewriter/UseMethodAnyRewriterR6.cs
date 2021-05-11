@@ -92,7 +92,11 @@ namespace EagleRepair.Ast.Rewriter
             var message = ReSharper.UseMethodAnyMessage + " / " + SonarQube.RuleSpecification1155Message;
             ChangeTracker.Stage(new Message
             {
-                Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message
+                RuleId = nameof(Rule.R6),
+                LineNr = lineNumber,
+                FilePath = FilePath,
+                ProjectName = ProjectName,
+                Text = message
             });
         }
 

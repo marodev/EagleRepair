@@ -210,7 +210,11 @@ namespace EagleRepair.Ast.Rewriter
             var message = ReSharper.MergeSequentialChecksUrl;
             ChangeTracker.Stage(new Message
             {
-                Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message
+                RuleId = nameof(Rule.R2),
+                LineNr = lineNumber,
+                FilePath = FilePath,
+                ProjectName = ProjectName,
+                Text = message
             });
 
             return newNode;

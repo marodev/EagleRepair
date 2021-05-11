@@ -18,7 +18,7 @@ namespace EagleRepair.IntegrationTests
             var builder = new ContainerBuilder();
 
             builder.RegisterType<ProgressBarMock>().As<IProgressBar>().SingleInstance();
-            ;
+            builder.RegisterType<TimeTracker>().As<ITimeTracker>();
             builder.RegisterType<DisplayService>().As<IDisplayService>();
             builder.RegisterType<RewriteService>().As<IRewriteService>();
             builder.RegisterType<TypeService>().As<ITypeService>();

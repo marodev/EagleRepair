@@ -31,7 +31,8 @@ namespace EagleRepair.Ast
             // filter rules to apply
             var visitors = FilterVisitors(_visitors, rules.ToList());
             Console.WriteLine("Found the following rules to apply: " +
-                              $"{string.Join(", ", visitors.Select(v => v.GetType().Name))}");
+                              $"{string.Join(", ", visitors.Select(v => v.GetType().Name))}" +
+                              Environment.NewLine);
             // report progress to console
             _progressBar.Report(0.0, "Opening solution " + solutionFilePath + " ...");
             var solution = await _solutionParser.OpenSolutionAsync(solutionFilePath);

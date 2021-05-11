@@ -9,6 +9,6 @@ namespace EagleRepair.Monitor
         public void Revert();
         public Dictionary<string, IList<Message>> All();
 
-        public string ToDisplayString();
+        public string FixesSummaryToDisplayString();
     }
 }

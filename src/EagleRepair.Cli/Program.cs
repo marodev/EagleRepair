@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Autofac;
-using EagleRepair.Monitor;
 
 namespace EagleRepair.Cli
 {
@@ -33,21 +32,7 @@ namespace EagleRepair.Cli
             // start our app
             var succeeded = await app.Run(commandLineArgs);
 
-            if (!succeeded)
-            {
-                return 1;
-            }
-
-            // print console message
-            var changeTracker = scope.Resolve<IChangeTracker>();
-            PrintFixMessages(changeTracker);
-            return 0;
-        }
-
-        private static void PrintFixMessages(IChangeTracker changeTracker)
-        {
-            var report = changeTracker.ToDisplayString();
-            Console.WriteLine(report);
+            return !succeeded ? 1 : 0;
         }
     }
 }

@@ -56,7 +56,11 @@ namespace EagleRepair.Ast.Rewriter
             var message = ReSharper.UseStringInterpolationMessage;
             ChangeTracker.Stage(new Message
             {
-                Line = lineNumber, Path = FilePath, Project = ProjectName, Text = message
+                RuleId = nameof(Rule.R9),
+                LineNr = lineNumber,
+                FilePath = FilePath,
+                ProjectName = ProjectName,
+                Text = message
             });
 
             return newStringInterpolationNode;
