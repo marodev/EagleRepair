@@ -23,7 +23,7 @@ namespace EagleRepair.Cli.Input
             }
             catch (ArgumentException ae)
             {
-                Console.WriteLine($"Invalid arguments detected: {ae}");
+                Console.WriteLine($"Invalid arguments detected. {ae.Message}");
                 return null;
             }
         }

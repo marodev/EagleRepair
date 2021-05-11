@@ -33,11 +33,15 @@ namespace EagleRepair.Cli
             // start our app
             var succeeded = await app.Run(commandLineArgs);
 
+            if (!succeeded)
+            {
+                return 1;
+            }
+
             // print console message
             var changeTracker = scope.Resolve<IChangeTracker>();
             PrintFixMessages(changeTracker);
-
-            return succeeded ? 0 : 1;
+            return 0;
         }
 
         private static void PrintFixMessages(IChangeTracker changeTracker)

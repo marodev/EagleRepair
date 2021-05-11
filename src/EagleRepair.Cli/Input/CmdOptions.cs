@@ -6,7 +6,9 @@ namespace EagleRepair.Cli.Input
 {
     public class CmdOptions
     {
-        [Option('r', "rules", Required = false, HelpText = "Specify the rules to apply.")]
+        [Option('r', "rules", Required = false,
+            HelpText =
+                "Specify the set of rules to apply, e.g., R1 R2 R3. If no argument is passed, all rules are applied.")]
         public ICollection<string> InputRules
         {
             get;

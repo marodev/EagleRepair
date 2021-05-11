@@ -28,13 +28,16 @@ namespace EagleRepair.Ast
 
         public async Task<bool> RunAsync(string solutionFilePath, IEnumerable<Rule> rules)
         {
+            // filter rules to apply
+            var visitors = FilterVisitors(_visitors, rules.ToList());
+            Console.WriteLine("Found the following rules to apply: " +
+                              $"{string.Join(", ", visitors.Select(v => v.GetType().Name))}");
             // report progress to console
             _progressBar.Report(0.0, "Opening solution " + solutionFilePath + " ...");
             var solution = await _solutionParser.OpenSolutionAsync(solutionFilePath);
             // select all files
             var files = solution.Projects.SelectMany(p => p.Documents).ToList();
-            // filter rules to apply
-            var visitors = FilterVisitors(_visitors, rules.ToList());
+            // Console.WriteLine($"Found {files.Count} C# files.");
             // rewrite the syntax tree
             var newSolution = await VisitNodes(solution, files, visitors);
             // apply the changes (if any) to the solution
