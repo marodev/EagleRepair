@@ -13,14 +13,14 @@ namespace EagleRepair.Ast
     public class Engine : IEngine
     {
         private readonly IChangeTracker _changeTracker;
-        private readonly ICollection<AbstractRewriter> _commands;
         private readonly IProgressBar _progressBar;
         private readonly ISolutionParser _solutionParser;
+        private readonly ICollection<AbstractRewriter> _visitors;
 
-        public Engine(ICollection<AbstractRewriter> commands, ISolutionParser solutionParser, IProgressBar progressBar,
+        public Engine(ICollection<AbstractRewriter> visitors, ISolutionParser solutionParser, IProgressBar progressBar,
             IChangeTracker changeTracker)
         {
-            _commands = commands;
+            _visitors = visitors;
             _solutionParser = solutionParser;
             _progressBar = progressBar;
             _changeTracker = changeTracker;
@@ -33,14 +33,26 @@ namespace EagleRepair.Ast
             var solution = await _solutionParser.OpenSolutionAsync(solutionFilePath);
             // select all files
             var files = solution.Projects.SelectMany(p => p.Documents).ToList();
+            // filter rules to apply
+            var visitors = FilterVisitors(_visitors, rules.ToList());
             // rewrite the syntax tree
-            var newSolution = await VisitNodes(solution, files);
+            var newSolution = await VisitNodes(solution, files, visitors);
             // apply the changes (if any) to the solution
             return ReferenceEquals(newSolution, _solutionParser.Workspace().CurrentSolution) ||
                    _solutionParser.Workspace().TryApplyChanges(newSolution);
         }
 
-        private async Task<Solution> VisitNodes(Solution solution, ICollection<Document> documents)
+        private static IList<AbstractRewriter> FilterVisitors(IEnumerable<AbstractRewriter> visitors, IList<Rule> rules)
+        {
+            return (from visitor in visitors
+                    let className = visitor.GetType().Name
+                    where rules.Any(r => className.EndsWith(r.ToString()))
+                    select visitor)
+                .ToList();
+        }
+
+        private async Task<Solution> VisitNodes(Solution solution, ICollection<Document> documents,
+            IList<AbstractRewriter> visitors)
         {
             var totalDocuments = documents.Count;
             var counter = 1;
@@ -48,7 +60,7 @@ namespace EagleRepair.Ast
             {
                 // report progress to console
                 _progressBar.Report((double)counter / totalDocuments, document.Name);
-                foreach (var rewriter in _commands)
+                foreach (var rewriter in visitors)
                 {
                     // Fetch document in solution
                     var modifiedDoc = solution.GetDocument(document.Id);
@@ -78,7 +90,7 @@ namespace EagleRepair.Ast
                     {
                         newRoot = rewriter.Visit(root);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         // TODO: we might log the exception at a later point and offer a verbose mode
                         continue;

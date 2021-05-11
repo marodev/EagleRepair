@@ -10,9 +10,9 @@ using Microsoft.CodeAnalysis.FindSymbols;
 
 namespace EagleRepair.Ast.Rewriter
 {
-    public class UsePatternMatchingRewriter : AbstractRewriter
+    public class UsePatternMatchingRewriterR8 : AbstractRewriter
     {
-        public UsePatternMatchingRewriter(IChangeTracker changeTracker, ITypeService typeService,
+        public UsePatternMatchingRewriterR8(IChangeTracker changeTracker, ITypeService typeService,
             IRewriteService rewriteService, IDisplayService displayService) : base(
             changeTracker, typeService, rewriteService, displayService)
         {

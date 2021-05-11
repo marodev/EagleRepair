@@ -6,9 +6,9 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EagleRepair.Ast.Rewriter
 {
-    public class UseStringIsNullOrEmptyRewriter : AbstractRewriter
+    public class UseStringIsNullOrEmptyRewriterR10 : AbstractRewriter
     {
-        public UseStringIsNullOrEmptyRewriter(IChangeTracker changeTracker, ITypeService typeService,
+        public UseStringIsNullOrEmptyRewriterR10(IChangeTracker changeTracker, ITypeService typeService,
             IRewriteService rewriteService, IDisplayService displayService) : base(
             changeTracker, typeService, rewriteService, displayService)
         {

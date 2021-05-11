@@ -7,9 +7,9 @@ using Microsoft.CodeAnalysis.Formatting;
 
 namespace EagleRepair.Ast.Rewriter
 {
-    public class UseStringInterpolationRewriter : AbstractRewriter
+    public class UseStringInterpolationRewriterR9 : AbstractRewriter
     {
-        public UseStringInterpolationRewriter(IChangeTracker changeTracker, ITypeService typeService,
+        public UseStringInterpolationRewriterR9(IChangeTracker changeTracker, ITypeService typeService,
             IRewriteService rewriteService, IDisplayService displayService) : base(
             changeTracker, typeService, rewriteService, displayService)
         {

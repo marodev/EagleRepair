@@ -10,7 +10,17 @@ namespace EagleRepair.Cli
     {
         public static int Main(string[] args)
         {
-            return StartApp(args).Result;
+            try
+            {
+                return StartApp(args).Result;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+
+            // return non-zero exit code
+            return 1;
         }
 
         private static async Task<int> StartApp(IEnumerable<string> commandLineArgs)

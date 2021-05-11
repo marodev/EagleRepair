@@ -10,11 +10,11 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace EagleRepair.Ast.Rewriter
 {
-    public class UseMethodAnyRewriter : AbstractRewriter
+    public class UseMethodAnyRewriterR6 : AbstractRewriter
     {
         private bool _usesLinqDirective;
 
-        public UseMethodAnyRewriter(IChangeTracker changeTracker, ITypeService typeService,
+        public UseMethodAnyRewriterR6(IChangeTracker changeTracker, ITypeService typeService,
             IRewriteService rewriteService, IDisplayService displayService) :
             base(changeTracker, typeService, rewriteService, displayService)
         {

@@ -6,9 +6,9 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EagleRepair.Ast.Rewriter
 {
-    public class NullChecksShouldNotBeUsedWithIsRewriter : AbstractRewriter
+    public class NullChecksShouldNotBeUsedWithIsRewriterR3 : AbstractRewriter
     {
-        public NullChecksShouldNotBeUsedWithIsRewriter(IChangeTracker changeTracker, ITypeService typeService,
+        public NullChecksShouldNotBeUsedWithIsRewriterR3(IChangeTracker changeTracker, ITypeService typeService,
             IRewriteService rewriteService, IDisplayService displayService) :
             base(changeTracker, typeService, rewriteService, displayService)
         {

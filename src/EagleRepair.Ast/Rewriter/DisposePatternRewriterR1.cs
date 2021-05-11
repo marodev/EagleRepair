@@ -13,9 +13,9 @@ using Microsoft.CodeAnalysis.Formatting;
 
 namespace EagleRepair.Ast.Rewriter
 {
-    public class DisposePatternRewriter : AbstractRewriter
+    public class DisposePatternRewriterR1 : AbstractRewriter
     {
-        public DisposePatternRewriter(IChangeTracker changeTracker, ITypeService typeService,
+        public DisposePatternRewriterR1(IChangeTracker changeTracker, ITypeService typeService,
             IRewriteService rewriteService, IDisplayService displayService) : base(
             changeTracker, typeService, rewriteService, displayService)
         {

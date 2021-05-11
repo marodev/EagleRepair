@@ -10,9 +10,9 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace EagleRepair.Ast.Rewriter
 {
     // TODO: needs improvement, i.e., doesn't cover all cases
-    public class TypeCheckAndCastRewriter : AbstractRewriter
+    public class TypeCheckAndCastRewriterR5 : AbstractRewriter
     {
-        public TypeCheckAndCastRewriter(IChangeTracker changeTracker, ITypeService typeService,
+        public TypeCheckAndCastRewriterR5(IChangeTracker changeTracker, ITypeService typeService,
             IRewriteService rewriteService, IDisplayService displayService) : base(
             changeTracker, typeService, rewriteService, displayService)
         {
