@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace EagleRepair.IntegrationTests.Cli.DataProvider.NullChecksShouldNotBeUsedWithIs
 {
-    public static class NullChecksShouldNotBeUsedWithIsOrDataProvider
+    public static class NullChecksShouldNotBeUsedWithIsOrIsNotDataProvider
     {
         private const string Input = @"
 namespace Entry

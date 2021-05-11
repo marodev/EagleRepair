@@ -2,6 +2,7 @@ using EagleRepair.Ast.Services;
 using EagleRepair.Ast.Url;
 using EagleRepair.Monitor;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EagleRepair.Ast.Rewriter
@@ -83,6 +84,12 @@ namespace EagleRepair.Ast.Rewriter
 
             if (node.Right is not PrefixUnaryExpressionSyntax unaryExpr)
             {
+                if (node.OperatorToken.Kind() == SyntaxKind.BarBarToken)
+                {
+                    // we can't refactor something like (s == null || s is string) to (s is string)
+                    return base.VisitBinaryExpression(node);
+                }
+
                 var lineNumber = $"{DisplayService.GetLineNumber(node)}";
                 var message = SonarQube.RuleSpecification4201Message + " / " + ReSharper.MergeSequentialChecksMessage;
                 ChangeTracker.Stage(new Message
