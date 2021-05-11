@@ -22,7 +22,7 @@ namespace Entry
 
             public class NestedNestedClass
             {
-                public int Count { get; set; }
+                public int Count() { return 0; }
             }
         }
 
@@ -30,12 +30,12 @@ namespace Entry
         {
             var nestedNestedClass = new NestedClass.NestedNestedClass();
 
-            if (nestedNestedClass.Count > 0)
+            if (nestedNestedClass.Count() > 0)
             {
                 Console.WriteLine(""Don't refactor me"");
             }
             
-            if (_nested.Values().Count < 1)
+            if (_nested.Values().Count() < 1)
             {
                 Console.WriteLine(""Don't refactor me"");
             }

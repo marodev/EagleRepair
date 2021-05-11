@@ -10,11 +10,9 @@ using System.Collections.Generic;
 
 public class FooClass
 {
-    public void FooMethod()
+    public void FooMethod(IEnumerable<int> myList)
     {
-        List<int> myList = new();
-
-        if (myList.Count > 0)
+        if (myList.Count() > 0)
         {
             Console.WriteLine(""List is not empty"");
         }
@@ -31,7 +29,7 @@ public class FooClass
             Console.WriteLine(""List is empty"");
         }
 
-        while (myList.Count < 1)
+        while (myList.Count() < 1)
         {
             Console.WriteLine(""List is empty"");
         }
@@ -46,10 +44,8 @@ using System.Linq;
 
 public class FooClass
 {
-    public void FooMethod()
+    public void FooMethod(IEnumerable<int> myList)
     {
-        List<int> myList = new();
-
         if (myList.Any())
         {
             Console.WriteLine(""List is not empty"");

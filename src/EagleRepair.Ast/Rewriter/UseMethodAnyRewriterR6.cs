@@ -38,22 +38,22 @@ namespace EagleRepair.Ast.Rewriter
 
         public override SyntaxNode VisitBinaryExpression(BinaryExpressionSyntax node)
         {
-            // we are looking for pattern such as list.Count > 0
-            var countNode = node.DescendantNodes().OfType<IdentifierNameSyntax>()
-                .FirstOrDefault(n => n.Identifier.ValueText.Equals("Count"));
+            // we are looking for pattern such as iEnumerable.Count() > 0
+            var countNode = node
+                .DescendantNodes()
+                .OfType<InvocationExpressionSyntax>()
+                .Where(i => i.Expression is MemberAccessExpressionSyntax ma &&
+                            ma.Name.ToString().Equals("Count"))
+                .Select(i => i.Expression as MemberAccessExpressionSyntax).FirstOrDefault();
 
             if (countNode is null)
-                // .Count() or .Count does not exist
             {
+                // .Count() does not exist
                 return base.VisitBinaryExpression(node);
             }
 
-            if (countNode.Parent is null)
-            {
-                return base.VisitBinaryExpression(node);
-            }
-
-            var typeSymbol = SemanticModel.GetTypeInfo(countNode.Parent.ChildNodes().ElementAt(0))
+            var variableName = countNode.ChildNodes().ElementAt(0);
+            var typeSymbol = SemanticModel.GetTypeInfo(variableName)
                 .Type;
 
             if (typeSymbol == null)

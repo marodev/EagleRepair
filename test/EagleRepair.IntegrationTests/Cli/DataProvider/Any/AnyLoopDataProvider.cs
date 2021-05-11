@@ -12,11 +12,9 @@ namespace Entry
 {
     public class C
     {
-        public void M()
+        public void M(IEnumerable<int> numbers)
         {
-            var numbers = new List<int> {1};
-
-            for (var i = 0; i < numbers.Count; i++)
+            for (var i = 0; i < numbers.Count(); i++)
             {
                 Console.Write(numbers[i]);
             }

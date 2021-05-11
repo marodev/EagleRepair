@@ -15,7 +15,7 @@ namespace EagleRepair.IntegrationTests.Cli
 
 
         [Theory]
-        [MemberData(nameof(AnySimpleDataProvider.TestCases), MemberType = typeof(AnyNestedDataProvider))]
+        [MemberData(nameof(AnyNestedDataProvider.TestCases), MemberType = typeof(AnyNestedDataProvider))]
         public async Task UseCount_MultipleMethodCalls_ReturnsAny(string inputTree, string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree);
@@ -65,6 +65,14 @@ namespace EagleRepair.IntegrationTests.Cli
         public async Task UseCount_NotZero_ReturnsAny(string inputTree, string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree);
+        }
+
+        [Theory]
+        [MemberData(nameof(AnyMemberAccessDataProvider.TestCases),
+            MemberType = typeof(AnyMemberAccessDataProvider))]
+        public async Task UseCount_WithList_ReturnsOriginal(string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree, false);
         }
     }
 }

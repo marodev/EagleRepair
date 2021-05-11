@@ -10,10 +10,8 @@ using System.Collections.Generic;
 
 public class FooClass
 {
-    public void FooMethod()
+    public void FooMethod(IEnumerable<int> myList)
     {
-        List<int> myList = new();
-
         if (myList.Count() <= 0 && myList.Count() == 0 && myList.Count() < 1)
         {
             if (myList.Count() <= 0 && myList.Count() == 0 && myList.Count() < 1)
@@ -33,10 +31,8 @@ using System.Linq;
 
 public class FooClass
 {
-    public void FooMethod()
+    public void FooMethod(IEnumerable<int> myList)
     {
-        List<int> myList = new();
-
         if (!myList.Any() && !myList.Any() && !myList.Any())
         {
             if (!myList.Any() && !myList.Any() && !myList.Any())

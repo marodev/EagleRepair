@@ -11,11 +11,9 @@ namespace Entry
 {
     public class C
     {
-        public void M()
+        public void M(IEnumerable<string> names)
         {
-            var names = new List<string>();
-            
-            if (names.Count != 0 && names.Count % 30 == 0)
+            if (names.Count() != 0 && names.Count() % 30 == 0)
             {
                 // do something
             }
@@ -32,11 +30,9 @@ namespace Entry
 {
     public class C
     {
-        public void M()
+        public void M(IEnumerable<string> names)
         {
-            var names = new List<string>();
-            
-            if (names.Any() && names.Count % 30 == 0)
+            if (names.Any() && names.Count() % 30 == 0)
             {
                 // do something
             }
