@@ -162,7 +162,18 @@ namespace EagleRepair.Ast.Rewriter
                 // }            --> some other block
                 //              --> target new line
                 // if ( ... )   --> our if condition
-                var existingTrivia = ifStatementChild.Parent.GetLeadingTrivia().Insert(0, SyntaxFactory.LineFeed);
+                var leadingTriviaList = ifStatementChild.Parent.GetLeadingTrivia();
+                var leadingTrivia = leadingTriviaList.FirstOrDefault().ToString();
+
+                if (leadingTrivia.Equals(SyntaxFactory.LineFeed.ToString()) ||
+                    leadingTrivia.Equals(SyntaxFactory.CarriageReturnLineFeed.ToString()))
+                {
+                    // \n or \r\n
+                    // already contains a new line, don't add an additional one
+                    continue;
+                }
+
+                var existingTrivia = leadingTriviaList.Insert(0, SyntaxFactory.LineFeed);
                 ifStatementsToReplace.Add(ifStatementChild.Parent,
                     ifStatementChild.Parent.WithLeadingTrivia(existingTrivia));
             }

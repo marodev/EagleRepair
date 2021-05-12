@@ -20,8 +20,8 @@ namespace EagleRepair.IntegrationTests.Cli
         public async Task UseTypeCheck_ChecksToNull_ReturnsNotRefactored(string inputTree, string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree, false);
-        }      
-        
+        }
+
         [Theory]
         [MemberData(nameof(TypeCheckAndCastTriviaDataProvider.TestCases),
             MemberType = typeof(TypeCheckAndCastTriviaDataProvider))]

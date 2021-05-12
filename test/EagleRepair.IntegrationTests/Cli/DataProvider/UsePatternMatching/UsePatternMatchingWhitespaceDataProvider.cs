@@ -5,46 +5,37 @@ namespace EagleRepair.IntegrationTests.Cli.DataProvider.UsePatternMatching
     public static class UsePatternMatchingWhitespaceDataProvider
     {
         private const string Input = @"
-using System;
-
-namespace Entry
-{
-    public class C
-    {        
-        public void M(object o)
+        public override bool Equals(object obj)
         {
-            if(true) {
-                // ignore
-            }
+            if (ReferenceEquals(null, obj))
+                return false;
 
-            var s = o as string;
-            if (s != null) {
-                Console.WriteLine($""Hi. {s}"");
-            }
+            if (ReferenceEquals(this, obj))
+                return true;
+
+            var arr = obj as CustomArray;
+
+            if (arr != null)
+                return Equals(_in, arr._inner);
+
+            return Equals(_in, obj);
         }
-    }
-}
 ";
 
         private const string ExpectedOutput = @"
-using System;
-
-namespace Entry
-{
-    public class C
-    {        
-        public void M(object o)
+        public override bool Equals(object obj)
         {
-            if(true) {
-                // ignore
-            }
+            if (ReferenceEquals(null, obj))
+                return false;
 
-            if (o is string s) {
-                Console.WriteLine($""Hi. {s}"");
-            }
+            if (ReferenceEquals(this, obj))
+                return true;
+
+            if (obj is CustomArray arr)
+                return Equals(_in, arr._inner);
+
+            return Equals(_in, obj);
         }
-    }
-}
 ";
 
         public static IEnumerable<object[]> TestCases()

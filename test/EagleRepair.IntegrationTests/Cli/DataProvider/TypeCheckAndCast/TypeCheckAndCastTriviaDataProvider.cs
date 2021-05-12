@@ -41,11 +41,10 @@ namespace Entry
         }
     }
 }";
-        
+
         public static IEnumerable<object[]> TestCases()
         {
             yield return new object[] {Input, ExpectedOutput};
         }
     }
 }
-
