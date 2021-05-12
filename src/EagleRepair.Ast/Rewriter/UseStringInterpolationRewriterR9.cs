@@ -49,8 +49,13 @@ namespace EagleRepair.Ast.Rewriter
                 return base.VisitInvocationExpression(node);
             }
 
-            newStringInterpolationNode = (InterpolatedStringExpressionSyntax)Formatter
-                .Format(newStringInterpolationNode, Workspace);
+            newStringInterpolationNode = newStringInterpolationNode.NormalizeWhitespace();
+
+            if (memberAccessExpr.Parent is not null)
+            {
+                // keep original trivia
+                newStringInterpolationNode = newStringInterpolationNode.WithTriviaFrom(memberAccessExpr.Parent);
+            }
 
             var lineNumber = $"{DisplayService.GetLineNumber(node)}";
             var message = ReSharper.UseStringInterpolationMessage;

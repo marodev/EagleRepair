@@ -39,6 +39,15 @@ namespace EagleRepair.IntegrationTests.Cli
             string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree);
+        }        
+        
+        [Theory]
+        [MemberData(nameof(UseStringInterpolationKeepTriviaDataProvider.TestCases),
+            MemberType = typeof(UseStringInterpolationKeepTriviaDataProvider))]
+        public async Task UseStringFormat_UsesTrivia_ReturnsInterpolatedStringWithTrivia(string inputTree,
+            string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree);
         }
     }
 }
