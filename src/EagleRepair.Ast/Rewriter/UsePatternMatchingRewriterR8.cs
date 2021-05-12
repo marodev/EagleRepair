@@ -6,7 +6,6 @@ using EagleRepair.Monitor;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.FindSymbols;
 
 namespace EagleRepair.Ast.Rewriter
 {
@@ -52,18 +51,6 @@ namespace EagleRepair.Ast.Rewriter
 
                 if (!"as".Equals(op))
                 {
-                    continue;
-                }
-
-                var declaredSymbol = ModelExtensions.GetDeclaredSymbol(SemanticModel, declaration);
-                var symbolReferences =
-                    SymbolFinder.FindReferencesAsync(declaredSymbol, Workspace.CurrentSolution).Result;
-                var localReferences = symbolReferences.First().Locations;
-
-                var count = localReferences.Count();
-                if (count > 2)
-                {
-                    // we can't refactor it with a high probability
                     continue;
                 }
 
