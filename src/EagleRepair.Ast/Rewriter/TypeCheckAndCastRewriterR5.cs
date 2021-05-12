@@ -77,6 +77,8 @@ namespace EagleRepair.Ast.Rewriter
             var targetMethodName = memberAccessExpr.Name.Identifier.ValueText;
             var newMethodInvocation = RewriteService.CreateMemberAccess(patternVariableName, targetMethodName);
 
+            newMethodInvocation = newMethodInvocation.WithTriviaFrom(memberAccessExpr);
+            
             var newIfNode = node.ReplaceNode(memberAccessExpr, newMethodInvocation);
 
             var patternExpr = RewriteService.CreateIsPattern(left, targetCastExpr.Type,

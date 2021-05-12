@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace EagleRepair.IntegrationTests.Cli.DataProvider.TypeCheckAndCast
 {
-    public class TypeCheckAndCastSimpleDataProvider
+    public static class TypeCheckAndCastSimpleDataProvider
     {
         private const string Input = @"
 using System;
@@ -67,7 +67,6 @@ namespace Entry
     }
 }
 ";
-
 
         public static IEnumerable<object[]> TestCases()
         {
