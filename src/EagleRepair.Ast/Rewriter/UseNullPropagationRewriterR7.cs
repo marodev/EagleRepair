@@ -93,9 +93,24 @@ namespace EagleRepair.Ast.Rewriter
                 return null;
             }
 
+            if (binaryExpr.Right is not LiteralExpressionSyntax nullLiteralExpr)
+            {
+                return null;
+            }
+
+            if (!nullLiteralExpr.Token.ToString().Equals("null"))
+            {
+                return null;
+            }
+
             var left = binaryExpr.Left;
 
             if (left is not IdentifierNameSyntax identifierName)
+            {
+                return null;
+            }
+
+            if (!binaryExpr.OperatorToken.Text.Equals("!="))
             {
                 return null;
             }

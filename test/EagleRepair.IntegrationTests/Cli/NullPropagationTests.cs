@@ -21,5 +21,13 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree, false);
         }
+
+        [Theory]
+        [MemberData(nameof(NullPropagationNotValidDataProvider.TestCases),
+            MemberType = typeof(NullPropagationNotValidDataProvider))]
+        public async Task IfNotNull_IsType_InvokeMethod(string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree, false);
+        }
     }
 }
