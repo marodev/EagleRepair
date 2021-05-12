@@ -111,8 +111,6 @@ namespace EagleRepair.Ast.Services
         public IsPatternExpressionSyntax CreateIsPattern(ExpressionSyntax identifierName, TypeSyntax type,
             string designation)
         {
-            // var identifier = IdentifierName(Identifier(identifierName));
-
             return IsPatternExpression(
                 identifierName,
                 DeclarationPattern(

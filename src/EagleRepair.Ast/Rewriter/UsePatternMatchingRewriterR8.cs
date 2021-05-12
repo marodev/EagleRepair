@@ -29,6 +29,7 @@ namespace EagleRepair.Ast.Rewriter
             }
 
             var oldNewNodeDict = new Dictionary<CSharpSyntaxNode, CSharpSyntaxNode>();
+            var childOfIfCondition = new SyntaxAnnotation("ChildOfIfCondition");
             foreach (var localDeclaration in localDeclarationStatements)
             {
                 var declaration = localDeclaration.Declaration.Variables.FirstOrDefault();
@@ -46,7 +47,6 @@ namespace EagleRepair.Ast.Rewriter
                     continue;
                 }
 
-                var left = binaryExpr.Left.ToString();
                 var right = binaryExpr.Right.ToString();
                 var op = binaryExpr.OperatorToken.ToString();
 
@@ -93,15 +93,23 @@ namespace EagleRepair.Ast.Rewriter
                         oldNewNodeDict.Add(localDeclaration, null); // null -> remove node
                     }
 
-                    if (!oldNewNodeDict.ContainsKey(binaryExprToReplace))
+                    if (oldNewNodeDict.ContainsKey(binaryExprToReplace))
                     {
-                        oldNewNodeDict.Add(binaryExprToReplace, newConditionExpr);
+                        continue;
                     }
+
+                    if (binaryExprToReplace.Parent is IfStatementSyntax)
+                    {
+                        newConditionExpr = newConditionExpr.WithAdditionalAnnotations(childOfIfCondition);
+                    }
+
+                    oldNewNodeDict.Add(binaryExprToReplace, newConditionExpr);
                 }
             }
 
             if (!oldNewNodeDict.Any())
             {
+                // there are no changes
                 return base.VisitMethodDeclaration(node);
             }
 
@@ -122,7 +130,43 @@ namespace EagleRepair.Ast.Rewriter
                 });
             }
 
+            var ifStatementChildren = newMethod.GetAnnotatedNodes(childOfIfCondition);
+            var ifStatementsToReplace = AddLeadingLineFeedToIfStatements(ifStatementChildren);
+
+            newMethod = newMethod.ReplaceNodes(ifStatementsToReplace.Keys.AsEnumerable(),
+                (n1, n2) => ifStatementsToReplace[n1]);
+
             return base.VisitMethodDeclaration(newMethod);
+        }
+
+        private static IDictionary<SyntaxNode, SyntaxNode> AddLeadingLineFeedToIfStatements(
+            IEnumerable<SyntaxNode> ifStatementChildren)
+        {
+            var ifStatementsToReplace = new Dictionary<SyntaxNode, SyntaxNode>();
+            foreach (var ifStatementChild in ifStatementChildren)
+            {
+                var firstChild = ifStatementChild.Parent?.Parent?.DescendantNodes().FirstOrDefault();
+
+                if (firstChild == null)
+                {
+                    continue;
+                }
+
+                if (firstChild.IsEquivalentTo(ifStatementChild.Parent))
+                {
+                    continue;
+                }
+
+                // node is not first child, we want a new line just before the if condition
+                // }            --> some other block
+                //              --> target new line
+                // if ( ... )   --> our if condition
+                var existingTrivia = ifStatementChild.Parent.GetLeadingTrivia().Insert(0, SyntaxFactory.LineFeed);
+                ifStatementsToReplace.Add(ifStatementChild.Parent,
+                    ifStatementChild.Parent.WithLeadingTrivia(existingTrivia));
+            }
+
+            return ifStatementsToReplace;
         }
 
         private static List<BinaryExpressionSyntax> FindBinaryExprToReplace(string variableName,
