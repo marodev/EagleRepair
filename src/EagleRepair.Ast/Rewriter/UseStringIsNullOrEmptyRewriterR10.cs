@@ -1,3 +1,4 @@
+using EagleRepair.Ast.ReservedToken;
 using EagleRepair.Ast.Services;
 using EagleRepair.Ast.Url;
 using EagleRepair.Monitor;
@@ -95,6 +96,45 @@ namespace EagleRepair.Ast.Rewriter
                         if (rightIdentifierName is null)
                         {
                             return base.VisitBinaryExpression(node);
+                        }
+
+                        if (subRightBinaryExpr.Right is not LiteralExpressionSyntax valueLiteralExpr)
+                        {
+                            return base.VisitBinaryExpression(node);
+                        }
+
+                        var numericalToken = valueLiteralExpr.Token.Value;
+
+                        if (numericalToken is not int intToken)
+                        {
+                            return base.VisitBinaryExpression(node);
+                        }
+
+                        var opText = subRightBinaryExpr.OperatorToken.Text;
+                        switch (intToken)
+                        {
+                            case 0:
+                                {
+                                    // operator must be >
+                                    if (!opText.Equals(OperatorToken.GreaterThan))
+                                    {
+                                        return base.VisitBinaryExpression(node);
+                                    }
+
+                                    break;
+                                }
+                            case 1:
+                                {
+                                    // operator must be >=
+                                    if (!opText.Equals(OperatorToken.GreaterThanOrEqual))
+                                    {
+                                        return base.VisitBinaryExpression(node);
+                                    }
+
+                                    break;
+                                }
+                            default:
+                                return base.VisitBinaryExpression(node);
                         }
 
                         break;
