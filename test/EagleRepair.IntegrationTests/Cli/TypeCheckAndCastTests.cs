@@ -28,6 +28,14 @@ namespace EagleRepair.IntegrationTests.Cli
         public async Task UseTypeCheck_InBinaryExpr_ReturnsPatternExprWithTrivia(string inputTree, string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree);
+        }        
+        
+        [Theory]
+        [MemberData(nameof(TypeCheckAndCastInMethodDataProvider.TestCases),
+            MemberType = typeof(TypeCheckAndCastInMethodDataProvider))]
+        public async Task UseTypeCheck_InMethodCast_ReturnsPatternExprWithoutCast(string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree);
         }
     }
 }

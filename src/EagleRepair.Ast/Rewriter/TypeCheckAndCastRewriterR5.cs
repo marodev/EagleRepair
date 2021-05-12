@@ -49,14 +49,10 @@ namespace EagleRepair.Ast.Rewriter
                 .FirstOrDefault(c => c.Expression is IdentifierNameSyntax identifier &&
                                      variableName.Equals(identifier.TryGetInferredMemberName()));
 
-            var parenthesizedExpr = targetCastExpr?.Parent;
+            var parentExpr = targetCastExpr?.Parent;
 
-            if (parenthesizedExpr is not ParenthesizedExpressionSyntax)
-            {
-                return base.VisitIfStatement(node);
-            }
-
-            if (parenthesizedExpr.Parent is not MemberAccessExpressionSyntax memberAccessExpr)
+            if (parentExpr is not ParenthesizedExpressionSyntax &&
+                parentExpr is not EqualsValueClauseSyntax)
             {
                 return base.VisitIfStatement(node);
             }
@@ -69,23 +65,62 @@ namespace EagleRepair.Ast.Rewriter
                 return base.VisitIfStatement(node);
             }
 
-            // take first lowercase character if built-in type
-            var patternVariableName = targetCastExpr.Type.Kind() == SyntaxKind.PredefinedType
-                ? targetType[0].ToString().ToLower()
-                : targetType.FirstCharToLowerCase();
+            IfStatementSyntax ifStatementSyntax;
+            // TODO: we might have to cover more variations here
+            switch (parentExpr.Parent)
+            {
+                case MemberAccessExpressionSyntax memberAccessExpr:
+                    {
+                        var targetMethodName = memberAccessExpr.Name.Identifier.ValueText;
+                        
+                        // take first lowercase character if built-in type
+                        var patternVariableName = targetCastExpr.Type.Kind() == SyntaxKind.PredefinedType
+                            ? targetType[0].ToString().ToLower()
+                            : targetType.FirstCharToLowerCase();
+                        
+                        var newMethodInvocation = RewriteService.CreateMemberAccess(patternVariableName, targetMethodName);
+                        newMethodInvocation = newMethodInvocation.WithTriviaFrom(memberAccessExpr);
+            
+                        var newIfNode = node.ReplaceNode(memberAccessExpr, newMethodInvocation);
+                        
+                        var patternExpr = RewriteService.CreateIsPattern(left, targetCastExpr.Type,
+                            patternVariableName);
 
-            var targetMethodName = memberAccessExpr.Name.Identifier.ValueText;
-            var newMethodInvocation = RewriteService.CreateMemberAccess(patternVariableName, targetMethodName);
+                        ifStatementSyntax = newIfNode.ReplaceNode(newIfNode.Condition, patternExpr);
+                        break;
+                    }
+                case VariableDeclaratorSyntax:
+                    {
+                        var localDeclarationStatement = parentExpr.Parent?.Parent?.Parent;
+                        if (localDeclarationStatement is not LocalDeclarationStatementSyntax localDecl)
+                        {
+                            return base.VisitIfStatement(node);
+                        }
 
-            newMethodInvocation = newMethodInvocation.WithTriviaFrom(memberAccessExpr);
+                        var patternVariableName = localDecl.Declaration.Variables
+                            .FirstOrDefault()
+                            ?.Identifier.ToString();
 
-            var newIfNode = node.ReplaceNode(memberAccessExpr, newMethodInvocation);
-
-            var patternExpr = RewriteService.CreateIsPattern(left, targetCastExpr.Type,
-                patternVariableName);
-
-            newIfNode = newIfNode.ReplaceNode(newIfNode.Condition, patternExpr);
-
+                        if (string.IsNullOrEmpty(patternVariableName))
+                        {
+                            return base.VisitIfStatement(node);
+                        }
+                
+                        // remove assignment
+                        // e.g., var str = (string) o;
+                        var newIfNode = node.RemoveNode(localDecl, SyntaxRemoveOptions.KeepNoTrivia);
+               
+                        var patternExpr = RewriteService.CreateIsPattern(left, targetCastExpr.Type,
+                            patternVariableName);
+                
+                        // replace type check with pattern expression
+                        ifStatementSyntax = newIfNode!.ReplaceNode(newIfNode.Condition, patternExpr);
+                        break;
+                    }
+                default:
+                    return base.VisitIfStatement(node);
+            }
+            
             var lineNumber = $"{DisplayService.GetLineNumber(node)}";
             var message = ReSharper.MergeCastWithTypeCheckMessage + " / " + SonarQube.RuleSpecification3247Message;
             ChangeTracker.Stage(new Message
@@ -98,7 +133,7 @@ namespace EagleRepair.Ast.Rewriter
             });
 
             // visit children of newIfNode
-            return base.VisitIfStatement(newIfNode);
+            return base.VisitIfStatement(ifStatementSyntax);
         }
     }
 }
