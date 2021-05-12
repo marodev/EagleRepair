@@ -16,7 +16,7 @@ namespace EagleRepair.Ast.Services
             ArgumentListSyntax arguments = null);
 
         public IsPatternExpressionSyntax CreateIsPattern(ExpressionSyntax identifierName, TypeSyntax type,
-            string designation);
+            string designation, SyntaxNode syntaxTrivia = null);
 
         public InvocationExpressionSyntax CreateOfTypeT(string variable, string type);
 

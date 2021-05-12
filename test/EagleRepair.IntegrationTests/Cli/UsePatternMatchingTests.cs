@@ -66,5 +66,14 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree);
         }
+
+        [Theory]
+        [MemberData(nameof(UsePatternMatchingBinaryExprWhitespaceDataProvider.TestCases),
+            MemberType = typeof(UsePatternMatchingBinaryExprWhitespaceDataProvider))]
+        public async Task UseAsType_AfterwardBinaryExpr_ReturnsAsPatternAndWhitespace(string inputTree,
+            string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree);
+        }
     }
 }

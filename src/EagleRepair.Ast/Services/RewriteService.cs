@@ -109,14 +109,22 @@ namespace EagleRepair.Ast.Services
         }
 
         public IsPatternExpressionSyntax CreateIsPattern(ExpressionSyntax identifierName, TypeSyntax type,
-            string designation)
+            string designation, SyntaxNode syntaxTrivia = null)
         {
-            return IsPatternExpression(
+            var patternExpr = IsPatternExpression(
                 identifierName,
                 DeclarationPattern(
                     type,
                     SingleVariableDesignation(
-                        Identifier(designation)))).NormalizeWhitespace();
+                        Identifier(designation))
+                )).NormalizeWhitespace();
+
+            if (syntaxTrivia != null)
+            {
+                patternExpr = patternExpr.WithTriviaFrom(syntaxTrivia);
+            }
+
+            return patternExpr;
         }
 
         public InvocationExpressionSyntax CreateOfTypeT(string variable, string type)
