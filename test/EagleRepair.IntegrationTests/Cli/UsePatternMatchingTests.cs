@@ -75,5 +75,14 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree);
         }
+
+        [Theory]
+        [MemberData(nameof(UsePatternMatchingMethodInvocationDataProvider.TestCases),
+            MemberType = typeof(UsePatternMatchingMethodInvocationDataProvider))]
+        public async Task UseAsType_WithMethodInvocation_ReturnsAsPatternFormatted(string inputTree,
+            string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree);
+        }
     }
 }

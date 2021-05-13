@@ -150,22 +150,51 @@ namespace EagleRepair.Ast.Rewriter
                     continue;
                 }
 
+                // check if ifStatementChild is first child
                 if (firstChild.IsEquivalentTo(ifStatementChild.Parent))
                 {
-                    var firstChildLeadingTrivia = firstChild.GetLeadingTrivia().FirstOrDefault();
-                    if (IsNewLine(firstChildLeadingTrivia))
+                    var firstChildLeadingTrivia = firstChild.GetLeadingTrivia();
+                    var position = -1;
+                    for (var i = 0; i < firstChildLeadingTrivia.Count; i++)
+                    {
+                        if (IsNewLine(firstChildLeadingTrivia[i]))
+                        {
+                            position = i;
+                            break;
+                        }
+
+                        var nextTriviaPos = i + 1;
+                        if (nextTriviaPos >= firstChildLeadingTrivia.Count)
+                        {
+                            // already reached the end
+                            break;
+                        }
+
+                        // check one token ahead. The goal is to detect comments (//, /* ... */) that we don't want to remove
+                        if (!string.IsNullOrWhiteSpace(firstChildLeadingTrivia[nextTriviaPos].ToString()) &&
+                            !IsNewLine(firstChildLeadingTrivia[nextTriviaPos]))
+                        {
+                            // the whitespace probably belongs to the following comment.
+                            position = -1;
+                            break;
+                        }
+
+                        position++;
+                    }
+
+                    if (position >= 0)
                     {
                         // we have to remove the leading trivia since the node is now the first child
                         // before:
                         // var s = obj as string  --> we removed this node
                         //                        --> new line still present, remove this
-                        // if { ... }
+                        // if { ... }             --> node to keep
 
                         var newFirstChildTrivia = ifStatementChild.Parent.GetLeadingTrivia();
-                        newFirstChildTrivia = newFirstChildTrivia.Skip(1).ToSyntaxTriviaList();
+                        var newTrivia = newFirstChildTrivia.Skip(position + 1).ToSyntaxTriviaList();
 
                         ifStatementsToReplace.Add(ifStatementChild.Parent,
-                            ifStatementChild.Parent.WithLeadingTrivia(newFirstChildTrivia));
+                            ifStatementChild.Parent.WithLeadingTrivia(newTrivia));
                     }
 
                     continue;
@@ -173,7 +202,7 @@ namespace EagleRepair.Ast.Rewriter
 
                 // node is not first child, we want a new line just before the if condition
                 // }            --> some other block
-                //              --> target new line
+                //              --> target new line to insert
                 // if ( ... )   --> our if condition
                 var leadingTriviaList = ifStatementChild.Parent.GetLeadingTrivia();
                 var leadingTrivia = leadingTriviaList.FirstOrDefault();

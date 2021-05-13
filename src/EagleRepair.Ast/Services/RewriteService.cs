@@ -111,8 +111,18 @@ namespace EagleRepair.Ast.Services
         public IsPatternExpressionSyntax CreateIsPattern(ExpressionSyntax identifierName, TypeSyntax type,
             string designation, SyntaxNode syntaxTrivia = null)
         {
-            var patternExpr = IsPatternExpression(
-                identifierName,
+            var newIdentifierName = identifierName;
+            var identifierAnnotation = new SyntaxAnnotation("identifierAnnotation");
+
+            IsPatternExpressionSyntax patternExpr = null;
+
+            if (identifierName is InvocationExpressionSyntax)
+            {
+                newIdentifierName = newIdentifierName.WithAdditionalAnnotations(identifierAnnotation);
+            }
+
+            patternExpr = IsPatternExpression(
+                newIdentifierName,
                 DeclarationPattern(
                     type,
                     SingleVariableDesignation(
@@ -123,6 +133,18 @@ namespace EagleRepair.Ast.Services
             {
                 patternExpr = patternExpr.WithTriviaFrom(syntaxTrivia);
             }
+
+            var annotatedNode = patternExpr.GetAnnotatedNodes(identifierAnnotation).FirstOrDefault();
+
+            if (annotatedNode is null)
+            {
+                return patternExpr;
+            }
+
+            // .NormalizeWhitespace() does not work in case there is a method invocation
+            // we manually add the missing whitespace here
+            patternExpr = patternExpr.Update(identifierName.WithTrailingTrivia(TriviaList(Space)),
+                patternExpr.IsKeyword, patternExpr.Pattern);
 
             return patternExpr;
         }

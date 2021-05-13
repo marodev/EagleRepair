@@ -72,17 +72,18 @@ namespace EagleRepair.Ast.Rewriter
                 case MemberAccessExpressionSyntax memberAccessExpr:
                     {
                         var targetMethodName = memberAccessExpr.Name.Identifier.ValueText;
-                        
+
                         // take first lowercase character if built-in type
                         var patternVariableName = targetCastExpr.Type.Kind() == SyntaxKind.PredefinedType
                             ? targetType[0].ToString().ToLower()
                             : targetType.FirstCharToLowerCase();
-                        
-                        var newMethodInvocation = RewriteService.CreateMemberAccess(patternVariableName, targetMethodName);
+
+                        var newMethodInvocation =
+                            RewriteService.CreateMemberAccess(patternVariableName, targetMethodName);
                         newMethodInvocation = newMethodInvocation.WithTriviaFrom(memberAccessExpr);
-            
+
                         var newIfNode = node.ReplaceNode(memberAccessExpr, newMethodInvocation);
-                        
+
                         var patternExpr = RewriteService.CreateIsPattern(left, targetCastExpr.Type,
                             patternVariableName);
 
@@ -105,14 +106,14 @@ namespace EagleRepair.Ast.Rewriter
                         {
                             return base.VisitIfStatement(node);
                         }
-                
+
                         // remove assignment
                         // e.g., var str = (string) o;
                         var newIfNode = node.RemoveNode(localDecl, SyntaxRemoveOptions.KeepNoTrivia);
-               
+
                         var patternExpr = RewriteService.CreateIsPattern(left, targetCastExpr.Type,
                             patternVariableName);
-                
+
                         // replace type check with pattern expression
                         ifStatementSyntax = newIfNode!.ReplaceNode(newIfNode.Condition, patternExpr);
                         break;
@@ -120,7 +121,7 @@ namespace EagleRepair.Ast.Rewriter
                 default:
                     return base.VisitIfStatement(node);
             }
-            
+
             var lineNumber = $"{DisplayService.GetLineNumber(node)}";
             var message = ReSharper.MergeCastWithTypeCheckMessage + " / " + SonarQube.RuleSpecification3247Message;
             ChangeTracker.Stage(new Message
