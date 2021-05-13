@@ -51,7 +51,6 @@ namespace Entry
         
         public void M(object o)
         {
-
             if (o is string str)
             {
                 // str != null

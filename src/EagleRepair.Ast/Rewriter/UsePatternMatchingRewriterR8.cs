@@ -29,6 +29,7 @@ namespace EagleRepair.Ast.Rewriter
 
             var oldNewNodeDict = new Dictionary<CSharpSyntaxNode, CSharpSyntaxNode>();
             var childOfIfCondition = new SyntaxAnnotation("ChildOfIfCondition");
+            var removeAsExpression = new SyntaxAnnotation("removeAsExpression");
             foreach (var localDeclaration in localDeclarationStatements)
             {
                 var declaration = localDeclaration.Declaration.Variables.FirstOrDefault();
@@ -78,7 +79,9 @@ namespace EagleRepair.Ast.Rewriter
 
                     if (!oldNewNodeDict.ContainsKey(localDeclaration))
                     {
-                        oldNewNodeDict.Add(localDeclaration, null); // null -> remove node
+                        // mark node to be removed with an annotation
+                        oldNewNodeDict.Add(localDeclaration,
+                            localDeclaration.WithAdditionalAnnotations(removeAsExpression));
                     }
 
                     if (oldNewNodeDict.ContainsKey(binaryExprToReplace))
@@ -103,6 +106,9 @@ namespace EagleRepair.Ast.Rewriter
 
             var newMethod = node.ReplaceNodes(oldNewNodeDict.Keys.AsEnumerable(),
                 (n1, n2) => oldNewNodeDict[n1]);
+
+            var nodesToBeRemoved = newMethod.GetAnnotatedNodes(removeAsExpression);
+            newMethod = newMethod.RemoveNodes(nodesToBeRemoved, SyntaxRemoveOptions.KeepNoTrivia);
 
             foreach (var nodeToUpdate in oldNewNodeDict)
             {
@@ -142,6 +148,22 @@ namespace EagleRepair.Ast.Rewriter
 
                 if (firstChild.IsEquivalentTo(ifStatementChild.Parent))
                 {
+                    var firstChildLeadingTrivia = firstChild.GetLeadingTrivia().FirstOrDefault();
+                    if (IsNewLine(firstChildLeadingTrivia))
+                    {
+                        // we have to remove the leading trivia since the node is now the first child
+                        // before:
+                        // var s = obj as string  --> we removed this node
+                        //                        --> new line still present, remove this
+                        // if { ... }
+
+                        var newFirstChildTrivia = ifStatementChild.Parent.GetLeadingTrivia();
+                        newFirstChildTrivia = newFirstChildTrivia.Skip(1).ToSyntaxTriviaList();
+
+                        ifStatementsToReplace.Add(ifStatementChild.Parent,
+                            ifStatementChild.Parent.WithLeadingTrivia(newFirstChildTrivia));
+                    }
+
                     continue;
                 }
 
@@ -150,12 +172,10 @@ namespace EagleRepair.Ast.Rewriter
                 //              --> target new line
                 // if ( ... )   --> our if condition
                 var leadingTriviaList = ifStatementChild.Parent.GetLeadingTrivia();
-                var leadingTrivia = leadingTriviaList.FirstOrDefault().ToString();
+                var leadingTrivia = leadingTriviaList.FirstOrDefault();
 
-                if (leadingTrivia.Equals(SyntaxFactory.LineFeed.ToString()) ||
-                    leadingTrivia.Equals(SyntaxFactory.CarriageReturnLineFeed.ToString()))
+                if (IsNewLine(leadingTrivia))
                 {
-                    // \n or \r\n
                     // already contains a new line, don't add an additional one
                     continue;
                 }
@@ -166,6 +186,18 @@ namespace EagleRepair.Ast.Rewriter
             }
 
             return ifStatementsToReplace;
+        }
+
+        /// <summary>
+        ///     \n or \r\n
+        /// </summary>
+        /// <param name="trivia"></param>
+        /// <returns></returns>
+        private static bool IsNewLine(SyntaxTrivia trivia)
+        {
+            var triviaStr = trivia.ToString();
+            return triviaStr.Equals(SyntaxFactory.LineFeed.ToString()) ||
+                   triviaStr.Equals(SyntaxFactory.CarriageReturnLineFeed.ToString());
         }
 
         private static List<BinaryExpressionSyntax> FindBinaryExprToReplace(string variableName,
