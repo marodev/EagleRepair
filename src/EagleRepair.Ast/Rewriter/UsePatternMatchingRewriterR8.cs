@@ -28,6 +28,7 @@ namespace EagleRepair.Ast.Rewriter
             }
 
             var oldNewNodeDict = new Dictionary<CSharpSyntaxNode, CSharpSyntaxNode>();
+            var messagesToReportDict = new Dictionary<CSharpSyntaxNode, CSharpSyntaxNode>();
             var childOfIfCondition = new SyntaxAnnotation("ChildOfIfCondition");
             var removeAsExpression = new SyntaxAnnotation("removeAsExpression");
             foreach (var localDeclaration in localDeclarationStatements)
@@ -95,6 +96,7 @@ namespace EagleRepair.Ast.Rewriter
                     }
 
                     oldNewNodeDict.Add(binaryExprToReplace, newConditionExpr);
+                    messagesToReportDict.Add(binaryExprToReplace, newConditionExpr);
                 }
             }
 
@@ -110,7 +112,15 @@ namespace EagleRepair.Ast.Rewriter
             var nodesToBeRemoved = newMethod.GetAnnotatedNodes(removeAsExpression);
             newMethod = newMethod.RemoveNodes(nodesToBeRemoved, SyntaxRemoveOptions.KeepNoTrivia);
 
-            foreach (var nodeToUpdate in oldNewNodeDict)
+            // deals with whitespace
+            var ifStatementChildren = newMethod.GetAnnotatedNodes(childOfIfCondition);
+            var ifStatementsToReplace = AddLeadingLineFeedToIfStatements(ifStatementChildren);
+
+            newMethod = newMethod.ReplaceNodes(ifStatementsToReplace.Keys.AsEnumerable(),
+                (n1, n2) => ifStatementsToReplace[n1]);
+
+            // report fixes
+            foreach (var nodeToUpdate in messagesToReportDict)
             {
                 var lineNumber = $"{DisplayService.GetLineNumber(nodeToUpdate.Key)}";
                 var message = ReSharper.UsePatternMatchingMessage;
@@ -123,12 +133,6 @@ namespace EagleRepair.Ast.Rewriter
                     Text = message
                 });
             }
-
-            var ifStatementChildren = newMethod.GetAnnotatedNodes(childOfIfCondition);
-            var ifStatementsToReplace = AddLeadingLineFeedToIfStatements(ifStatementChildren);
-
-            newMethod = newMethod.ReplaceNodes(ifStatementsToReplace.Keys.AsEnumerable(),
-                (n1, n2) => ifStatementsToReplace[n1]);
 
             return base.VisitMethodDeclaration(newMethod);
         }
