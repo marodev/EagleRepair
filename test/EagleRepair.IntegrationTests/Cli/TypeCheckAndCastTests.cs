@@ -37,5 +37,23 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree);
         }
+
+        [Theory]
+        [MemberData(nameof(TypeCheckAndCastCommentDataProvider.TestCases),
+            MemberType = typeof(TypeCheckAndCastCommentDataProvider))]
+        public async Task UseTypeCheck_InMethodCastWithLeadingTrivia_ReturnsPatternExprWithoutCastAndLeadingTrivia(
+            string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree);
+        }
+
+        [Theory]
+        [MemberData(nameof(TypeCheckAndCastNewLineDataProvider.TestCases),
+            MemberType = typeof(TypeCheckAndCastNewLineDataProvider))]
+        public async Task UseTypeCheck_NextStatementHasLeadingWhiteSpace_ReturnsPatternExprWithoutCastAndLeadingTrivia(
+            string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree);
+        }
     }
 }

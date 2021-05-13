@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using EagleRepair.Ast.Extensions;
 using EagleRepair.Ast.Services;
@@ -108,8 +109,38 @@ namespace EagleRepair.Ast.Rewriter
                         }
 
                         // remove assignment
+                        // but keep any comments
                         // e.g., var str = (string) o;
-                        var newIfNode = node.RemoveNode(localDecl, SyntaxRemoveOptions.KeepNoTrivia);
+                        var leadingTriviaToKeep = ExtractLeadingTriviaToKeep(localDecl.GetLeadingTrivia());
+                        var trailingTriviaToKeep = ExtractLeadingTriviaToKeep(localDecl.GetTrailingTrivia());
+                        var localDeclAnnotation = new SyntaxAnnotation("LocalDeclarationAnnotation");
+
+                        var newLocalDecl = localDecl
+                            .WithLeadingTrivia(leadingTriviaToKeep)
+                            .WithTrailingTrivia(trailingTriviaToKeep)
+                            .WithAdditionalAnnotations(localDeclAnnotation);
+
+                        var newIfNode = node.ReplaceNode(localDecl, newLocalDecl);
+                        var localDeclToRemove = newIfNode.GetAnnotatedNodes(localDeclAnnotation).First();
+                        newIfNode = newIfNode.RemoveNode(localDeclToRemove, SyntaxRemoveOptions.KeepExteriorTrivia);
+
+                        var firstBlockStatement = ((BlockSyntax)newIfNode?.Statement)?.Statements.FirstOrDefault();
+
+                        if (firstBlockStatement is not null)
+                        {
+                            var leadingTriviaOfFirstIfStatement = firstBlockStatement.GetLeadingTrivia();
+                            // we need to adjust the newline inside the block
+                            // first child should not have a trailing EndOfLineTrivia
+                            // if ( ... ) {
+                            //                   --> remove trailing EndOfLineTrivia
+                            //   try ( ...)      --> first child inside block statement
+                            if (leadingTriviaOfFirstIfStatement.FirstOrDefault().IsKind(SyntaxKind.EndOfLineTrivia))
+                            {
+                                newIfNode = newIfNode.ReplaceNode(firstBlockStatement,
+                                    firstBlockStatement.WithLeadingTrivia(leadingTriviaOfFirstIfStatement.Skip(1)
+                                        .ToSyntaxTriviaList()));
+                            }
+                        }
 
                         var patternExpr = RewriteService.CreateIsPattern(left, targetCastExpr.Type,
                             patternVariableName);
@@ -135,6 +166,50 @@ namespace EagleRepair.Ast.Rewriter
 
             // visit children of newIfNode
             return base.VisitIfStatement(ifStatementSyntax);
+        }
+
+        private static SyntaxTriviaList ExtractLeadingTriviaToKeep(SyntaxTriviaList syntaxTriviaList)
+        {
+            var newLeadingTrivia = new List<SyntaxTrivia>();
+
+            for (var i = 0; i < syntaxTriviaList.Count; i++)
+            {
+                if (IsComment(syntaxTriviaList[i]))
+                {
+                    newLeadingTrivia.Add(syntaxTriviaList[i]);
+                    continue;
+                }
+
+                var oneLookAhead = i + 1;
+                if (oneLookAhead >= syntaxTriviaList.Count)
+                {
+                    break;
+                }
+
+                if (syntaxTriviaList[i].IsKind(SyntaxKind.WhitespaceTrivia) &&
+                    IsComment(syntaxTriviaList[oneLookAhead]))
+                {
+                    newLeadingTrivia.Add(syntaxTriviaList[i]);
+                }
+            }
+
+            if (newLeadingTrivia.Any())
+            {
+                newLeadingTrivia.Add(SyntaxFactory.EndOfLine("\n"));
+            }
+
+            return new SyntaxTriviaList(newLeadingTrivia);
+        }
+
+        private static bool IsComment(SyntaxTrivia trivia)
+        {
+            return trivia.IsKind(SyntaxKind.MultiLineCommentTrivia) ||
+                   trivia.IsKind(SyntaxKind.SingleLineCommentTrivia);
+        }
+
+        private static bool IsEndOfLine(SyntaxTrivia trivia)
+        {
+            return trivia.IsKind(SyntaxKind.EndOfLineTrivia);
         }
     }
 }
