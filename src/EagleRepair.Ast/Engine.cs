@@ -37,13 +37,22 @@ namespace EagleRepair.Ast
             _progressBar.Report(0.0, "Opening solution " + solutionFilePath + " ...");
             var solution = await _solutionParser.OpenSolutionAsync(solutionFilePath);
             // select all files
-            var files = solution.Projects.SelectMany(p => p.Documents).ToList();
+            var files = FilterCSharpFiles(solution);
             // Console.WriteLine($"Found {files.Count} C# files.");
             // rewrite the syntax tree
             var newSolution = await VisitNodes(solution, files, visitors);
             // apply the changes (if any) to the solution
             return ReferenceEquals(newSolution, _solutionParser.Workspace().CurrentSolution) ||
                    _solutionParser.Workspace().TryApplyChanges(newSolution);
+        }
+
+        private static IList<Document> FilterCSharpFiles(Solution solution)
+        {
+            // TODO: Currently, we consider the assemblies of one target framework
+            // e.g, if the project was compiled against .NET 5 and .NET Core 3, we process all documents from .NET 5
+            return solution.Projects.GroupBy(p => p.FilePath)
+                .Select(g => g.OrderBy(pro => pro.Name).FirstOrDefault())
+                .SelectMany(p => p?.Documents).ToList();
         }
 
         private static IList<AbstractRewriter> FilterVisitors(IEnumerable<AbstractRewriter> visitors, IList<Rule> rules)
