@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using EagleRepair.Ast.Extensions;
 using EagleRepair.Ast.Services;
@@ -13,10 +12,13 @@ namespace EagleRepair.Ast.Rewriter
     // TODO: needs improvement, i.e., doesn't cover all cases
     public class TypeCheckAndCastRewriterR5 : AbstractRewriter
     {
+        private readonly ITriviaService _triviaService;
+
         public TypeCheckAndCastRewriterR5(IChangeTracker changeTracker, ITypeService typeService,
-            IRewriteService rewriteService, IDisplayService displayService) : base(
+            IRewriteService rewriteService, IDisplayService displayService, ITriviaService triviaService) : base(
             changeTracker, typeService, rewriteService, displayService)
         {
+            _triviaService = triviaService;
         }
 
         public override SyntaxNode VisitIfStatement(IfStatementSyntax node)
@@ -111,8 +113,8 @@ namespace EagleRepair.Ast.Rewriter
                         // remove assignment
                         // but keep any comments
                         // e.g., var str = (string) o;
-                        var leadingTriviaToKeep = ExtractLeadingTriviaToKeep(localDecl.GetLeadingTrivia());
-                        var trailingTriviaToKeep = ExtractLeadingTriviaToKeep(localDecl.GetTrailingTrivia());
+                        var leadingTriviaToKeep = _triviaService.ExtractTriviaToKeep(localDecl.GetLeadingTrivia());
+                        var trailingTriviaToKeep = _triviaService.ExtractTriviaToKeep(localDecl.GetTrailingTrivia());
                         var localDeclAnnotation = new SyntaxAnnotation("LocalDeclarationAnnotation");
 
                         var newLocalDecl = localDecl
@@ -166,50 +168,6 @@ namespace EagleRepair.Ast.Rewriter
 
             // visit children of newIfNode
             return base.VisitIfStatement(ifStatementSyntax);
-        }
-
-        private static SyntaxTriviaList ExtractLeadingTriviaToKeep(SyntaxTriviaList syntaxTriviaList)
-        {
-            var newLeadingTrivia = new List<SyntaxTrivia>();
-
-            for (var i = 0; i < syntaxTriviaList.Count; i++)
-            {
-                if (IsComment(syntaxTriviaList[i]))
-                {
-                    newLeadingTrivia.Add(syntaxTriviaList[i]);
-                    continue;
-                }
-
-                var oneLookAhead = i + 1;
-                if (oneLookAhead >= syntaxTriviaList.Count)
-                {
-                    break;
-                }
-
-                if (syntaxTriviaList[i].IsKind(SyntaxKind.WhitespaceTrivia) &&
-                    IsComment(syntaxTriviaList[oneLookAhead]))
-                {
-                    newLeadingTrivia.Add(syntaxTriviaList[i]);
-                }
-            }
-
-            if (newLeadingTrivia.Any())
-            {
-                newLeadingTrivia.Add(SyntaxFactory.EndOfLine("\n"));
-            }
-
-            return new SyntaxTriviaList(newLeadingTrivia);
-        }
-
-        private static bool IsComment(SyntaxTrivia trivia)
-        {
-            return trivia.IsKind(SyntaxKind.MultiLineCommentTrivia) ||
-                   trivia.IsKind(SyntaxKind.SingleLineCommentTrivia);
-        }
-
-        private static bool IsEndOfLine(SyntaxTrivia trivia)
-        {
-            return trivia.IsKind(SyntaxKind.EndOfLineTrivia);
         }
     }
 }

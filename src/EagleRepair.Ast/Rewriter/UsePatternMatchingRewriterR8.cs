@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using EagleRepair.Ast.Extensions;
 using EagleRepair.Ast.Services;
 using EagleRepair.Ast.Url;
 using EagleRepair.Monitor;
@@ -11,10 +12,13 @@ namespace EagleRepair.Ast.Rewriter
 {
     public class UsePatternMatchingRewriterR8 : AbstractRewriter
     {
+        private readonly ITriviaService _triviaService;
+
         public UsePatternMatchingRewriterR8(IChangeTracker changeTracker, ITypeService typeService,
-            IRewriteService rewriteService, IDisplayService displayService) : base(
+            IRewriteService rewriteService, IDisplayService displayService, ITriviaService triviaService) : base(
             changeTracker, typeService, rewriteService, displayService)
         {
+            _triviaService = triviaService;
         }
 
         public override SyntaxNode VisitMethodDeclaration(MethodDeclarationSyntax node)
@@ -30,6 +34,8 @@ namespace EagleRepair.Ast.Rewriter
             var oldNewNodeDict = new Dictionary<CSharpSyntaxNode, CSharpSyntaxNode>();
             var messagesToReportDict = new Dictionary<CSharpSyntaxNode, CSharpSyntaxNode>();
             var childOfIfCondition = new SyntaxAnnotation("ChildOfIfCondition");
+            var childOfChildOfIfCondition = new SyntaxAnnotation("ChildOfChildOfIfCondition");
+
             var removeAsExpression = new SyntaxAnnotation("removeAsExpression");
             foreach (var localDeclaration in localDeclarationStatements)
             {
@@ -95,6 +101,13 @@ namespace EagleRepair.Ast.Rewriter
                         newConditionExpr = newConditionExpr.WithAdditionalAnnotations(childOfIfCondition);
                     }
 
+                    if (binaryExprToReplace.Parent?.Parent is IfStatementSyntax)
+                    {
+                        // TODO: delte me
+                        newConditionExpr = newConditionExpr.WithAdditionalAnnotations(childOfChildOfIfCondition);
+                        // oldNewNodeDict.Add(binaryExprToReplace, newConditionExpr);
+                    }
+
                     oldNewNodeDict.Add(binaryExprToReplace, newConditionExpr);
                     messagesToReportDict.Add(binaryExprToReplace, newConditionExpr);
                 }
@@ -110,11 +123,39 @@ namespace EagleRepair.Ast.Rewriter
                 (n1, n2) => oldNewNodeDict[n1]);
 
             var nodesToBeRemoved = newMethod.GetAnnotatedNodes(removeAsExpression);
-            newMethod = newMethod.RemoveNodes(nodesToBeRemoved, SyntaxRemoveOptions.KeepNoTrivia);
+
+            foreach (var _ in nodesToBeRemoved)
+            {
+                // TODO: duplicated code in TypeCheckAndCast --> Refactor
+                // create a copy of the node to be replaced to keep important trivias (comments)
+                var nodeToBeRemoved = newMethod!.GetAnnotatedNodes(removeAsExpression).First();
+                var leadingTriviaToKeep = _triviaService.ExtractTriviaToKeep(nodeToBeRemoved.GetLeadingTrivia());
+                var trailingTriviaToKeep = _triviaService.ExtractTriviaToKeep(nodeToBeRemoved.GetTrailingTrivia());
+                var nodeToBeRemovedAnnotation = new SyntaxAnnotation("nodeToBeRemovedAnnotation");
+                var newNodeToBeRemoved = nodeToBeRemoved
+                    .WithLeadingTrivia(leadingTriviaToKeep)
+                    .WithTrailingTrivia(trailingTriviaToKeep)
+                    .WithAdditionalAnnotations(nodeToBeRemovedAnnotation);
+
+                newMethod = newMethod.ReplaceNode(nodeToBeRemoved, newNodeToBeRemoved);
+                newNodeToBeRemoved = newMethod.GetAnnotatedNodes(nodeToBeRemovedAnnotation).First();
+
+                newMethod = newMethod.RemoveNode(newNodeToBeRemoved, SyntaxRemoveOptions.KeepExteriorTrivia);
+            }
 
             // deals with whitespace
-            var ifStatementChildren = newMethod.GetAnnotatedNodes(childOfIfCondition);
-            var ifStatementsToReplace = AddLeadingLineFeedToIfStatements(ifStatementChildren);
+            var ifStatementChildren = newMethod!.GetAnnotatedNodes(childOfIfCondition);
+            var ifStatementsToReplace = new Dictionary<SyntaxNode, SyntaxNode>();
+            ifStatementsToReplace =
+                ifStatementsToReplace.Merge(AddLeadingLineFeedToIfStatements(ifStatementChildren.ToList()));
+
+            var childrenOfChildrenOfIfCondition = newMethod.GetAnnotatedNodes(childOfChildOfIfCondition);
+            var potentialChildrenOfIfStatement = childrenOfChildrenOfIfCondition
+                .Where(n => n.Parent != null)
+                .Select(n => n.Parent).ToList();
+
+            ifStatementsToReplace =
+                ifStatementsToReplace.Merge(AddLeadingLineFeedToIfStatements(potentialChildrenOfIfStatement));
 
             newMethod = newMethod.ReplaceNodes(ifStatementsToReplace.Keys.AsEnumerable(),
                 (n1, n2) => ifStatementsToReplace[n1]);

@@ -84,5 +84,14 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree);
         }
+
+        [Theory]
+        [MemberData(nameof(UsePatternMatchingTriviaDataProvider.TestCases),
+            MemberType = typeof(UsePatternMatchingTriviaDataProvider))]
+        public async Task UseAsType_WithWhitespace_ReturnsAsPatternWithoutWhitespace(string inputTree,
+            string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree);
+        }
     }
 }
