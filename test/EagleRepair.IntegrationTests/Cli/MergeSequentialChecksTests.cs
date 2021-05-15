@@ -56,7 +56,7 @@ namespace EagleRepair.IntegrationTests.Cli
         public async Task IfNotNull_AndMemberAccessEquals_ReturnsNullConditionalAccess(string inputTree,
             string expectedTree)
         {
-            await TestExecutor.Run(inputTree, expectedTree);
+            await TestExecutor.Run(inputTree, expectedTree, false);
         }
 
         [Theory]

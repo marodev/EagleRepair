@@ -4,7 +4,7 @@ namespace EagleRepair.IntegrationTests.Cli.DataProvider.MergeSequentialChecks
 {
     public static class MergeSequentialChecksNotNullEqualsDataProvider
     {
-        private const string Input = @"
+        private const string InputAndExpectedOutput = @"
 namespace Entry
 {
     public class C
@@ -20,25 +20,9 @@ namespace Entry
     }
 }";
 
-        private const string ExpectedOutput = @"
-namespace Entry
-{
-    public class C
-    {
-        public void M(string s)
-        {
-            const int count = 2;
-            if (s?.Length == count)
-                return;
-            
-            // Do something
-        }
-    }
-}";
-
         public static IEnumerable<object[]> TestCases()
         {
-            yield return new object[] {Input, ExpectedOutput};
+            yield return new object[] {InputAndExpectedOutput, InputAndExpectedOutput};
         }
     }
 }
