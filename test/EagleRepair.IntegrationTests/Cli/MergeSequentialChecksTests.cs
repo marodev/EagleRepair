@@ -67,5 +67,14 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree, false);
         }
+
+        [Theory]
+        [MemberData(nameof(MergeSequentialChecksNotEqualNegativeDataProvider.TestCases),
+            MemberType = typeof(MergeSequentialChecksNotEqualNegativeDataProvider))]
+        public async Task IfNotValue_AndEqualsValue_ReturnsOriginal(string inputTree,
+            string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree, false);
+        }
     }
 }

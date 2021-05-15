@@ -155,6 +155,16 @@ namespace EagleRepair.Ast.Rewriter
                 return base.VisitBinaryExpression(node);
             }
 
+            if (leftBinaryExpr.Right is not LiteralExpressionSyntax nullLiteralExpr)
+            {
+                return base.VisitBinaryExpression(node);
+            }
+
+            if (!nullLiteralExpr.Token.Text.Equals("null"))
+            {
+                return base.VisitBinaryExpression(node);
+            }
+
             var symbol = SemanticModel.GetSymbolInfo(leftLeftIdentifierName).Symbol;
 
             if (symbol is null)
