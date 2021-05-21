@@ -201,19 +201,6 @@ namespace EagleRepair.Ast.Rewriter
                 return base.VisitBinaryExpression(node);
             }
 
-            // if (leftBinaryExpr.OperatorToken.ToString().Equals("=="))
-            // {
-            //     if (node.Right is not IsPatternExpressionSyntax)
-            //     {
-            //         if (!rightBinaryExpr.OperatorToken.IsKind(SyntaxKind.IsKeyword))
-            //             {
-            //                 // we can't fix something like if (s == null || s.Length != count)
-            //                 return base.VisitBinaryExpression(node);
-            //             }
-            //         
-            //     }
-            // }
-
             var leftExprVariableName = leftLeftIdentifierName.ToString();
             var newNode = node.Right switch
             {

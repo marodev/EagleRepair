@@ -105,6 +105,12 @@ namespace EagleRepair.Ast.Rewriter
 
             // TODO: only if target is NET5.0
             // use C# 9 !(s is string) --> s is not string
+            if (leftBinaryExpr.OperatorToken.IsKind(SyntaxKind.ExclamationEqualsToken))
+            {
+                // we can't fix a pattern such as --> s != null && !(s is string)
+                return base.VisitBinaryExpression(node);
+            }
+
             var newNode = RewriteService.ConvertUnaryToIsNotPattern(unaryExpr);
 
             var lineNr = $"{DisplayService.GetLineNumber(node)}";

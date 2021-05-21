@@ -40,7 +40,7 @@ namespace EagleRepair.Ast.Url
 
         public static readonly string UseMethodAnyUrl =
             $"{ToolName}/UseMethodAny.0.html";
-        
+
         public static readonly string UseMethodAnyMessage =
             $"{ToolName}: Use '.Any()' to test whether this IEnumerable is empty or not. See {UseMethodAnyUrl}";
 
