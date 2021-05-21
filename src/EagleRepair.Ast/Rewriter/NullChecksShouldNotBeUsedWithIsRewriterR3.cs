@@ -103,6 +103,7 @@ namespace EagleRepair.Ast.Rewriter
                 return node.Right;
             }
 
+            // TODO: only if target is NET5.0
             // use C# 9 !(s is string) --> s is not string
             var newNode = RewriteService.ConvertUnaryToIsNotPattern(unaryExpr);
 
