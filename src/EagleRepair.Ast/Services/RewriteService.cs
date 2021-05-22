@@ -455,6 +455,7 @@ namespace EagleRepair.Ast.Services
 
         private static InterpolationSyntax CreateInterpolation(ExpressionSyntax argument)
         {
+            return Interpolation(ParenthesizedExpression(argument));
             return Interpolation(argument);
         }
 

@@ -49,5 +49,15 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree);
         }
+
+        // TODO: not supported yet!
+        [Theory]
+        [MemberData(nameof(UseStringInterpolationConditionalDataProvider.TestCases),
+            MemberType = typeof(UseStringInterpolationConditionalDataProvider))]
+        public async Task UseStringFormat_UsesCondition_ReturnsOriginal(string inputTree,
+            string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree);
+        }
     }
 }
