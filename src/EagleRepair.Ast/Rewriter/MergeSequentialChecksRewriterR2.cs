@@ -105,7 +105,7 @@ namespace EagleRepair.Ast.Rewriter
 
             var opKeyword = isPatternExpr.IsKeyword.ToString();
 
-            IsPatternExpressionSyntax newNode = null;
+            ExpressionSyntax newNode = null;
             switch (declarationOrConstNullPattern)
             {
                 case DeclarationPatternSyntax declPattern:
@@ -208,6 +208,13 @@ namespace EagleRepair.Ast.Rewriter
                 IsPatternExpressionSyntax isPatternExpr => FixRightIsPatternExpr(leftExprVariableName, isPatternExpr),
                 _ => null
             };
+
+            // SyntaxNode newNode = node.Right;
+            //
+            // if (newNode is not BinaryExpressionSyntax && newNode is not IsPatternExpressionSyntax)
+            // {
+            //     return base.VisitBinaryExpression(node);
+            // }
 
             if (newNode is null)
             {

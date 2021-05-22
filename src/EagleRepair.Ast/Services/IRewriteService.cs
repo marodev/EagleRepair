@@ -32,7 +32,7 @@ namespace EagleRepair.Ast.Services
 
         public ExpressionSyntax CreateConditionalAccess(string variableName, string memberName);
 
-        public IsPatternExpressionSyntax CreateNullPatternExprWithConditionalMemberAccess(string variableName,
+        public ExpressionSyntax CreateNullPatternExprWithConditionalMemberAccess(string variableName,
             string op, string memberName);
 
         public IsPatternExpressionSyntax CreateIsPatternExprWithConditionalMemberAccessAndDeclaration(

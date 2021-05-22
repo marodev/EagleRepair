@@ -301,14 +301,29 @@ namespace EagleRepair.Ast.Services
             );
         }
 
-        public IsPatternExpressionSyntax CreateNullPatternExprWithConditionalMemberAccess(string variableName,
+        public ExpressionSyntax CreateNullPatternExprWithConditionalMemberAccess(string variableName,
             string op, string memberName)
         {
-            return IsPatternExpression
-            (
+            if (!op.Equals("!=") && !op.Equals("=="))
+            {
+                return IsPatternExpression
+                (
+                    CreateConditionalAccess(variableName, memberName),
+                    CreateNullPattern(op)
+                ).NormalizeWhitespace();
+            }
+
+            var syntaxOp = SyntaxKind.EqualsExpression;
+            if (op.Equals("!="))
+            {
+                syntaxOp = SyntaxKind.NotEqualsExpression;
+            }
+
+            return BinaryExpression(
+                syntaxOp,
                 CreateConditionalAccess(variableName, memberName),
-                CreateNullPattern(op)
-            ).NormalizeWhitespace();
+                LiteralExpression(
+                    SyntaxKind.NullLiteralExpression)).NormalizeWhitespace();
         }
 
         public IsPatternExpressionSyntax CreateIsPatternExprWithConditionalMemberAccessAndDeclaration(
@@ -455,8 +470,9 @@ namespace EagleRepair.Ast.Services
 
         private static InterpolationSyntax CreateInterpolation(ExpressionSyntax argument)
         {
-            return Interpolation(argument is ConditionalExpressionSyntax ? 
-                ParenthesizedExpression(argument) : argument);
+            return Interpolation(argument is ConditionalExpressionSyntax
+                ? ParenthesizedExpression(argument)
+                : argument);
         }
 
         private static PatternSyntax CreateNullLiteral()

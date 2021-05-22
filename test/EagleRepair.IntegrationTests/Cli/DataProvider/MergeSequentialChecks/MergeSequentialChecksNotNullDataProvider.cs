@@ -36,7 +36,7 @@ namespace Entry
         }
         public void M(B b, object o)
         {
-            if (b?.Parent is not null && o is string)
+            if (b?.Parent != null && o is string)
             {
                 // do something
             }
