@@ -76,10 +76,46 @@ namespace EagleRepair.Ast.Rewriter
                     {
                         var targetMethodName = memberAccessExpr.Name.Identifier.ValueText;
 
-                        // take first lowercase character if built-in type
-                        var patternVariableName = targetCastExpr.Type.Kind() == SyntaxKind.PredefinedType
-                            ? targetType[0].ToString().ToLower()
-                            : targetType.FirstCharToLowerCase();
+                        string patternVariableName;
+                        if (targetCastExpr.Type.IsKind(SyntaxKind.ArrayType))
+                        {
+                            patternVariableName = targetCastExpr.Type.ToString();
+                            patternVariableName = patternVariableName.Split("[").FirstOrDefault();
+
+                            if (string.IsNullOrEmpty(patternVariableName))
+                            {
+                                return base.VisitIfStatement(node);
+                            }
+
+                            patternVariableName += "s";
+                        }
+                        else if (targetCastExpr.Type is QualifiedNameSyntax qfn &&
+                                 qfn.Right.IsKind(SyntaxKind.GenericName))
+                        {
+                            var rightQualifiedName = qfn.Right;
+                            patternVariableName = ParseGenericName(rightQualifiedName as GenericNameSyntax);
+                        }
+                        else if (targetCastExpr.Type.IsKind(SyntaxKind.GenericName))
+                        {
+                            patternVariableName = ParseGenericName(targetCastExpr.Type as GenericNameSyntax);
+                        }
+                        else
+                        {
+                            // take first lowercase character if built-in type
+                            patternVariableName = targetCastExpr.Type.Kind() == SyntaxKind.PredefinedType
+                                ? targetType[0].ToString().ToLower()
+                                : targetType.FirstCharToLowerCase();
+                        }
+
+                        if (patternVariableName.Contains("."))
+                        {
+                            patternVariableName = patternVariableName.Split(".").Last().FirstCharToLowerCase();
+                        }
+
+                        if (string.IsNullOrEmpty(patternVariableName))
+                        {
+                            return base.VisitIfStatement(node);
+                        }
 
                         var newMethodInvocation =
                             RewriteService.CreateMemberAccess(patternVariableName, targetMethodName);
@@ -168,6 +204,26 @@ namespace EagleRepair.Ast.Rewriter
 
             // visit children of newIfNode
             return base.VisitIfStatement(ifStatementSyntax);
+        }
+
+        private static string ParseGenericName(GenericNameSyntax genericNameSyntax)
+        {
+            if (genericNameSyntax == null)
+            {
+                return null;
+            }
+
+            var patternVariableName = genericNameSyntax.TypeArgumentList.Arguments
+                .FirstOrDefault()?.GetText().ToString();
+
+            if (string.IsNullOrEmpty(patternVariableName))
+            {
+                return null;
+            }
+
+            patternVariableName += "s";
+
+            return patternVariableName;
         }
     }
 }
