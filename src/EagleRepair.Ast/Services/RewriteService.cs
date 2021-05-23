@@ -212,8 +212,16 @@ namespace EagleRepair.Ast.Services
                 {
                     // something in braces {0}
                     // Try to get format, e.g. {0:2N}
-                    var format = GetInterpolatedFormat(part);
-                    interpolationFormats.Add(format);
+                    try
+                    {
+                        var format = GetInterpolatedFormat(part);
+                        interpolationFormats.Add(format);
+                    }
+                    catch (ArgumentException)
+                    {
+                        // failed to parse format, abort
+                        return null;
+                    }
                 }
 
                 position++;
@@ -395,6 +403,17 @@ namespace EagleRepair.Ast.Services
             }
 
             var formatString = string.Join("", formats.Skip(1).ToArray());
+
+            if (!formatString.ToCharArray().Any(char.IsDigit))
+            {
+                throw new ArgumentException("format should contain a number.");
+            }
+
+            if (formatString.Contains("(") && formatString.Contains(")") && formatString.Contains("+"))
+            {
+                throw new ArgumentException("can't format a concatenated string.");
+            }
+
             interpolationFormat = interpolationFormat.WithFormatStringToken(Token(
                 TriviaList(),
                 SyntaxKind.InterpolatedStringTextToken,

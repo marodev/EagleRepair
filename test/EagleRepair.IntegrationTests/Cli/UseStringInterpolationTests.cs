@@ -58,5 +58,14 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree);
         }
+
+        [Theory]
+        [MemberData(nameof(UseStringInterpolationControlSpacingDataProvider.TestCases),
+            MemberType = typeof(UseStringInterpolationControlSpacingDataProvider))]
+        public async Task UseStringFormat_UsesStringConcat_ReturnsOriginal(string inputTree,
+            string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree, false);
+        }
     }
 }
