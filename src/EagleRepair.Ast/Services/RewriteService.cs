@@ -201,6 +201,12 @@ namespace EagleRepair.Ast.Services
                 return null;
             }
 
+            if (text.Contains("string.Join("))
+            {
+                // TODO: not supported
+                return null;
+            }
+
             // member accesses and method invocations
             var interpolationArguments = allArguments.Skip(1).ToList();
             var texts = new List<string>();
