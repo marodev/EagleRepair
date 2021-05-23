@@ -179,6 +179,12 @@ namespace EagleRepair.Ast.Rewriter
                 {
                     return base.VisitBinaryExpression(node);
                 }
+
+                if (rightBinaryExpr.OperatorToken.IsKind(SyntaxKind.EqualsEqualsToken))
+                {
+                    // we can't fix something like if (o != null && o.Foo == null)
+                    return base.VisitBinaryExpression(node);
+                }
             }
 
             var symbol = SemanticModel.GetSymbolInfo(leftLeftIdentifierName).Symbol;
