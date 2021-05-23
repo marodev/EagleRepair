@@ -67,5 +67,14 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree, false);
         }
+
+        [Theory]
+        [MemberData(nameof(UseStringInterpolationAndConcatenationDataProvider.TestCases),
+            MemberType = typeof(UseStringInterpolationAndConcatenationDataProvider))]
+        public async Task UseStringFormat_UsesStringConcatOnNewLine_ReturnsOriginal(string inputTree,
+            string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree, false);
+        }
     }
 }

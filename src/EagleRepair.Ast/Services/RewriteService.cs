@@ -194,6 +194,13 @@ namespace EagleRepair.Ast.Services
 
             // Remove first and last character, which are "
             text = text.Substring(1, text.Length - 2);
+
+            if (text.Contains("\"") && text.Contains("+"))
+            {
+                // TODO: patterns such as string.format("{0}" + "{1}", 0, 1) are not supported yet
+                return null;
+            }
+
             // member accesses and method invocations
             var interpolationArguments = allArguments.Skip(1).ToList();
             var texts = new List<string>();
