@@ -192,6 +192,12 @@ namespace EagleRepair.Ast.Services
                 return null;
             }
 
+            if (text.Contains("{{") || text.Contains("}}"))
+            {
+                // TODO: not supported yet
+                return null;
+            }
+
             // Remove first and last character, which are "
             text = text.Substring(1, text.Length - 2);
 

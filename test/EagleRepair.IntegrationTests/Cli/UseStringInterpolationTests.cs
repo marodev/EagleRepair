@@ -76,5 +76,14 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree, false);
         }
+
+        [Theory]
+        [MemberData(nameof(UseStringInterpolationNestedBracesDataProvider.TestCases),
+            MemberType = typeof(UseStringInterpolationNestedBracesDataProvider))]
+        public async Task UseStringFormat_HasNestedBraces_ReturnsOriginalBecauseNotSupported(string inputTree,
+            string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree, false);
+        }
     }
 }
