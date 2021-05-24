@@ -198,6 +198,13 @@ namespace EagleRepair.Ast.Services
                 return null;
             }
 
+            if (text.Split("{0}").Length > 2 || text.Split("{1}").Length > 2 ||
+                text.Split("{2}").Length > 2 || text.Split("{4}").Length > 2)
+            {
+                // ReSharper doesn't provide refactoring for patterns such as string.Format("{0}{0}", json); 
+                return null;
+            }
+
             // Remove first and last character, which are "
             text = text.Substring(1, text.Length - 2);
 

@@ -85,5 +85,14 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree, false);
         }
+
+        [Theory]
+        [MemberData(nameof(UseStringInterpolationMultipleTimesDataProvider.TestCases),
+            MemberType = typeof(UseStringInterpolationMultipleTimesDataProvider))]
+        public async Task UseStringFormat_UsesSameSlotMultipleTimes_ReturnsOriginal(string inputTree,
+            string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree, false);
+        }
     }
 }
