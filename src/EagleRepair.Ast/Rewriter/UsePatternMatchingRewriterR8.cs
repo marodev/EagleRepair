@@ -178,7 +178,7 @@ namespace EagleRepair.Ast.Rewriter
             return base.VisitMethodDeclaration(newMethod);
         }
 
-        private static IDictionary<SyntaxNode, SyntaxNode> AddLeadingLineFeedToIfStatements(
+        private IDictionary<SyntaxNode, SyntaxNode> AddLeadingLineFeedToIfStatements(
             IEnumerable<SyntaxNode> ifStatementChildren)
         {
             var ifStatementsToReplace = new Dictionary<SyntaxNode, SyntaxNode>();
@@ -198,6 +198,13 @@ namespace EagleRepair.Ast.Rewriter
                     var position = -1;
                     for (var i = 0; i < firstChildLeadingTrivia.Count; i++)
                     {
+                        if (_triviaService.IsIfElseDirective(firstChildLeadingTrivia[i]))
+                        {
+                            // keep #if and #endif directives
+                            position = -1;
+                            break;
+                        }
+
                         if (IsNewLine(firstChildLeadingTrivia[i]))
                         {
                             position = i;

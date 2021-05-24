@@ -13,7 +13,7 @@ namespace EagleRepair.Ast.Services
 
             for (var i = 0; i < syntaxTriviaList.Count; i++)
             {
-                if (IsComment(syntaxTriviaList[i]))
+                if (IsComment(syntaxTriviaList[i]) || IsIfElseDirective(syntaxTriviaList[i]))
                 {
                     newLeadingTrivia.Add(syntaxTriviaList[i]);
                     continue;
@@ -32,12 +32,18 @@ namespace EagleRepair.Ast.Services
                 }
             }
 
-            if (newLeadingTrivia.Any())
+            if (newLeadingTrivia.Any() && !IsIfElseDirective(newLeadingTrivia.Last()))
             {
                 newLeadingTrivia.Add(SyntaxFactory.EndOfLine("\n"));
             }
 
             return new SyntaxTriviaList(newLeadingTrivia);
+        }
+
+        public bool IsIfElseDirective(SyntaxTrivia trivia)
+        {
+            return trivia.IsKind(SyntaxKind.IfDirectiveTrivia) ||
+                   trivia.IsKind(SyntaxKind.ElseDirectiveTrivia);
         }
 
         private static bool IsComment(SyntaxTrivia trivia)

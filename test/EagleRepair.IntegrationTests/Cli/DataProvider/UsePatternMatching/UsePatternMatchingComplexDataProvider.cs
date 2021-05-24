@@ -5,6 +5,7 @@ namespace EagleRepair.IntegrationTests.Cli.DataProvider.UsePatternMatching
     public static class UsePatternMatchingComplexDataProvider
     {
         private const string Input = @"
+#define pi
 namespace Entry
 {
     public class C
@@ -27,11 +28,13 @@ namespace Entry
         {
             ProcessCompleted += i =>
             {
+#if (pi)
                 var user = e.Entity as User;
                 if (user != null)
                 {
                     user.Count = i;
                 }
+#endif
             };
             
             ProcessCompleted += i =>
@@ -47,6 +50,7 @@ namespace Entry
 }";
 
         private const string ExpectedOutput = @"
+#define pi
 namespace Entry
 {
     public class C
@@ -69,10 +73,12 @@ namespace Entry
         {
             ProcessCompleted += i =>
             {
+#if (pi)
                 if (e.Entity is User user)
                 {
                     user.Count = i;
                 }
+#endif
             };
             
             ProcessCompleted += i =>
