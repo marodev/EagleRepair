@@ -64,5 +64,14 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree);
         }
+
+        [Theory]
+        [MemberData(nameof(TypeCheckAndCastDoubleDataProvider.TestCases),
+            MemberType = typeof(TypeCheckAndCastDoubleDataProvider))]
+        public async Task UseTypeCheck_typeIsDouble_ReturnsPatternExpr(
+            string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree);
+        }
     }
 }

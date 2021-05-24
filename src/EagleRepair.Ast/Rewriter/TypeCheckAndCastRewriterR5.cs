@@ -105,6 +105,12 @@ namespace EagleRepair.Ast.Rewriter
                             patternVariableName = targetCastExpr.Type.Kind() == SyntaxKind.PredefinedType
                                 ? targetType[0].ToString().ToLower()
                                 : targetType.FirstCharToLowerCase();
+
+                            if (patternVariableName.Equals("double") || patternVariableName.Equals("int16") ||
+                                patternVariableName.Equals("int32") || patternVariableName.Equals("int64"))
+                            {
+                                patternVariableName = patternVariableName[0].ToString().ToLower();
+                            }
                         }
 
                         if (patternVariableName.Contains("."))
