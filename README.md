@@ -25,8 +25,8 @@ EagleRepair is [available on NuGet](https://www.nuget.org/packages/EagleRepair.C
 $ dotnet tool install --global EagleRepair.Cli
 ```
 
-## 🤝 Contributing
+## Contributing
 
-Contributions are welcome!
+PR's are welcome!
+Start here: [CONTRIBUTING.md](CONTRIBUTING.md)
 
-Can you make EagleRepair even better? Feel free to open a pull request.
