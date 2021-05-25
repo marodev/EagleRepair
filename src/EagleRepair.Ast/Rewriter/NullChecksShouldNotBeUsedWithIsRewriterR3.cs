@@ -22,8 +22,10 @@ namespace EagleRepair.Ast.Rewriter
                 return base.VisitBinaryExpression(node);
             }
 
-            // check if first (left) expression is s != null
-            if (leftBinaryExpr.Left is not IdentifierNameSyntax leftIdentifierName)
+            var leftIdentifierName = leftBinaryExpr.Left as IdentifierNameSyntax;
+            var leftMemberAccessExpr = leftBinaryExpr.Left as MemberAccessExpressionSyntax;
+
+            if (leftIdentifierName is null && leftMemberAccessExpr is null)
             {
                 return base.VisitBinaryExpression(node);
             }
@@ -51,6 +53,10 @@ namespace EagleRepair.Ast.Rewriter
             {
                 rightIdentifier = ExtractIdentifier(rightBinaryExpr);
             }
+            else if (node.Right is IsPatternExpressionSyntax rightIsPatternExpr)
+            {
+                rightIdentifier = rightIsPatternExpr.Expression.ToString();
+            }
             else
             {
                 if (node.Right is not PrefixUnaryExpressionSyntax rightPrefixUnaryExpr)
@@ -76,7 +82,7 @@ namespace EagleRepair.Ast.Rewriter
                 return base.VisitBinaryExpression(node);
             }
 
-            var leftIdentifier = leftIdentifierName.Identifier.ValueText;
+            var leftIdentifier = leftIdentifierName?.Identifier.ValueText ?? leftMemberAccessExpr.ToString();
             if (!leftIdentifier.Equals(rightIdentifier))
             {
                 return base.VisitBinaryExpression(node);

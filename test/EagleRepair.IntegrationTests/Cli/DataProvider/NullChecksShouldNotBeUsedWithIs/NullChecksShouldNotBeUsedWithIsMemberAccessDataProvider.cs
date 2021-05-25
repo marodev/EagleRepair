@@ -2,19 +2,24 @@ using System.Collections.Generic;
 
 namespace EagleRepair.IntegrationTests.Cli.DataProvider.NullChecksShouldNotBeUsedWithIs
 {
-    public static class NullChecksShouldNotBeUsedWithIsOrIsNotDataProvider
+    public static class NullChecksShouldNotBeUsedWithIsMemberAccessDataProvider
     {
         private const string Input = @"
 namespace Entry
 {
     public class C
     {
-        public void M(object s)
+        public class Vehicle {}
+
+        public class Car
         {
-            if (s == null || !(s is string))
+            public Vehicle V { get; set; }
+        }
+
+        public void M(Car c)
+        {
+            if (c.V != null && c.V is Vehicle v)
             {
-                // do something
-            } else if (s == null || !(s is string)) {
                 // do something
             }
         }
@@ -26,12 +31,17 @@ namespace Entry
 {
     public class C
     {
-        public void M(object s)
+        public class Vehicle {}
+
+        public class Car
         {
-            if (!(s is string))
+            public Vehicle V { get; set; }
+        }
+
+        public void M(Car c)
+        {
+            if (c.V is Vehicle v)
             {
-                // do something
-            } else if (!(s is string)) {
                 // do something
             }
         }
