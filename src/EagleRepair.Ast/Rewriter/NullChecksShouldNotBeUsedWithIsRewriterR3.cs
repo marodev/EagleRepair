@@ -111,7 +111,8 @@ namespace EagleRepair.Ast.Rewriter
                 return base.VisitBinaryExpression(node);
             }
 
-            var newNode = RewriteService.ConvertUnaryToIsNotPattern(unaryExpr);
+            // TODO: if target is dotnet 5.0, use "is not null" instead of !(... == null)
+            // var newNode = RewriteService.ConvertUnaryToIsNotPattern(unaryExpr);
 
             var lineNr = $"{DisplayService.GetLineNumber(node)}";
             var msg = SonarQube.RuleSpecification4201Message + " / " + ReSharper.MergeSequentialChecksMessage;
@@ -124,7 +125,7 @@ namespace EagleRepair.Ast.Rewriter
                 Text = msg
             });
 
-            return newNode;
+            return unaryExpr;
         }
 
         private static string ExtractIdentifier(BinaryExpressionSyntax binaryExpr)

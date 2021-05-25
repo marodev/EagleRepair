@@ -26,7 +26,7 @@ namespace Entry
     {
         public void M(object s)
         {
-            if (s is not string)
+            if (!(s is string))
             {
                 // do something
             }
