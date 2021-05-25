@@ -4,6 +4,8 @@ namespace EagleRepair.Ast.Services
     {
         bool InheritsFromIEnumerable(string typeSymbol);
 
+        bool IsIEnumerable(string typeSymbol);
+
         bool IsBuiltInType(string containingNamespace);
     }
 }

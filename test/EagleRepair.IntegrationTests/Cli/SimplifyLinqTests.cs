@@ -86,5 +86,13 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree);
         }
+
+        [Theory]
+        [MemberData(nameof(SimplifyIEnumerableLinqCountMethodDataProvider.TestCases),
+            MemberType = typeof(SimplifyIEnumerableLinqCountMethodDataProvider))]
+        public async Task SimplifyLinq_UsesCountMethod_ReturnsOriginal(string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree, false);
+        }
     }
 }

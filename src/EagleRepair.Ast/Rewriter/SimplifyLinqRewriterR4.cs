@@ -44,7 +44,8 @@ namespace EagleRepair.Ast.Rewriter
             if (node is { } countInvocationExpr && invokedMethodName.Equals("Count") &&
                 countInvocationExpr.Expression is MemberAccessExpressionSyntax countMemberAccessExpr &&
                 !countMemberAccessExpr.Name.ToString().Equals("Where") &&
-                !countMemberAccessExpr.ToString().Contains(".Where("))
+                !countMemberAccessExpr.ToString().Contains(".Where(") &&
+                !node.ArgumentList.Arguments.Any())
             {
                 var typeCount = SemanticModel.GetTypeInfo(node).Type;
 
@@ -71,10 +72,14 @@ namespace EagleRepair.Ast.Rewriter
                     return base.VisitInvocationExpression(node);
                 }
 
-                var memberNamespace = SemanticModel.GetTypeInfo(countIdentifierName)
-                    .Type?.ContainingNamespace?.ToString();
+                var memberNamespace = SemanticModel.GetTypeInfo(countIdentifierName).Type;
 
-                if (!TypeService.InheritsFromIEnumerable(memberNamespace))
+                if (!TypeService.InheritsFromIEnumerable(memberNamespace?.ContainingNamespace?.ToString()))
+                {
+                    return base.VisitInvocationExpression(node);
+                }
+
+                if (TypeService.IsIEnumerable(memberNamespace?.ToString()))
                 {
                     return base.VisitInvocationExpression(node);
                 }
