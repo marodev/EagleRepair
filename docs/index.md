@@ -1,17 +1,29 @@
 # Welcome to MkDocs
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+![Screenshot](img/eaglerepair-logo.png)
 
-## Commands
+<p align="center">
+    <em>EagleRepair is a cross-platform command line tool for automatically fixing static analysis warnigns in C# programs.</em>
+</p>
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
 
-## Project layout
+<p align="center">
+   <img src="https://github.com/marodev/EagleRepair/actions/workflows/ci.yml/badge.svg" />
+</p>
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+## Install
+
+### Prerequisites
+Install [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) or later
+
+### Command line tool
+EagleRepair is [available on NuGet](https://www.nuget.org/packages/EagleRepair.Cli) and can be installed as a global tool:
+```
+$ dotnet tool install --global EagleRepair.Cli
+```
+
+## 🤝 Contributing
+
+Contributions are welcome!
+
+Can you make EagleRepair even better? Feel free to open a pull request.
