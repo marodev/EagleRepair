@@ -69,12 +69,17 @@ namespace EagleRepair.Ast.Rewriter
                     return base.VisitBinaryExpression(node);
                 }
 
-                if (rightOperandExpr.Expression is not BinaryExpressionSyntax rightBinaryExprInParenthesis)
+                switch (rightOperandExpr.Expression)
                 {
-                    return base.VisitBinaryExpression(node);
+                    case BinaryExpressionSyntax rightBinaryExprInParenthesis:
+                        rightIdentifier = ExtractIdentifier(rightBinaryExprInParenthesis);
+                        break;
+                    case IsPatternExpressionSyntax rightExprIsPatternExpr:
+                        rightIdentifier = rightExprIsPatternExpr.Expression.ToString();
+                        break;
+                    default:
+                        return base.VisitBinaryExpression(node);
                 }
-
-                rightIdentifier = ExtractIdentifier(rightBinaryExprInParenthesis);
             }
 
             if (string.IsNullOrEmpty(rightIdentifier))

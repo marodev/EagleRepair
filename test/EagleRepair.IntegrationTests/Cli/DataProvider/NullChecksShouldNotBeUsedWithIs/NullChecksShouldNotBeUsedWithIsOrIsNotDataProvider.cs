@@ -14,7 +14,7 @@ namespace Entry
             if (s == null || !(s is string))
             {
                 // do something
-            } else if (s == null || !(s is string)) {
+            } else if (s == null || !(s is string str)) {
                 // do something
             }
         }
@@ -31,7 +31,7 @@ namespace Entry
             if (!(s is string))
             {
                 // do something
-            } else if (!(s is string)) {
+            } else if (!(s is string str)) {
                 // do something
             }
         }
