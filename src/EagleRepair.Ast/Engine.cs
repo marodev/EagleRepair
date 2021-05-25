@@ -124,7 +124,9 @@ namespace EagleRepair.Ast
                     var diagnosticsForDocAfterChanges = await GetDiagnostics(solution, document.Id);
 
                     if (diagnosticsForDocBeforeChanges is null ||
-                        diagnosticsForDocBeforeChanges.Value.Length < diagnosticsForDocAfterChanges.Length)
+                        diagnosticsForDocBeforeChanges.Value.Length < diagnosticsForDocAfterChanges.Length &&
+                        !IsDiffNotNeededUsingDirectiveError(diagnosticsForDocBeforeChanges.Value,
+                            diagnosticsForDocAfterChanges))
                     {
                         // something went wrong, revert changes!
                         solution = solution.WithDocumentSyntaxRoot(document.Id, root);
@@ -156,6 +158,15 @@ namespace EagleRepair.Ast
 
             var semanticModel = await foundDocument.GetSemanticModelAsync();
             return semanticModel?.GetDiagnostics() ?? new ImmutableArray<Diagnostic>();
+        }
+
+        private static bool IsDiffNotNeededUsingDirectiveError(ImmutableArray<Diagnostic> before,
+            ImmutableArray<Diagnostic> after)
+        {
+            const string NotNeededUsingDirectiveCode = "CS8019";
+            return before.Length == after.Length - 1 &&
+                   before.Count(d => d.Id.ToString().Equals(NotNeededUsingDirectiveCode)) ==
+                   after.Count(d => d.Id.ToString().Equals(NotNeededUsingDirectiveCode)) - 1;
         }
     }
 }

@@ -48,5 +48,7 @@ namespace EagleRepair.Ast.Services
 
         public ExpressionSyntax CreateConditionalBinaryExpr(string variableName, string memberName, SyntaxToken op,
             ExpressionSyntax rightExpr);
+
+        public SyntaxNode CreateSimpleMemberAccessExpr(string variableIdentifierName, string memberIdentifierName);
     }
 }

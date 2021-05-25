@@ -406,6 +406,14 @@ namespace EagleRepair.Ast.Services
                 rightExpr).NormalizeWhitespace();
         }
 
+        public SyntaxNode CreateSimpleMemberAccessExpr(string variableIdentifierName, string memberIdentifierName)
+        {
+            return MemberAccessExpression(
+                SyntaxKind.SimpleMemberAccessExpression,
+                IdentifierName(variableIdentifierName),
+                IdentifierName(memberIdentifierName));
+        }
+
         private static InterpolationFormatClauseSyntax GetInterpolatedFormat(string part)
         {
             InterpolationFormatClauseSyntax interpolationFormat;

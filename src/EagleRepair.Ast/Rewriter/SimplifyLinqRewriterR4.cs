@@ -41,6 +41,61 @@ namespace EagleRepair.Ast.Rewriter
                 return base.VisitInvocationExpression(node);
             }
 
+            if (node is { } countInvocationExpr && invokedMethodName.Equals("Count") &&
+                countInvocationExpr.Expression is MemberAccessExpressionSyntax countMemberAccessExpr &&
+                !countMemberAccessExpr.Name.ToString().Equals("Where") &&
+                !countMemberAccessExpr.ToString().Contains(".Where("))
+            {
+                var typeCount = SemanticModel.GetTypeInfo(node).Type;
+
+                if (typeCount == null)
+                {
+                    return base.VisitInvocationExpression(node);
+                }
+
+                var typeCountValue = typeCount.ToString();
+                if (string.IsNullOrEmpty(typeCountValue) || !typeCountValue.Equals("int"))
+                {
+                    return base.VisitInvocationExpression(node);
+                }
+
+                var nameSpaceCount = typeCount.ContainingNamespace?.ToString();
+
+                if (nameSpaceCount == null)
+                {
+                    return base.VisitInvocationExpression(node);
+                }
+
+                if (countMemberAccessExpr.Expression is not IdentifierNameSyntax countIdentifierName)
+                {
+                    return base.VisitInvocationExpression(node);
+                }
+
+                var memberNamespace = SemanticModel.GetTypeInfo(countIdentifierName)
+                    .Type?.ContainingNamespace?.ToString();
+
+                if (!TypeService.InheritsFromIEnumerable(memberNamespace))
+                {
+                    return base.VisitInvocationExpression(node);
+                }
+
+                var simpleMemberAccess = RewriteService
+                    .CreateSimpleMemberAccessExpr(countIdentifierName.Identifier.ValueText, "Count");
+
+                var lineNumber = $"{DisplayService.GetLineNumber(node)}";
+                var message = ReSharper.ReplaceWith(invokedMethodName) + " / " + SonarQube.RuleSpecification2971Message;
+                ChangeTracker.Stage(new Message
+                {
+                    RuleId = nameof(Rule.R4),
+                    LineNr = lineNumber,
+                    FilePath = FilePath,
+                    ProjectName = ProjectName,
+                    Text = message
+                });
+
+                return simpleMemberAccess;
+            }
+
             if (memberAccessExpr.Expression is not InvocationExpressionSyntax invocationExpr)
             {
                 return base.VisitInvocationExpression(node);
