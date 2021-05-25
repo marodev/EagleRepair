@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/marodev/EagleRepair"><img src="https://marodev.github.io/EagleRepair/img/eaglerepair-logo.png" alt="EagleRepair"></a>
+  <a href="https://github.com/marodev/EagleRepair"><img src="https://marodev.github.io/EagleRepair/img/eaglerepair-logo.png" alt="EagleRepair" width="400" ></a>
 </p>
 
 <p align="center">
@@ -11,7 +11,9 @@
 </p>
 
 ---
+
 **Documentation**: <a href="https://marodev.github.io/EagleRepair" target="_blank">https://marodev.github.io/EagleRepair</a>
+
 ---
 
 ## Install
