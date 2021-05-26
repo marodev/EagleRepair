@@ -24,7 +24,7 @@ Install [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) or later
 ### Command line tool
 EagleRepair is [available on NuGet](https://www.nuget.org/packages/EagleRepair.Cli) and can be installed as a global tool:
 ```
-$ dotnet tool install --global EagleRepair.Cli
+dotnet tool install --global EagleRepair.Cli
 ```
 
 ## Contributing
