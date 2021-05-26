@@ -16,6 +16,11 @@ namespace Entry
         {
             var list = new List<object>();
             var number = list.Count();
+
+            var list2 = new List<object>();
+            for(int i = 0; i < list2.Count(); i++) {
+                // do something
+            }
         }
     }
 }
@@ -33,6 +38,11 @@ namespace Entry
         {
             var list = new List<object>();
             var number = list.Count;
+
+            var list2 = new List<object>();
+            for(int i = 0; i < list2.Count; i++) {
+                // do something
+            }
         }
     }
 }
