@@ -14,6 +14,8 @@ namespace Entry
     {
         public bool Foo(IEnumerable<int> numbers)
         {
+            var enumerable = numbers as int[] ?? numbers.ToArray();
+            var isTrue = enumerable.Count(n => n > 42) > 0;
             return numbers.Count() > 0;
         }
     }
@@ -30,6 +32,8 @@ namespace Entry
     {
         public bool Foo(IEnumerable<int> numbers)
         {
+            var enumerable = numbers as int[] ?? numbers.ToArray();
+            var isTrue = enumerable.Any(n => n > 42);
             return numbers.Any();
         }
     }

@@ -65,14 +65,15 @@ namespace EagleRepair.Ast.Rewriter
                 .ContainingNamespace
                 ?.ToDisplayString();
 
-            if (string.IsNullOrEmpty(containingNamespace))
-            {
-                return base.VisitBinaryExpression(node);
-            }
-
             if (!TypeService.InheritsFromIEnumerable(containingNamespace))
             {
-                return base.VisitBinaryExpression(node);
+                var implementedInterfaces = typeSymbol.Interfaces;
+
+                if (!implementedInterfaces.Any(i => TypeService.InheritsFromIEnumerable(i.ToString())))
+                {
+                    // e.g. int[] implements System.Collection.Generics
+                    return base.VisitBinaryExpression(node);
+                }
             }
 
             if (node.Left is ConditionalAccessExpressionSyntax)
