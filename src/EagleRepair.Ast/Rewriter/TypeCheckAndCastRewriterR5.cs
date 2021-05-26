@@ -9,7 +9,6 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EagleRepair.Ast.Rewriter
 {
-    // TODO: needs improvement, i.e., doesn't cover all cases
     public class TypeCheckAndCastRewriterR5 : AbstractRewriter
     {
         private readonly ITriviaService _triviaService;
@@ -55,7 +54,9 @@ namespace EagleRepair.Ast.Rewriter
             var parentExpr = targetCastExpr?.Parent;
 
             if (parentExpr is not ParenthesizedExpressionSyntax &&
-                parentExpr is not EqualsValueClauseSyntax)
+                parentExpr is not EqualsValueClauseSyntax &&
+                parentExpr is not ArgumentSyntax &&
+                parentExpr is not AssignmentExpressionSyntax)
             {
                 return base.VisitIfStatement(node);
             }
@@ -69,54 +70,53 @@ namespace EagleRepair.Ast.Rewriter
             }
 
             IfStatementSyntax ifStatementSyntax;
-            // TODO: we might have to cover more variations here
             switch (parentExpr.Parent)
             {
+                case ExpressionStatementSyntax expressionStatementSyntax:
+
+                    var patVariableName = GetPatternVariableName(targetCastExpr);
+
+                    if (string.IsNullOrEmpty(patVariableName))
+                    {
+                        return base.VisitIfStatement(node);
+                    }
+
+                    var isPatExpr = RewriteService.CreateIsPattern(left, targetCastExpr.Type,
+                        patVariableName);
+
+                    var newIdentifier = RewriteService.CreateIdentifier(patVariableName);
+                    var newIfNodeWithWithAssignmentAndNoCast = node.ReplaceNode(targetCastExpr, newIdentifier);
+
+                    newIfNodeWithWithAssignmentAndNoCast =
+                        newIfNodeWithWithAssignmentAndNoCast.ReplaceNode(newIfNodeWithWithAssignmentAndNoCast.Condition,
+                            isPatExpr);
+
+                    ifStatementSyntax = newIfNodeWithWithAssignmentAndNoCast;
+
+                    break;
+                case ArgumentListSyntax:
+                    var ptVariableName = GetPatternVariableName(targetCastExpr);
+
+                    if (string.IsNullOrEmpty(ptVariableName))
+                    {
+                        return base.VisitIfStatement(node);
+                    }
+
+                    var isPatternExpr = RewriteService.CreateIsPattern(left, targetCastExpr.Type,
+                        ptVariableName);
+
+                    var newArgument = RewriteService.CreateArgument(ptVariableName);
+
+                    var newIfNodeWithWithArgumentInsteadOfCast = node.ReplaceNode(parentExpr, newArgument);
+
+                    ifStatementSyntax =
+                        newIfNodeWithWithArgumentInsteadOfCast.ReplaceNode(
+                            newIfNodeWithWithArgumentInsteadOfCast.Condition, isPatternExpr);
+                    break;
                 case MemberAccessExpressionSyntax memberAccessExpr:
                     {
                         var targetMethodName = memberAccessExpr.Name.Identifier.ValueText;
-
-                        string patternVariableName;
-                        if (targetCastExpr.Type.IsKind(SyntaxKind.ArrayType))
-                        {
-                            patternVariableName = targetCastExpr.Type.ToString();
-                            patternVariableName = patternVariableName.Split("[").FirstOrDefault();
-
-                            if (string.IsNullOrEmpty(patternVariableName))
-                            {
-                                return base.VisitIfStatement(node);
-                            }
-
-                            patternVariableName += "s";
-                        }
-                        else if (targetCastExpr.Type is QualifiedNameSyntax qfn &&
-                                 qfn.Right.IsKind(SyntaxKind.GenericName))
-                        {
-                            var rightQualifiedName = qfn.Right;
-                            patternVariableName = ParseGenericName(rightQualifiedName as GenericNameSyntax);
-                        }
-                        else if (targetCastExpr.Type.IsKind(SyntaxKind.GenericName))
-                        {
-                            patternVariableName = ParseGenericName(targetCastExpr.Type as GenericNameSyntax);
-                        }
-                        else
-                        {
-                            // take first lowercase character if built-in type
-                            patternVariableName = targetCastExpr.Type.Kind() == SyntaxKind.PredefinedType
-                                ? targetType[0].ToString().ToLower()
-                                : targetType.FirstCharToLowerCase();
-
-                            if (patternVariableName.Equals("double") || patternVariableName.Equals("int16") ||
-                                patternVariableName.Equals("int32") || patternVariableName.Equals("int64"))
-                            {
-                                patternVariableName = patternVariableName[0].ToString().ToLower();
-                            }
-                        }
-
-                        if (patternVariableName.Contains("."))
-                        {
-                            patternVariableName = patternVariableName.Split(".").Last().FirstCharToLowerCase();
-                        }
+                        var patternVariableName = GetPatternVariableName(targetCastExpr);
 
                         if (string.IsNullOrEmpty(patternVariableName))
                         {
@@ -228,6 +228,53 @@ namespace EagleRepair.Ast.Rewriter
             }
 
             patternVariableName += "s";
+
+            return patternVariableName;
+        }
+
+        private static string GetPatternVariableName(CastExpressionSyntax targetCastExpr)
+        {
+            string patternVariableName;
+            if (targetCastExpr.Type.IsKind(SyntaxKind.ArrayType))
+            {
+                patternVariableName = targetCastExpr.Type.ToString();
+                patternVariableName = patternVariableName.Split("[").FirstOrDefault();
+
+                if (string.IsNullOrEmpty(patternVariableName))
+                {
+                    return null;
+                }
+
+                patternVariableName += "s";
+            }
+            else if (targetCastExpr.Type is QualifiedNameSyntax qfn &&
+                     qfn.Right.IsKind(SyntaxKind.GenericName))
+            {
+                var rightQualifiedName = qfn.Right;
+                patternVariableName = ParseGenericName(rightQualifiedName as GenericNameSyntax);
+            }
+            else if (targetCastExpr.Type.IsKind(SyntaxKind.GenericName))
+            {
+                patternVariableName = ParseGenericName(targetCastExpr.Type as GenericNameSyntax);
+            }
+            else
+            {
+                // take first lowercase character if built-in type
+                patternVariableName = targetCastExpr.Type.Kind() == SyntaxKind.PredefinedType
+                    ? targetCastExpr.Type.ToString()[0].ToString().ToLower()
+                    : targetCastExpr.Type.ToString().FirstCharToLowerCase();
+
+                if (patternVariableName.Equals("double") || patternVariableName.Equals("int16") ||
+                    patternVariableName.Equals("int32") || patternVariableName.Equals("int64"))
+                {
+                    patternVariableName = patternVariableName[0].ToString().ToLower();
+                }
+            }
+
+            if (patternVariableName.Contains("."))
+            {
+                patternVariableName = patternVariableName.Split(".").Last().FirstCharToLowerCase();
+            }
 
             return patternVariableName;
         }

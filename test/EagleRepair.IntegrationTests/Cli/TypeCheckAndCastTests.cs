@@ -73,5 +73,14 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree);
         }
+
+        [Theory]
+        [MemberData(nameof(TypeCheckAndCastIsPatternAndCastDataProvider.TestCases),
+            MemberType = typeof(TypeCheckAndCastIsPatternAndCastDataProvider))]
+        public async Task UseTypeCheck_AndCast_ReturnsPatternExprWithoutCast(
+            string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree);
+        }
     }
 }

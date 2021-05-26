@@ -50,5 +50,9 @@ namespace EagleRepair.Ast.Services
             ExpressionSyntax rightExpr);
 
         public SyntaxNode CreateSimpleMemberAccessExpr(string variableIdentifierName, string memberIdentifierName);
+
+        public ArgumentSyntax CreateArgument(string argName);
+
+        public IdentifierNameSyntax CreateIdentifier(string identifierName);
     }
 }

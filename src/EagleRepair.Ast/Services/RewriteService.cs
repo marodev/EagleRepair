@@ -414,6 +414,16 @@ namespace EagleRepair.Ast.Services
                 IdentifierName(memberIdentifierName));
         }
 
+        public ArgumentSyntax CreateArgument(string argName)
+        {
+            return Argument(IdentifierName(argName));
+        }
+
+        public IdentifierNameSyntax CreateIdentifier(string identifierName)
+        {
+            return IdentifierName(identifierName);
+        }
+
         private static InterpolationFormatClauseSyntax GetInterpolatedFormat(string part)
         {
             InterpolationFormatClauseSyntax interpolationFormat;
