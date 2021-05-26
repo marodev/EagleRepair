@@ -11,7 +11,16 @@ namespace EagleRepair.IntegrationTests.Cli
             MemberType = typeof(EngineShouldNotAcceptDataProvider))]
         public async Task CanBeRefactored_ButNotInGivenContext_ReturnsOriginal(string inputTree, string expectedTree)
         {
-            await TestExecutor.Run(inputTree, expectedTree, false);
+            await TestExecutor.Run(inputTree, expectedTree, false, true);
+        }
+
+        [Theory]
+        [MemberData(nameof(EngineSemanticModelNotAcceptDataProvider.TestCases),
+            MemberType = typeof(EngineSemanticModelNotAcceptDataProvider))]
+        public async Task CanBeRefactored_ButNotWithSameIdentifier_ReturnsOriginal(string inputTree,
+            string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree, false, true);
         }
     }
 }

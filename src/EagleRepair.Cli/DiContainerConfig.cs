@@ -17,7 +17,9 @@ namespace EagleRepair.Cli
 
             builder.RegisterType<ProgressBar>().As<IProgressBar>().SingleInstance();
             builder.RegisterType<TriviaService>().As<ITriviaService>();
-            builder.RegisterType<FaultTracker>().As<IFaultTracker>();
+            builder.RegisterType<FaultTracker>().As<IFaultTracker>().SingleInstance();
+            ;
+            ;
             builder.RegisterType<TimeTracker>().As<ITimeTracker>();
             builder.RegisterType<DisplayService>().As<IDisplayService>();
             builder.RegisterType<RewriteService>().As<IRewriteService>();

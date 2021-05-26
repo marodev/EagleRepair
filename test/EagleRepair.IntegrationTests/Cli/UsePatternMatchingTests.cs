@@ -37,7 +37,7 @@ namespace EagleRepair.IntegrationTests.Cli
         public async Task UseAsType_VariableAccessedMultipleTimesNotInCondition_ReturnsOriginal(string inputTree,
             string expectedTree)
         {
-            await TestExecutor.Run(inputTree, expectedTree, false);
+            await TestExecutor.Run(inputTree, expectedTree, false, true);
         }
 
         [Theory]
@@ -55,7 +55,7 @@ namespace EagleRepair.IntegrationTests.Cli
         public async Task UseAsType_NotInCondition_ReturnsOriginal(string inputTree,
             string expectedTree)
         {
-            await TestExecutor.Run(inputTree, expectedTree, false);
+            await TestExecutor.Run(inputTree, expectedTree, false, true);
         }
 
         [Theory]
