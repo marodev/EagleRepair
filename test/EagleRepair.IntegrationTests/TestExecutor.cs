@@ -15,7 +15,8 @@ namespace EagleRepair.IntegrationTests
 {
     public static class TestExecutor
     {
-        public static async Task Run(string inputTree, string expectedTree, bool hasMessage = true)
+        public static async Task Run(string inputTree, string expectedTree, bool hasMessage = true,
+            bool hasDiagnostics = false)
         {
             // Arrange
             var diBuilder = DiContainerTestConfig.Builder();
@@ -24,7 +25,7 @@ namespace EagleRepair.IntegrationTests
             var diContainer = diBuilder.Build();
             await using var scope = diContainer.BeginLifetimeScope();
             var app = scope.Resolve<IApplication>();
-            var cmdArgs = new List<string> {"-p", "ignore.sln"};
+            var cmdArgs = new List<string> {"-p", "ignore.sln", "-v", "True"};
 
             // Act
             var succeeded = await app.Run(cmdArgs);
@@ -47,6 +48,17 @@ namespace EagleRepair.IntegrationTests
             else
             {
                 Assert.False(messages.Any());
+            }
+
+            var faultTracker = scope.Resolve<IFaultTracker>();
+            if (hasDiagnostics)
+            {
+                Assert.NotEqual(FaultTracker.EmptyDiagnosticsMessage, faultTracker.ToDisplayString());
+                Assert.NotEmpty(FaultTracker.EmptyDiagnosticsMessage);
+            }
+            else
+            {
+                Assert.Equal(FaultTracker.EmptyDiagnosticsMessage, faultTracker.ToDisplayString());
             }
         }
 

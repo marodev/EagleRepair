@@ -13,17 +13,19 @@ namespace EagleRepair.Ast
     public class Engine : IEngine
     {
         private readonly IChangeTracker _changeTracker;
+        private readonly IFaultTracker _faultTracker;
         private readonly IProgressBar _progressBar;
         private readonly ISolutionParser _solutionParser;
         private readonly ICollection<AbstractRewriter> _visitors;
 
         public Engine(ICollection<AbstractRewriter> visitors, ISolutionParser solutionParser, IProgressBar progressBar,
-            IChangeTracker changeTracker)
+            IChangeTracker changeTracker, IFaultTracker faultTracker)
         {
             _visitors = visitors;
             _solutionParser = solutionParser;
             _progressBar = progressBar;
             _changeTracker = changeTracker;
+            _faultTracker = faultTracker;
         }
 
         public async Task<bool> RunAsync(string solutionFilePath, IEnumerable<Rule> rules)
@@ -73,7 +75,7 @@ namespace EagleRepair.Ast
             {
                 // report progress to console
                 _progressBar.Report((double)counter / totalDocuments, document.Name);
-                foreach (var rewriter in visitors)
+                foreach (var visitor in visitors)
                 {
                     // Fetch document in solution
                     var modifiedDoc = solution.GetDocument(document.Id);
@@ -86,26 +88,30 @@ namespace EagleRepair.Ast
                     var syntaxTree = await modifiedDoc.GetSyntaxTreeAsync();
                     if (syntaxTree is null)
                     {
-                        Console.WriteLine($"Error: Unable to parse SyntaxTree for document: {modifiedDoc.Name}");
+                        _faultTracker.Add(visitor.GetType().Name, document.FilePath,
+                            $"Error: Unable to parse SyntaxTree for document: {modifiedDoc.Name}", "-", "-");
                         continue;
                     }
 
                     var root = await syntaxTree.GetRootAsync();
                     var semanticModel = await modifiedDoc.GetSemanticModelAsync();
 
-                    rewriter.SemanticModel = semanticModel;
-                    rewriter.Workspace = solution.Workspace;
-                    rewriter.FilePath = modifiedDoc.FilePath;
-                    rewriter.ProjectName = modifiedDoc.Project.Name;
+                    visitor.SemanticModel = semanticModel;
+                    visitor.Workspace = solution.Workspace;
+                    visitor.FilePath = modifiedDoc.FilePath;
+                    visitor.ProjectName = modifiedDoc.Project.Name;
 
                     SyntaxNode newRoot;
                     try
                     {
-                        newRoot = rewriter.Visit(root);
+                        newRoot = visitor.Visit(root);
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
-                        // TODO: we might log the exception at a later point and offer a verbose mode
+                        _faultTracker.Add(visitor.GetType().Name, document.FilePath,
+                            $"Error: Unable to create valid SyntaxTree for document: {modifiedDoc.Name}. " +
+                            $"Caught exception: {e}, Message: {e.Message}",
+                            root.ToString(), "-");
                         continue;
                     }
 
@@ -130,6 +136,11 @@ namespace EagleRepair.Ast
                     {
                         // something went wrong, revert changes!
                         solution = solution.WithDocumentSyntaxRoot(document.Id, root);
+                        _faultTracker.Add(visitor.GetType().Name, document.FilePath,
+                            "Error: The created Syntax Tree is semantically incorrect.",
+                            root.ToString(), newRoot.ToString(),
+                            string.Join(",", diagnosticsForDocBeforeChanges),
+                            string.Join(",", diagnosticsForDocAfterChanges));
                         _changeTracker.Revert();
                     }
                     else
