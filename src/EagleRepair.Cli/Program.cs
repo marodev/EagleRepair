@@ -9,11 +9,6 @@ namespace EagleRepair.Cli
     {
         public static int Main(string[] args)
         {
-            args = new[]
-            {
-                "-p", "/Users/martinodermatt/repos/thesis/AzureDevops/FunctionsHostAzure/WebJobs.Script.sln", "-r",
-                "R5"
-            };
             try
             {
                 return StartApp(args).Result;

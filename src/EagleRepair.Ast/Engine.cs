@@ -98,11 +98,6 @@ namespace EagleRepair.Ast
                     rewriter.FilePath = modifiedDoc.FilePath;
                     rewriter.ProjectName = modifiedDoc.Project.Name;
 
-                    if (document.Name.Contains("FunctionBinding"))
-                    {
-                        var s = "s";
-                    }
-
                     SyntaxNode newRoot;
                     try
                     {
