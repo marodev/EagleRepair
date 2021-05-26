@@ -136,11 +136,21 @@ namespace EagleRepair.Ast
                     {
                         // something went wrong, revert changes!
                         solution = solution.WithDocumentSyntaxRoot(document.Id, root);
-                        _faultTracker.Add(visitor.GetType().Name, document.FilePath,
-                            "Error: The created Syntax Tree is semantically incorrect.",
-                            root.ToString(), newRoot.ToString(),
-                            string.Join(",", diagnosticsForDocBeforeChanges),
-                            string.Join(",", diagnosticsForDocAfterChanges));
+                        if (diagnosticsForDocBeforeChanges is not null)
+                        {
+                            _faultTracker.Add(visitor.GetType().Name, document.FilePath,
+                                "Error: The created Syntax Tree is semantically incorrect.",
+                                root.ToString(), newRoot.ToString(),
+                                string.Join(",", diagnosticsForDocBeforeChanges.Value),
+                                string.Join(",", diagnosticsForDocAfterChanges));
+                        }
+                        else
+                        {
+                            _faultTracker.Add(visitor.GetType().Name, document.FilePath,
+                                "Error: Failed to create a semantic model.",
+                                root.ToString(), newRoot.ToString());
+                        }
+
                         _changeTracker.Revert();
                     }
                     else
