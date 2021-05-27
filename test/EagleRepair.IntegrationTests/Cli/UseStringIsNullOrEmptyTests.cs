@@ -29,5 +29,13 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree, false);
         }
+
+        [Theory]
+        [MemberData(nameof(UseStringIsNullOrEmptyStringEmptyDataProvider.TestCases),
+            MemberType = typeof(UseStringIsNullOrEmptyStringEmptyDataProvider))]
+        public async Task UseStringEmpty_ReturnsStringIsNullOrEmpty(string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree);
+        }
     }
 }

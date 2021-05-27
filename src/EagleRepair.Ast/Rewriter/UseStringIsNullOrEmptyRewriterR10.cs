@@ -3,6 +3,7 @@ using EagleRepair.Ast.Services;
 using EagleRepair.Ast.Url;
 using EagleRepair.Monitor;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace EagleRepair.Ast.Rewriter
@@ -13,6 +14,68 @@ namespace EagleRepair.Ast.Rewriter
             IRewriteService rewriteService, IDisplayService displayService) : base(
             changeTracker, typeService, rewriteService, displayService)
         {
+        }
+
+        private SyntaxNode ExtractIsNullOrEmpty(InvocationExpressionSyntax node)
+        {
+            if (node.ArgumentList.Arguments.Count != 1)
+            {
+                return null;
+            }
+
+            var firstArgument = node.ArgumentList.Arguments.First();
+
+            if (firstArgument.Expression is not MemberAccessExpressionSyntax memberAccessExpressionSyntax)
+            {
+                return null;
+            }
+
+            if (!memberAccessExpressionSyntax.Name.ToString().Equals("Empty"))
+            {
+                return null;
+            }
+
+            if (!memberAccessExpressionSyntax.OperatorToken.IsKind(SyntaxKind.DotToken))
+            {
+                return null;
+            }
+
+            var stringIdentifier = memberAccessExpressionSyntax.Expression;
+
+            if (!stringIdentifier.IsKind(SyntaxKind.PredefinedType))
+            {
+                return null;
+            }
+
+            if (!stringIdentifier.ToString().Equals("string"))
+            {
+                return null;
+            }
+
+            if (node.Expression is not MemberAccessExpressionSyntax memberAccessExpr)
+            {
+                return null;
+            }
+
+            if (memberAccessExpr.Expression is not IdentifierNameSyntax identifier)
+            {
+                return null;
+            }
+
+            return RewriteService.CreateIsNullOrEmpty(identifier.ToString());
+        }
+
+        public override SyntaxNode VisitInvocationExpression(InvocationExpressionSyntax node)
+        {
+            var newNode = ExtractIsNullOrEmpty(node);
+
+            if (newNode is null)
+            {
+                return base.VisitInvocationExpression(node);
+            }
+
+            AddNodeToMonitor(newNode);
+            return newNode;
         }
 
         public override SyntaxNode VisitBinaryExpression(BinaryExpressionSyntax node)
@@ -32,10 +95,83 @@ namespace EagleRepair.Ast.Rewriter
 
             if (node.Right is not BinaryExpressionSyntax subRightBinaryExpr)
             {
-                return base.VisitBinaryExpression(node);
+                if (node.Right is not (InvocationExpressionSyntax or PrefixUnaryExpressionSyntax))
+                {
+                    return base.VisitBinaryExpression(node);
+                }
+
+                if (node.Left is not BinaryExpressionSyntax leftBinaryExpr)
+                {
+                    return base.VisitBinaryExpression(node);
+                }
+
+                SyntaxNode newSyntaxNode;
+                if (node.Right is InvocationExpressionSyntax invocationExpr)
+                {
+                    newSyntaxNode = ExtractIsNullOrEmpty(invocationExpr);
+                }
+                else
+                {
+                    var prefixUnaryExpr = node.Right as PrefixUnaryExpressionSyntax;
+                    var invocOp = prefixUnaryExpr?.Operand;
+
+                    if (invocOp is not InvocationExpressionSyntax syntax)
+                    {
+                        return base.VisitBinaryExpression(node);
+                    }
+
+                    invocationExpr = syntax;
+                    var newStringIsNullOrEmptyNode = ExtractIsNullOrEmpty(syntax);
+
+                    if (newStringIsNullOrEmptyNode is null)
+                    {
+                        return base.VisitBinaryExpression(node);
+                    }
+
+                    if (invocationExpr.Expression is not MemberAccessExpressionSyntax memberAccessExpr)
+                    {
+                        return base.VisitBinaryExpression(node);
+                    }
+
+                    var variableName = memberAccessExpr.Expression.ToString();
+
+                    newSyntaxNode = RewriteService.CreateIsNotNullOrEmpty(variableName);
+                }
+
+                if (newSyntaxNode is null)
+                {
+                    return base.VisitBinaryExpression(node);
+                }
+
+                if (leftBinaryExpr.Left is not IdentifierNameSyntax subLeftIdentifierName)
+                {
+                    return base.VisitBinaryExpression(node);
+                }
+
+                if (invocationExpr.Expression is not MemberAccessExpressionSyntax memberAccessExpressionSyntax)
+                {
+                    return base.VisitBinaryExpression(node);
+                }
+
+                // TODO: code duplication - cleanup
+                if (memberAccessExpressionSyntax.Expression is not IdentifierNameSyntax rightIdentifierNme)
+                {
+                    return base.VisitBinaryExpression(node);
+                }
+
+                var rightId = rightIdentifierNme.Identifier.ToString();
+                var leftIdentifier = subLeftIdentifierName.Identifier.ToString();
+
+                if (!leftIdentifier.Equals(rightId))
+                {
+                    return base.VisitBinaryExpression(node);
+                }
+
+                AddNodeToMonitor(node);
+                return newSyntaxNode;
             }
 
-            if (subRightBinaryExpr.Right is not LiteralExpressionSyntax subRightNumericLiteralExpr)
+            if (subRightBinaryExpr.Right is not LiteralExpressionSyntax)
             {
                 return base.VisitBinaryExpression(node);
             }
@@ -148,8 +284,8 @@ namespace EagleRepair.Ast.Rewriter
                 return base.VisitBinaryExpression(node);
             }
 
-            var leftSymbol = SemanticModel.GetTypeInfo(leftIdentifierName).Type?.ToString();
-            var rightSymbol = SemanticModel.GetTypeInfo(rightIdentifierName).Type?.ToString();
+            var leftSymbol = ModelExtensions.GetTypeInfo(SemanticModel, leftIdentifierName).Type?.ToString();
+            var rightSymbol = ModelExtensions.GetTypeInfo(SemanticModel, rightIdentifierName).Type?.ToString();
 
             // must be of type string, otherwise string.IsNullOrEmpty(..) can't be used.
             if (!"string".Equals(leftSymbol) || !leftSymbol.Equals(rightSymbol))
@@ -159,6 +295,15 @@ namespace EagleRepair.Ast.Rewriter
 
             var newNode = RewriteService.CreateIsNotNullOrEmpty(leftIdentifierName.ToString());
 
+            AddNodeToMonitor(newNode);
+
+            // keep original space after node
+            newNode = newNode.WithTrailingTrivia(node.GetTrailingTrivia());
+            return newNode;
+        }
+
+        private void AddNodeToMonitor(SyntaxNode node)
+        {
             var lineNumber = $"{DisplayService.GetLineNumber(node)}";
             var message = ReSharper.ReplaceWithStringIsNullOrEmptyMessage + " / " +
                           SonarQube.RuleSpecification3256Message;
@@ -171,10 +316,6 @@ namespace EagleRepair.Ast.Rewriter
                 ProjectName = ProjectName,
                 Text = message
             });
-
-            // keep original space after node
-            newNode = newNode.WithTrailingTrivia(node.GetTrailingTrivia());
-            return newNode;
         }
     }
 }

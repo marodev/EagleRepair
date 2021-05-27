@@ -28,6 +28,8 @@ namespace EagleRepair.Ast.Services
 
         public PrefixUnaryExpressionSyntax CreateIsNotNullOrEmpty(string variableName);
 
+        public ExpressionSyntax CreateIsNullOrEmpty(string variableName);
+
         public ExpressionSyntax ConvertUnaryToIsNotPattern(PrefixUnaryExpressionSyntax unaryExpr);
 
         public ExpressionSyntax CreateConditionalAccess(string variableName, string memberName);

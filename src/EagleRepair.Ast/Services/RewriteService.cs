@@ -301,6 +301,21 @@ namespace EagleRepair.Ast.Services
                                     IdentifierName(variableName))))));
         }
 
+        public ExpressionSyntax CreateIsNullOrEmpty(string variableName)
+        {
+            return InvocationExpression(
+                    MemberAccessExpression(
+                        SyntaxKind.SimpleMemberAccessExpression,
+                        PredefinedType(
+                            Token(SyntaxKind.StringKeyword)),
+                        IdentifierName("IsNullOrEmpty")))
+                .WithArgumentList(
+                    ArgumentList(
+                        SingletonSeparatedList(
+                            Argument(
+                                IdentifierName(variableName)))));
+        }
+
         public ExpressionSyntax ConvertUnaryToIsNotPattern(PrefixUnaryExpressionSyntax unaryExpr)
         {
             var binaryExpr = unaryExpr.DescendantNodes().OfType<BinaryExpressionSyntax>().FirstOrDefault();
