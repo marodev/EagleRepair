@@ -17,9 +17,24 @@ namespace EagleRepair.Ast.Rewriter
 
         public override SyntaxNode VisitBinaryExpression(BinaryExpressionSyntax node)
         {
-            if (node.Left is not BinaryExpressionSyntax leftBinaryExpr)
+            BinaryExpressionSyntax leftBinaryExpr;
+            switch (node.Left)
             {
-                return base.VisitBinaryExpression(node);
+                case BinaryExpressionSyntax left:
+                    leftBinaryExpr = left;
+                    break;
+                case ParenthesizedExpressionSyntax parenthesizedExpr:
+                    {
+                        if (parenthesizedExpr.Expression is not BinaryExpressionSyntax binaryExpr)
+                        {
+                            return base.VisitBinaryExpression(node);
+                        }
+
+                        leftBinaryExpr = binaryExpr;
+                        break;
+                    }
+                default:
+                    return base.VisitBinaryExpression(node);
             }
 
             var leftIdentifierName = leftBinaryExpr.Left as IdentifierNameSyntax;

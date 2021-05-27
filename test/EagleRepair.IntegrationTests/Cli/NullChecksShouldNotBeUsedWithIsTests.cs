@@ -53,5 +53,13 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree);
         }
+
+        [Theory]
+        [MemberData(nameof(NullChecksShouldNotBeUsedWithIsParenthesesDataProvider.TestCases),
+            MemberType = typeof(NullChecksShouldNotBeUsedWithIsParenthesesDataProvider))]
+        public async Task UseNullOrNotPattern_ReturnsIsNot(string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree);
+        }
     }
 }
