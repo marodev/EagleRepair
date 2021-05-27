@@ -22,5 +22,14 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree, false, true);
         }
+
+        [Theory]
+        [MemberData(nameof(EngineDuplicatedVariableDeclDataProvider.TestCases),
+            MemberType = typeof(EngineDuplicatedVariableDeclDataProvider))]
+        public async Task CanBeRefactored_ButNotWithSameVariableDecl_ReturnsOriginal(string inputTree,
+            string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree, false, true);
+        }
     }
 }
