@@ -265,7 +265,8 @@ namespace EagleRepair.Ast.Rewriter
                     : targetCastExpr.Type.ToString().FirstCharToLowerCase();
 
                 if (patternVariableName.Equals("double") || patternVariableName.Equals("int16") ||
-                    patternVariableName.Equals("int32") || patternVariableName.Equals("int64"))
+                    patternVariableName.Equals("int32") || patternVariableName.Equals("int64") ||
+                    patternVariableName.Equals("decimal") || patternVariableName.Equals("float"))
                 {
                     patternVariableName = patternVariableName[0].ToString().ToLower();
                 }
