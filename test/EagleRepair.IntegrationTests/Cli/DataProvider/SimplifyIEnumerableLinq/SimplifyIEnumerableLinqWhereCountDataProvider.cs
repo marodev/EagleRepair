@@ -18,6 +18,10 @@ namespace Entry
 
             var result = list.Where(i => i is not null && i.ToString().Equals(""foo"")).Count();
 
+            if(list.Where(i => i is not null && i.ToString().Equals(""foo"")).Count() == 0) {
+                // do something
+            }
+
             return result > 0;
         }
     }
@@ -36,6 +40,10 @@ namespace Entry
             var list = new List<object>();
 
             var result = list.Count(i => i is not null && i.ToString().Equals(""foo""));
+
+            if(!list.Any(i => i is not null && i.ToString().Equals(""foo""))) {
+                // do something
+            }
 
             return result > 0;
         }
