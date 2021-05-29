@@ -12,7 +12,7 @@ namespace EagleRepair.Ast.Services
 
         public MemberAccessExpressionSyntax CreateMemberAccess(string variable, string methodName);
 
-        public InvocationExpressionSyntax CreateInvocation(string variable, string methodName,
+        public InvocationExpressionSyntax CreateInvocation(ExpressionSyntax identifierOrInvocExpr, string methodName,
             ArgumentListSyntax arguments = null);
 
         public IsPatternExpressionSyntax CreateIsPattern(ExpressionSyntax identifierName, TypeSyntax type,

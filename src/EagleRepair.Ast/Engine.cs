@@ -62,7 +62,7 @@ namespace EagleRepair.Ast
             return (from visitor in visitors
                     let className = visitor.GetType().Name
                     where rules.Any(r => className.EndsWith(r.ToString()))
-                    select visitor)
+                    select visitor).OrderByDescending(r => r.Priority)
                 .ToList();
         }
 

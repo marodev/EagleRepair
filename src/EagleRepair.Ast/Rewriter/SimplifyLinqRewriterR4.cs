@@ -134,12 +134,10 @@ namespace EagleRepair.Ast.Rewriter
                 return base.VisitInvocationExpression(node);
             }
 
-            if (variableIdentifier is not IdentifierNameSyntax variable)
+            if (variableIdentifier is not IdentifierNameSyntax && variableIdentifier is not InvocationExpressionSyntax)
             {
                 return base.VisitInvocationExpression(node);
             }
-
-            var variableName = variable.Identifier.ToString();
 
             if (!invokedMethodName.Equals("Select"))
             {
@@ -155,7 +153,7 @@ namespace EagleRepair.Ast.Rewriter
                 }
 
                 var newNode =
-                    RewriteService.CreateInvocation(variableName, invokedMethodName, invocationExpr.ArgumentList);
+                    RewriteService.CreateInvocation(variableIdentifier, invokedMethodName, invocationExpr.ArgumentList);
 
                 var lineNumber = $"{DisplayService.GetLineNumber(node)}";
                 var message = ReSharper.ReplaceWith(invokedMethodName) + " / " + SonarQube.RuleSpecification2971Message;
@@ -245,6 +243,14 @@ namespace EagleRepair.Ast.Rewriter
                     return base.VisitInvocationExpression(node);
             }
 
+            if (variableIdentifier is not IdentifierNameSyntax identifierNameSyntax)
+            {
+                return base.VisitInvocationExpression(node);
+            }
+
+            var variableName = identifierNameSyntax.ToString();
+            var newOfTypeNode = RewriteService.CreateOfTypeT(variableName, castedTypeInWhereCondition);
+
             var lineNr = $"{DisplayService.GetLineNumber(node)}";
             var msg = ReSharper.ReplaceWithOfType2Message + " / " + SonarQube.RuleSpecification2971Message;
             ChangeTracker.Stage(new Message
@@ -255,8 +261,6 @@ namespace EagleRepair.Ast.Rewriter
                 ProjectName = ProjectName,
                 Text = msg
             });
-
-            var newOfTypeNode = RewriteService.CreateOfTypeT(variableName, castedTypeInWhereCondition);
 
             return base.VisitInvocationExpression(newOfTypeNode);
         }

@@ -1,4 +1,5 @@
 using System.Linq;
+using EagleRepair.Ast.Priority;
 using EagleRepair.Ast.ReservedToken;
 using EagleRepair.Ast.Services;
 using EagleRepair.Ast.Url;
@@ -18,6 +19,7 @@ namespace EagleRepair.Ast.Rewriter
             IRewriteService rewriteService, IDisplayService displayService) :
             base(changeTracker, typeService, rewriteService, displayService)
         {
+            Priority = RewriterPriority.MEDIUM;
         }
 
 

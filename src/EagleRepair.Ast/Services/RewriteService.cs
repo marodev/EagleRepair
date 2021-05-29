@@ -91,13 +91,13 @@ namespace EagleRepair.Ast.Services
                 IdentifierName(methodName));
         }
 
-        public InvocationExpressionSyntax CreateInvocation(string variable, string methodName,
+        public InvocationExpressionSyntax CreateInvocation(ExpressionSyntax identifierOrInvocExpr, string methodName,
             ArgumentListSyntax arguments = null)
         {
             var invocation = InvocationExpression(
                 MemberAccessExpression(
                     SyntaxKind.SimpleMemberAccessExpression,
-                    IdentifierName(variable),
+                    identifierOrInvocExpr,
                     IdentifierName(methodName)));
 
             if (arguments is null)
@@ -107,6 +107,23 @@ namespace EagleRepair.Ast.Services
 
             return invocation.WithArgumentList(arguments);
         }
+
+        // public InvocationExpressionSyntax CreateInvocation(string variable, string methodName,
+        //     ArgumentListSyntax arguments = null)
+        // {
+        //     var invocation = InvocationExpression(
+        //         MemberAccessExpression(
+        //             SyntaxKind.SimpleMemberAccessExpression,
+        //             IdentifierName(variable),
+        //             IdentifierName(methodName)));
+        //
+        //     if (arguments is null)
+        //     {
+        //         return invocation;
+        //     }
+        //
+        //     return invocation.WithArgumentList(arguments);
+        // }
 
         public IsPatternExpressionSyntax CreateIsPattern(ExpressionSyntax identifierName, TypeSyntax type,
             string designation, SyntaxNode syntaxTrivia = null)

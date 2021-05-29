@@ -12,11 +12,24 @@ namespace Entry
 {
     public class SimplifyIEnumerableLinqWhereAny
     {
-        public bool FooMethod()
+        public class NestedClass
+        {
+            public IEnumerable<int> Products()
+            {
+                return null;
+            }
+        }
+
+        public bool FooMethod(NestedClass nc)
         {
             var list = new List<object>();
 
             var result = list.Where(i => i is not null && i.ToString().Equals(""foo"")).Any();
+
+            if (nc.Products().Where(n => n == 5).Count() == 0)
+            {
+                // do something
+            }
 
             return result;
         }
@@ -32,11 +45,24 @@ namespace Entry
 {
     public class SimplifyIEnumerableLinqWhereAny
     {
-        public bool FooMethod()
+        public class NestedClass
+        {
+            public IEnumerable<int> Products()
+            {
+                return null;
+            }
+        }
+
+        public bool FooMethod(NestedClass nc)
         {
             var list = new List<object>();
 
             var result = list.Any(i => i is not null && i.ToString().Equals(""foo""));
+
+            if (!nc.Products().Any(n => n == 5))
+            {
+                // do something
+            }
 
             return result;
         }
