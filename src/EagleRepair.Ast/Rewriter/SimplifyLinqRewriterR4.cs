@@ -136,7 +136,9 @@ namespace EagleRepair.Ast.Rewriter
                 return base.VisitInvocationExpression(node);
             }
 
-            if (variableIdentifier is not IdentifierNameSyntax && variableIdentifier is not InvocationExpressionSyntax)
+            if (variableIdentifier is not IdentifierNameSyntax &&
+                variableIdentifier is not InvocationExpressionSyntax &&
+                variableIdentifier is not MemberAccessExpressionSyntax)
             {
                 return base.VisitInvocationExpression(node);
             }

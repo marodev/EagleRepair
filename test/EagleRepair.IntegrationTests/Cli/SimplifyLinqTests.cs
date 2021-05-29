@@ -103,5 +103,14 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree, false);
         }
+
+        [Theory]
+        [MemberData(nameof(SimplifyIEnumerableLinqWhereCountAnyDataProvider.TestCases),
+            MemberType = typeof(SimplifyIEnumerableLinqWhereCountAnyDataProvider))]
+        public async Task SimplifyLinq_UsesWhereAndCountGreaterZero_ReturnsAny(string inputTree,
+            string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree);
+        }
     }
 }
