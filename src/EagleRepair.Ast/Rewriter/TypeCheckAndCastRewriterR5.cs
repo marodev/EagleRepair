@@ -259,16 +259,33 @@ namespace EagleRepair.Ast.Rewriter
             }
             else
             {
-                // take first lowercase character if built-in type
-                patternVariableName = targetCastExpr.Type.Kind() == SyntaxKind.PredefinedType
-                    ? targetCastExpr.Type.ToString()[0].ToString().ToLower()
-                    : targetCastExpr.Type.ToString().FirstCharToLowerCase();
+                patternVariableName = targetCastExpr.Type.ToString().FirstCharToLowerCase();
 
-                if (patternVariableName.Equals("double") || patternVariableName.Equals("int16") ||
-                    patternVariableName.Equals("int32") || patternVariableName.Equals("int64") ||
-                    patternVariableName.Equals("decimal") || patternVariableName.Equals("float"))
+                switch (patternVariableName)
                 {
-                    patternVariableName = patternVariableName[0].ToString().ToLower();
+                    case "double":
+                    case "int16":
+                    case "int32":
+                    case "int64":
+                    case "decimal":
+                    case "float":
+                        patternVariableName = patternVariableName[0].ToString().ToLower();
+                        break;
+                    case "sbyte":
+                    case "ushort":
+                    case "uint":
+                    case "ulong":
+                    case "nuint":
+                    case "short":
+                        patternVariableName = patternVariableName[0].ToString().ToLower() +
+                                              patternVariableName[1].ToString().ToLower();
+                        break;
+                    default:
+                        // take first lowercase character if built-in type
+                        patternVariableName = targetCastExpr.Type.Kind() == SyntaxKind.PredefinedType
+                            ? targetCastExpr.Type.ToString()[0].ToString().ToLower()
+                            : targetCastExpr.Type.ToString().FirstCharToLowerCase();
+                        break;
                 }
             }
 
