@@ -98,6 +98,8 @@ namespace EagleRepair.Ast.Rewriter
                     Text = message
                 });
 
+                simpleMemberAccess = simpleMemberAccess.WithTriviaFrom(node);
+
                 return simpleMemberAccess;
             }
 
@@ -152,8 +154,21 @@ namespace EagleRepair.Ast.Rewriter
                     return base.VisitInvocationExpression(node);
                 }
 
+                if (listWhereMemberAccessExpr.ToString().Split("Where").Length > 2)
+                {
+                    // TODO:
+                    // patterns such as .Where(...).Where(...) are not supported yet
+                    return base.VisitInvocationExpression(node);
+                }
+
+                var opToken = listWhereMemberAccessExpr.OperatorToken;
+
                 var newNode =
-                    RewriteService.CreateInvocation(variableIdentifier, invokedMethodName, invocationExpr.ArgumentList);
+                    RewriteService.CreateInvocation(variableIdentifier, opToken, invokedMethodName,
+                        invocationExpr.ArgumentList);
+
+
+                // listWhereMemberAccessExpr.OperatorToken.GetAllTrivia().ToString()
 
                 var lineNumber = $"{DisplayService.GetLineNumber(node)}";
                 var message = ReSharper.ReplaceWith(invokedMethodName) + " / " + SonarQube.RuleSpecification2971Message;
@@ -166,6 +181,7 @@ namespace EagleRepair.Ast.Rewriter
                     Text = message
                 });
 
+                // return newNode;
                 return base.VisitInvocationExpression(newNode);
             }
 

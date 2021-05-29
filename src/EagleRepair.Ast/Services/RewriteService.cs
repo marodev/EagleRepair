@@ -91,14 +91,18 @@ namespace EagleRepair.Ast.Services
                 IdentifierName(methodName));
         }
 
-        public InvocationExpressionSyntax CreateInvocation(ExpressionSyntax identifierOrInvocExpr, string methodName,
+        public InvocationExpressionSyntax CreateInvocation(ExpressionSyntax identifierOrInvocExpr,
+            SyntaxToken operatorToken,
+            string methodName,
             ArgumentListSyntax arguments = null)
         {
             var invocation = InvocationExpression(
                 MemberAccessExpression(
-                    SyntaxKind.SimpleMemberAccessExpression,
-                    identifierOrInvocExpr,
-                    IdentifierName(methodName)));
+                        SyntaxKind.SimpleMemberAccessExpression,
+                        identifierOrInvocExpr,
+                        IdentifierName(methodName))
+                    .WithOperatorToken(operatorToken)
+            );
 
             if (arguments is null)
             {

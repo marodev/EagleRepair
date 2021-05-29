@@ -21,6 +21,10 @@ namespace Entry
             for(int i = 0; i < list2.Count(); i++) {
                 // do something
             }
+
+            if (list.Count() > 10) {
+                // do something
+            }
         }
     }
 }
@@ -41,6 +45,10 @@ namespace Entry
 
             var list2 = new List<object>();
             for(int i = 0; i < list2.Count; i++) {
+                // do something
+            }
+
+            if (list.Count > 10) {
                 // do something
             }
         }

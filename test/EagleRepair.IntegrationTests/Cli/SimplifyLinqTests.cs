@@ -94,5 +94,14 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree, false);
         }
+
+        [Theory]
+        [MemberData(nameof(SimplifyIEnumerableLinqWhereWhereFirstOrDefaultDataProvider.TestCases),
+            MemberType = typeof(SimplifyIEnumerableLinqWhereWhereFirstOrDefaultDataProvider))]
+        public async Task SimplifyLinq_UsesTwoTimesWhereFirstOrDefault_ReturnsWhereFirstOrDefault(string inputTree,
+            string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree, false);
+        }
     }
 }
