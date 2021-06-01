@@ -68,7 +68,7 @@ namespace EagleRepair.Monitor
             return _appliedChanges;
         }
 
-        public string FixesSummaryToDisplayString()
+        public Tuple<int, string> FixesSummaryToDisplayString()
         {
             var consoleMessage = string.Empty;
             const string Offset = "    ";
@@ -81,7 +81,7 @@ namespace EagleRepair.Monitor
             {
                 consoleMessage +=
                     $"{Environment.NewLine}{Environment.NewLine}Project: {projectName}{Environment.NewLine}";
-                ;
+
                 var messagesPerProject =
                     messages.OrderBy(m => m.FilePath).ThenBy(m => m.LineNr).ToImmutableList();
 
@@ -107,10 +107,10 @@ namespace EagleRepair.Monitor
             consoleMessage += $"Fixed SonarQube issues: {totalFixedSonarQubeIssues}{Environment.NewLine}";
             consoleMessage += $"Total fixed issues: {totalFixedIssues}{Environment.NewLine}";
 
-            return consoleMessage;
+            return new Tuple<int, string>(totalFixedIssues, consoleMessage);
         }
 
-        public string StatisticsToCsv()
+        public string StatisticsToCsv(int totalDetected = 0, int totalFixes = 0, string runtime = null)
         {
             var header = "";
             var frequency = "";
@@ -125,6 +125,14 @@ namespace EagleRepair.Monitor
                 header += $"{rule}_f;"; // f for fixed
                 frequency += $"{occurrences};";
             }
+
+            header += "TotalDetected;";
+            header += "TotalAppliedFixes;";
+            header += "Runtime;";
+
+            frequency += $"{totalDetected};";
+            frequency += $"{totalFixes};";
+            frequency += $"{runtime};";
 
             var csvRow = header + Environment.NewLine + frequency;
             return csvRow;

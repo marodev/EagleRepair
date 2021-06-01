@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 
 namespace EagleRepair.Monitor
@@ -27,7 +28,8 @@ namespace EagleRepair.Monitor
             var ts = _stopWatch.Elapsed;
 
             // Format and display the TimeSpan value.
-            var elapsedTime = $"{ts.Seconds} s {ts.Milliseconds} ms";
+            var roundedSeconds = TimeSpan.FromSeconds(Math.Round(ts.TotalSeconds));
+            var elapsedTime = $"{roundedSeconds.Seconds} s";
             if (!ts.Minutes.Equals(0))
             {
                 elapsedTime = $"{ts.Minutes} min " + elapsedTime;

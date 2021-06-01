@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace EagleRepair.Monitor
@@ -9,8 +10,8 @@ namespace EagleRepair.Monitor
         public void Revert();
         public Dictionary<string, IList<Message>> All();
 
-        public string FixesSummaryToDisplayString();
+        public Tuple<int, string> FixesSummaryToDisplayString();
 
-        public string StatisticsToCsv();
+        public string StatisticsToCsv(int totalDetected = 0, int totalFixes = 0, string runtime = null);
     }
 }

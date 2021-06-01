@@ -56,7 +56,7 @@ namespace EagleRepair.Monitor
             _messages.Add(builder.ToString());
         }
 
-        public string ToDisplayString()
+        public Tuple<int, string> ToDisplayString()
         {
             var displayMessage = _messages
                 .Aggregate(string.Empty, (current, message) => current + message);
@@ -66,7 +66,7 @@ namespace EagleRepair.Monitor
                 displayMessage = EmptyDiagnosticsMessage;
             }
 
-            return displayMessage;
+            return new Tuple<int, string>(_messages.Count, displayMessage);
         }
     }
 }

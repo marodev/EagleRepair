@@ -38,22 +38,30 @@ namespace EagleRepair.Cli
             var succeeded = await _engine.RunAsync(cmdOptions.SolutionPath, cmdOptions.Rules);
             _timeTracker.Stop();
 
+            var (totalFixes, displayString) = _changeTracker.FixesSummaryToDisplayString();
+            Console.WriteLine(displayString);
             // print stats to console
-            Console.WriteLine(_changeTracker.FixesSummaryToDisplayString());
             Console.WriteLine($"Finished in: {_timeTracker.GetElapsedTime()}");
 
-            if (cmdOptions.Verbose)
+            switch (cmdOptions.Verbose)
             {
-                Console.WriteLine(_faultTracker.ToDisplayString());
+                case true when !string.IsNullOrEmpty(cmdOptions.CsvPath):
+                    {
+                        var (numberOfErrors, errorDisplayString) = _faultTracker.ToDisplayString();
+                        Console.WriteLine(errorDisplayString);
+                        var totalDetected = totalFixes + numberOfErrors;
+                        var csv = _changeTracker.StatisticsToCsv(totalDetected, totalFixes,
+                            _timeTracker.GetElapsedTime());
+                        await File.WriteAllTextAsync(cmdOptions.CsvPath, csv);
+                        break;
+                    }
+                case true:
+                    {
+                        var (_, errorDisplayString) = _faultTracker.ToDisplayString();
+                        Console.WriteLine(errorDisplayString);
+                        break;
+                    }
             }
-
-            if (string.IsNullOrEmpty(cmdOptions.CsvPath))
-            {
-                return succeeded;
-            }
-
-            var csv = _changeTracker.StatisticsToCsv();
-            await File.WriteAllTextAsync(cmdOptions.CsvPath, csv);
 
             return succeeded;
         }

@@ -51,14 +51,16 @@ namespace EagleRepair.IntegrationTests
             }
 
             var faultTracker = scope.Resolve<IFaultTracker>();
+            var (numberOfErrors, displayString) = faultTracker.ToDisplayString();
             if (hasDiagnostics)
             {
-                Assert.NotEqual(FaultTracker.EmptyDiagnosticsMessage, faultTracker.ToDisplayString());
+                Assert.NotEqual(FaultTracker.EmptyDiagnosticsMessage, displayString);
                 Assert.NotEmpty(FaultTracker.EmptyDiagnosticsMessage);
             }
             else
             {
-                Assert.Equal(FaultTracker.EmptyDiagnosticsMessage, faultTracker.ToDisplayString());
+                Assert.Equal(0, numberOfErrors);
+                Assert.Equal(FaultTracker.EmptyDiagnosticsMessage, displayString);
             }
         }
 
