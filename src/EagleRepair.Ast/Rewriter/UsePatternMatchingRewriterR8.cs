@@ -118,15 +118,14 @@ namespace EagleRepair.Ast.Rewriter
                     continue;
                 }
 
-
                 foreach (var binaryExprToReplace in binaryExpressionsToReplace)
                 {
-                    TypeSyntax s = binaryExpr.Right switch
+                    var s = binaryExpr.Right as TypeSyntax;
+
+                    if (s is null)
                     {
-                        PredefinedTypeSyntax predefinedTypeSyntax => predefinedTypeSyntax,
-                        QualifiedNameSyntax qualifiedNameSyntax => qualifiedNameSyntax,
-                        _ => SyntaxFactory.IdentifierName(SyntaxFactory.Identifier(right))
-                    };
+                        continue;
+                    }
 
                     var newConditionExpr = RewriteService
                         .CreateIsPattern(binaryExpr.Left, s, identifierName, binaryExprToReplace);

@@ -102,5 +102,14 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree, false);
         }
+        
+        [Theory]
+        [MemberData(nameof(UsePatternMatchingGenericsDataProvider.TestCases),
+            MemberType = typeof(UsePatternMatchingGenericsDataProvider))]
+        public async Task UseTypeCheck_AndCastWithGeneric_ReturnsPatternExprWithoutCast(
+            string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree);
+        }
     }
 }
