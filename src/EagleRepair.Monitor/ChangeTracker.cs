@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using EagleRepair.Statistics;
 
 namespace EagleRepair.Monitor
 {
@@ -13,17 +14,32 @@ namespace EagleRepair.Monitor
         // <projectName, messages>
         // reported changes before we know the syntax tree was created correctly
         private readonly Dictionary<string, IList<Message>> _stagedChanges;
+        private readonly Dictionary<string, int> _statisticsApplied;
+
+        private readonly Dictionary<string, int> _statisticsDetected;
 
         public ChangeTracker()
         {
             _stagedChanges = new Dictionary<string, IList<Message>>();
             _appliedChanges = new Dictionary<string, IList<Message>>();
+            _statisticsDetected = StaticAnalysisRules.All();
+            _statisticsApplied = StaticAnalysisRules.All();
         }
 
         public void Confirm()
         {
             foreach (var (_, messages) in _stagedChanges)
             {
+                foreach (var message in messages)
+                {
+                    if (!IsTestFile(message))
+                    {
+                        IncrementFixed(message.SonarQubeId);
+                    }
+
+                    IncrementFixed(message.ReSharperId);
+                }
+
                 Add(messages, _appliedChanges);
             }
 
@@ -37,6 +53,13 @@ namespace EagleRepair.Monitor
 
         public void Stage(Message message)
         {
+            if (!IsTestFile(message))
+            {
+                // SonarQube doesn't scan test files
+                IncrementDetected(message.SonarQubeId);
+            }
+
+            IncrementDetected(message.ReSharperId);
             Add(message, _stagedChanges);
         }
 
@@ -85,6 +108,47 @@ namespace EagleRepair.Monitor
             consoleMessage += $"Total fixed issues: {totalFixedIssues}{Environment.NewLine}";
 
             return consoleMessage;
+        }
+
+        public string StatisticsToCsv()
+        {
+            var header = "";
+            var frequency = "";
+            foreach (var (rule, occurrences) in _statisticsDetected)
+            {
+                header += $"{rule}_d;"; // d for detected
+                frequency += $"{occurrences};";
+            }
+
+            foreach (var (rule, occurrences) in _statisticsApplied)
+            {
+                header += $"{rule}_f;"; // f for fixed
+                frequency += $"{occurrences};";
+            }
+
+            var csvRow = header + Environment.NewLine + frequency;
+            return csvRow;
+        }
+
+        private void IncrementDetected(string ruleId)
+        {
+            if (!string.IsNullOrEmpty(ruleId))
+            {
+                _statisticsDetected[ruleId] += 1;
+            }
+        }
+
+        private void IncrementFixed(string ruleId)
+        {
+            if (!string.IsNullOrEmpty(ruleId))
+            {
+                _statisticsApplied[ruleId] += 1;
+            }
+        }
+
+        private static bool IsTestFile(Message message)
+        {
+            return message.FilePath.ToLower().Contains("test");
         }
 
         public string RulesSummaryToDisplayString()

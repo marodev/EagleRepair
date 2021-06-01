@@ -1,6 +1,8 @@
+using System;
 using EagleRepair.Ast.Services;
 using EagleRepair.Ast.Url;
 using EagleRepair.Monitor;
+using EagleRepair.Statistics;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -41,7 +43,16 @@ namespace EagleRepair.Ast.Rewriter
                 return base.VisitInvocationExpression(node);
             }
 
-            var newStringInterpolationNode = RewriteService.CreateInterpolatedString(node.ArgumentList.Arguments);
+            SyntaxNode newStringInterpolationNode;
+            try
+            {
+                newStringInterpolationNode = RewriteService.CreateInterpolatedString(node.ArgumentList.Arguments);
+            }
+            catch (Exception)
+            {
+                // TODO: catch more specific exception
+                newStringInterpolationNode = null;
+            }
 
             if (newStringInterpolationNode == null)
             {
@@ -64,7 +75,8 @@ namespace EagleRepair.Ast.Rewriter
                 LineNr = lineNumber,
                 FilePath = FilePath,
                 ProjectName = ProjectName,
-                Text = message
+                Text = message,
+                ReSharperId = ReSharperRule.UseStringInterpolation.ToString()
             });
 
             return newStringInterpolationNode;

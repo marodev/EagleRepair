@@ -2,6 +2,7 @@ using System.Linq;
 using EagleRepair.Ast.Services;
 using EagleRepair.Ast.Url;
 using EagleRepair.Monitor;
+using EagleRepair.Statistics;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -215,13 +216,6 @@ namespace EagleRepair.Ast.Rewriter
                 _ => null
             };
 
-            // SyntaxNode newNode = node.Right;
-            //
-            // if (newNode is not BinaryExpressionSyntax && newNode is not IsPatternExpressionSyntax)
-            // {
-            //     return base.VisitBinaryExpression(node);
-            // }
-
             if (newNode is null)
             {
                 return base.VisitBinaryExpression(node);
@@ -238,7 +232,8 @@ namespace EagleRepair.Ast.Rewriter
                 LineNr = lineNumber,
                 FilePath = FilePath,
                 ProjectName = ProjectName,
-                Text = message
+                Text = message,
+                ReSharperId = ReSharperRule.MergeSequentialChecks.ToString()
             });
 
             return newNode;

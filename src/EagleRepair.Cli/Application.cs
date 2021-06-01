@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using EagleRepair.Ast;
 using EagleRepair.Cli.Input;
@@ -45,6 +46,14 @@ namespace EagleRepair.Cli
             {
                 Console.WriteLine(_faultTracker.ToDisplayString());
             }
+
+            if (string.IsNullOrEmpty(cmdOptions.CsvPath))
+            {
+                return succeeded;
+            }
+
+            var csv = _changeTracker.StatisticsToCsv();
+            await File.WriteAllTextAsync(cmdOptions.CsvPath, csv);
 
             return succeeded;
         }

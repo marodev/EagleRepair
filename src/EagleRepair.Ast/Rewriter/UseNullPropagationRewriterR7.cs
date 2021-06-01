@@ -3,6 +3,7 @@ using System.Linq;
 using EagleRepair.Ast.Services;
 using EagleRepair.Ast.Url;
 using EagleRepair.Monitor;
+using EagleRepair.Statistics;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -62,7 +63,8 @@ namespace EagleRepair.Ast.Rewriter
                     LineNr = lineNumber,
                     FilePath = FilePath,
                     ProjectName = ProjectName,
-                    Text = message
+                    Text = message,
+                    ReSharperId = ReSharperRule.UseNullPropagation.ToString()
                 });
             }
 

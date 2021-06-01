@@ -11,7 +11,7 @@ namespace EagleRepair.IntegrationTests.Cli
             MemberType = typeof(EngineShouldNotAcceptDataProvider))]
         public async Task CanBeRefactored_ButNotInGivenContext_ReturnsOriginal(string inputTree, string expectedTree)
         {
-            await TestExecutor.Run(inputTree, expectedTree, false, true);
+            await TestExecutor.Run(inputTree, expectedTree, false);
         }
 
         [Theory]

@@ -31,5 +31,8 @@ namespace EagleRepair.Cli.Input
 
         [Option('v', "verbose", Required = false, HelpText = "Set output to verbose messages.")]
         public bool Verbose { get; set; }
+
+        [Option('o', "output", Required = false, HelpText = "Specify an output path for statistics.")]
+        public string CsvPath { get; set; }
     }
 }

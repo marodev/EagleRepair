@@ -4,9 +4,11 @@ using EagleRepair.Ast.Extensions;
 using EagleRepair.Ast.Services;
 using EagleRepair.Ast.Url;
 using EagleRepair.Monitor;
+using EagleRepair.Statistics;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.FindSymbols;
 
 namespace EagleRepair.Ast.Rewriter
 {
@@ -19,6 +21,27 @@ namespace EagleRepair.Ast.Rewriter
             changeTracker, typeService, rewriteService, displayService)
         {
             _triviaService = triviaService;
+        }
+
+        private static bool IsChildOfIfStatementOrReturnStatement(SyntaxNode syntax)
+        {
+            var copy = syntax;
+            while (copy != null)
+            {
+                switch (copy)
+                {
+                    case IfStatementSyntax:
+                    case ReturnStatementSyntax:
+                        return true;
+                    case MethodDeclarationSyntax:
+                        return false;
+                    default:
+                        copy = copy.Parent;
+                        break;
+                }
+            }
+
+            return false;
         }
 
         public override SyntaxNode VisitMethodDeclaration(MethodDeclarationSyntax node)
@@ -57,7 +80,33 @@ namespace EagleRepair.Ast.Rewriter
                 var right = binaryExpr.Right.ToString();
                 var op = binaryExpr.OperatorToken.ToString();
 
+                var firstVariable = localDeclaration.Declaration.Variables.FirstOrDefault();
+
+                if (firstVariable is null)
+                {
+                    continue;
+                }
+
                 if (!"as".Equals(op))
+                {
+                    continue;
+                }
+
+                var sym = SemanticModel.GetDeclaredSymbol(firstVariable);
+                var references = SymbolFinder.FindReferencesAsync(sym, Workspace.CurrentSolution).Result;
+
+                var reference = references.FirstOrDefault();
+                var location = reference?.Locations.FirstOrDefault();
+                var firstOccurrence = location?.Location;
+
+                if (firstOccurrence is null)
+                {
+                    continue;
+                }
+
+                var referencedNode = firstOccurrence.SourceTree?.GetRoot().FindNode(firstOccurrence.SourceSpan);
+
+                if (!IsChildOfIfStatementOrReturnStatement(referencedNode))
                 {
                     continue;
                 }
@@ -69,17 +118,15 @@ namespace EagleRepair.Ast.Rewriter
                     continue;
                 }
 
+
                 foreach (var binaryExprToReplace in binaryExpressionsToReplace)
                 {
-                    TypeSyntax s;
-                    if (binaryExpr.Right is PredefinedTypeSyntax predefinedTypeSyntax)
+                    TypeSyntax s = binaryExpr.Right switch
                     {
-                        s = predefinedTypeSyntax;
-                    }
-                    else
-                    {
-                        s = SyntaxFactory.IdentifierName(SyntaxFactory.Identifier(right));
-                    }
+                        PredefinedTypeSyntax predefinedTypeSyntax => predefinedTypeSyntax,
+                        QualifiedNameSyntax qualifiedNameSyntax => qualifiedNameSyntax,
+                        _ => SyntaxFactory.IdentifierName(SyntaxFactory.Identifier(right))
+                    };
 
                     var newConditionExpr = RewriteService
                         .CreateIsPattern(binaryExpr.Left, s, identifierName, binaryExprToReplace);
@@ -103,9 +150,7 @@ namespace EagleRepair.Ast.Rewriter
 
                     if (binaryExprToReplace.Parent?.Parent is IfStatementSyntax)
                     {
-                        // TODO: delte me
                         newConditionExpr = newConditionExpr.WithAdditionalAnnotations(childOfChildOfIfCondition);
-                        // oldNewNodeDict.Add(binaryExprToReplace, newConditionExpr);
                     }
 
                     oldNewNodeDict.Add(binaryExprToReplace, newConditionExpr);
@@ -171,7 +216,8 @@ namespace EagleRepair.Ast.Rewriter
                     LineNr = lineNumber,
                     FilePath = FilePath,
                     ProjectName = ProjectName,
-                    Text = message
+                    Text = message,
+                    ReSharperId = ReSharperRule.UsePatternMatching.ToString()
                 });
             }
 

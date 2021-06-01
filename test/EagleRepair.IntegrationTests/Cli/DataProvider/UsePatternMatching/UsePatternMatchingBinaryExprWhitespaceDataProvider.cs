@@ -13,7 +13,7 @@ namespace Entry
     {        
         public bool M(object o)
         {
-            var s = o as string;
+            var s = o as System.String;
             return s != null && 42 == s.GetHashCode();
         }
     }
@@ -28,7 +28,7 @@ namespace Entry
     {        
         public bool M(object o)
         {
-            return o is string s && 42 == s.GetHashCode();
+            return o is System.String s && 42 == s.GetHashCode();
         }
     }
 }";

@@ -3,6 +3,7 @@ using EagleRepair.Ast.Extensions;
 using EagleRepair.Ast.Services;
 using EagleRepair.Ast.Url;
 using EagleRepair.Monitor;
+using EagleRepair.Statistics;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -205,7 +206,9 @@ namespace EagleRepair.Ast.Rewriter
                 LineNr = lineNumber,
                 FilePath = FilePath,
                 ProjectName = ProjectName,
-                Text = message
+                Text = message,
+                SonarQubeId = SonarQubeRule.S3247.ToString(),
+                ReSharperId = ReSharperRule.MergeCastWithTypeCheck.ToString()
             });
 
             // visit children of newIfNode

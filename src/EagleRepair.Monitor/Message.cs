@@ -2,6 +2,18 @@ namespace EagleRepair.Monitor
 {
     public class Message
     {
+        public string ReSharperId
+        {
+            get;
+            init;
+        }
+
+        public string SonarQubeId
+        {
+            get;
+            init;
+        }
+
         public string RuleId
         {
             get;

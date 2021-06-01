@@ -1,7 +1,9 @@
+using System;
 using EagleRepair.Ast.ReservedToken;
 using EagleRepair.Ast.Services;
 using EagleRepair.Ast.Url;
 using EagleRepair.Monitor;
+using EagleRepair.Statistics;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -58,6 +60,28 @@ namespace EagleRepair.Ast.Rewriter
             }
 
             if (memberAccessExpr.Expression is not IdentifierNameSyntax identifier)
+            {
+                return null;
+            }
+
+            ITypeSymbol typeInfo;
+
+            try
+            {
+                typeInfo = SemanticModel.GetTypeInfo(
+                    (IdentifierNameSyntax)((MemberAccessExpressionSyntax)node.Expression).Expression).Type;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            if (typeInfo is null)
+            {
+                return null;
+            }
+
+            if (!typeInfo.ToString().Equals("string"))
             {
                 return null;
             }
@@ -314,7 +338,9 @@ namespace EagleRepair.Ast.Rewriter
                 LineNr = lineNumber,
                 FilePath = FilePath,
                 ProjectName = ProjectName,
-                Text = message
+                Text = message,
+                SonarQubeId = SonarQubeRule.S3256.ToString(),
+                ReSharperId = ReSharperRule.ReplaceWithStringIsNullOrEmpty.ToString()
             });
         }
     }

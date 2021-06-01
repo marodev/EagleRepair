@@ -37,7 +37,7 @@ namespace EagleRepair.IntegrationTests.Cli
         public async Task UseAsType_VariableAccessedMultipleTimesNotInCondition_ReturnsOriginal(string inputTree,
             string expectedTree)
         {
-            await TestExecutor.Run(inputTree, expectedTree, false, true);
+            await TestExecutor.Run(inputTree, expectedTree, false);
         }
 
         [Theory]
@@ -55,7 +55,7 @@ namespace EagleRepair.IntegrationTests.Cli
         public async Task UseAsType_NotInCondition_ReturnsOriginal(string inputTree,
             string expectedTree)
         {
-            await TestExecutor.Run(inputTree, expectedTree, false, true);
+            await TestExecutor.Run(inputTree, expectedTree, false);
         }
 
         [Theory]
@@ -92,6 +92,15 @@ namespace EagleRepair.IntegrationTests.Cli
             string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree);
+        }
+
+        [Theory]
+        [MemberData(nameof(UsePatternMatchingOutsideIfCondition.TestCases),
+            MemberType = typeof(UsePatternMatchingOutsideIfCondition))]
+        public async Task UseAsType_WithoutIfCondition_ReturnsOriginal(string inputTree,
+            string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree, false);
         }
     }
 }

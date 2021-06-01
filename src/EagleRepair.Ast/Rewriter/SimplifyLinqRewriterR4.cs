@@ -3,6 +3,7 @@ using System.Linq;
 using EagleRepair.Ast.Services;
 using EagleRepair.Ast.Url;
 using EagleRepair.Monitor;
+using EagleRepair.Statistics;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -38,6 +39,13 @@ namespace EagleRepair.Ast.Rewriter
             };
             if (!linqKeyWords.Contains(invokedMethodName))
             {
+                return base.VisitInvocationExpression(node);
+            }
+
+            if (node.ArgumentList.Arguments.Count > 0 && !invokedMethodName.Equals("Select"))
+            {
+                // We can't fix something like .Where(...).FirstOrDefault(...)
+                // .FirstOrDefault should not have a predicate
                 return base.VisitInvocationExpression(node);
             }
 
@@ -95,7 +103,9 @@ namespace EagleRepair.Ast.Rewriter
                     LineNr = lineNumber,
                     FilePath = FilePath,
                     ProjectName = ProjectName,
-                    Text = message
+                    Text = message,
+                    SonarQubeId = SonarQubeRule.S2971.ToString(),
+                    ReSharperId = $"ReplaceWithSingleCallTo{invokedMethodName}"
                 });
 
                 simpleMemberAccess = simpleMemberAccess.WithTriviaFrom(node);
@@ -170,8 +180,6 @@ namespace EagleRepair.Ast.Rewriter
                         invocationExpr.ArgumentList);
 
 
-                // listWhereMemberAccessExpr.OperatorToken.GetAllTrivia().ToString()
-
                 var lineNumber = $"{DisplayService.GetLineNumber(node)}";
                 var message = ReSharper.ReplaceWith(invokedMethodName) + " / " + SonarQube.RuleSpecification2971Message;
                 ChangeTracker.Stage(new Message
@@ -180,7 +188,9 @@ namespace EagleRepair.Ast.Rewriter
                     LineNr = lineNumber,
                     FilePath = FilePath,
                     ProjectName = ProjectName,
-                    Text = message
+                    Text = message,
+                    SonarQubeId = SonarQubeRule.S2971.ToString(),
+                    ReSharperId = $"ReplaceWithSingleCallTo{invokedMethodName}"
                 });
 
                 // return newNode;
@@ -277,7 +287,9 @@ namespace EagleRepair.Ast.Rewriter
                 LineNr = lineNr,
                 FilePath = FilePath,
                 ProjectName = ProjectName,
-                Text = msg
+                Text = msg,
+                SonarQubeId = SonarQubeRule.S2971.ToString(),
+                ReSharperId = $"ReplaceWithSingleCallTo{invokedMethodName}"
             });
 
             return base.VisitInvocationExpression(newOfTypeNode);

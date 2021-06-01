@@ -13,6 +13,8 @@ namespace Entry
     {        
         public void M(string s)
         {
+            Console.WriteLine(string.Empty);
+
             if(s.Equals(string.Empty)) {
                 // do something
             }
@@ -41,6 +43,8 @@ namespace Entry
     {        
         public void M(string s)
         {
+            Console.WriteLine(string.Empty);
+
             if(string.IsNullOrEmpty(s)) {
                 // do something
             }

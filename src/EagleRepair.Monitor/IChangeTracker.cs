@@ -10,5 +10,7 @@ namespace EagleRepair.Monitor
         public Dictionary<string, IList<Message>> All();
 
         public string FixesSummaryToDisplayString();
+
+        public string StatisticsToCsv();
     }
 }
