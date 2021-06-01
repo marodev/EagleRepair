@@ -18,16 +18,20 @@ namespace EagleRepair.IntegrationTests
                 .Select(p => MetadataReference.CreateFromFile(p))
                 .ToList();
 
+            const string FilePath = "/my/dummy/path";
             var workspace = new AdhocWorkspace();
             var projectId = ProjectId.CreateNewId();
             var versionStamp = VersionStamp.Create();
             var projectInfo = ProjectInfo.Create(projectId, versionStamp, projectName, projectName,
-                LanguageNames.CSharp, metadataReferences: references);
+                LanguageNames.CSharp, metadataReferences: references, filePath: $"{FilePath}/proj.csproj");
             var newProject = workspace.AddProject(projectInfo);
             var sourceText = SourceText.From(sourceCode);
             var newDocument = workspace.AddDocument(newProject.Id, fileName, sourceText);
+            newDocument = newDocument.WithFilePath($"{FilePath}/{fileName}");
+            var project = newDocument.Project;
+            workspace.TryApplyChanges(project.Solution);
 
-            return newDocument.Project.Solution;
+            return workspace.CurrentSolution;
         }
     }
 }

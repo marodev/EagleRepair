@@ -289,7 +289,7 @@ namespace EagleRepair.Ast.Rewriter
                 ProjectName = ProjectName,
                 Text = msg,
                 SonarQubeId = SonarQubeRule.S2971.ToString(),
-                ReSharperId = $"ReplaceWithSingleCallTo{invokedMethodName}"
+                ReSharperId = ReSharperRule.ReplaceWithOfType.ToString()
             });
 
             return base.VisitInvocationExpression(newOfTypeNode);
