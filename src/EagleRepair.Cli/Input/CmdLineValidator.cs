@@ -37,7 +37,7 @@ namespace EagleRepair.Cli.Input
                 throw new ArgumentException($"Solution file not found: {solutionPath}");
             }
 
-            if (!solutionPath.EndsWith(".sln"))
+            if (!solutionPath.EndsWith(".sln") && !solutionPath.EndsWith(".slnf"))
             {
                 throw new ArgumentException("Only solution (*.sln) files are supported yet");
             }
