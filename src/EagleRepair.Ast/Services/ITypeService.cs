@@ -7,5 +7,7 @@ namespace EagleRepair.Ast.Services
         bool IsIEnumerable(string typeSymbol);
 
         bool IsBuiltInType(string containingNamespace);
+
+        bool ContainsReservedKeyword(string identifier);
     }
 }

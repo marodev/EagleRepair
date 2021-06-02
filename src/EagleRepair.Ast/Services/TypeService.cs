@@ -1,3 +1,5 @@
+using Microsoft.CodeAnalysis.CSharp;
+
 namespace EagleRepair.Ast.Services
 {
     public class TypeService : ITypeService
@@ -15,6 +17,12 @@ namespace EagleRepair.Ast.Services
         public bool IsBuiltInType(string containingNamespace)
         {
             return containingNamespace is not null && containingNamespace.StartsWith("System");
+        }
+
+        public bool ContainsReservedKeyword(string identifier)
+        {
+            return SyntaxFacts.GetKeywordKind(identifier) != SyntaxKind.None
+                   || SyntaxFacts.GetContextualKeywordKind(identifier) != SyntaxKind.None;
         }
     }
 }

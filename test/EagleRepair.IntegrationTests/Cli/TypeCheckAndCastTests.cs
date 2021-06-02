@@ -91,5 +91,14 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree);
         }
+
+        [Theory]
+        [MemberData(nameof(TypeCheckAndCastReservedKeywordDataProvider.TestCases),
+            MemberType = typeof(TypeCheckAndCastReservedKeywordDataProvider))]
+        public async Task UseTypeCheck_WithReservedKeyword_ReturnsPatternExprAndAtChar(
+            string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree);
+        }
     }
 }

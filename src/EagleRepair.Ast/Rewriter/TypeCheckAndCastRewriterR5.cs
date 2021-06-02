@@ -235,7 +235,7 @@ namespace EagleRepair.Ast.Rewriter
             return patternVariableName;
         }
 
-        private static string GetPatternVariableName(CastExpressionSyntax targetCastExpr)
+        private string GetPatternVariableName(CastExpressionSyntax targetCastExpr)
         {
             string patternVariableName;
             if (targetCastExpr.Type.IsKind(SyntaxKind.ArrayType))
@@ -295,6 +295,11 @@ namespace EagleRepair.Ast.Rewriter
             if (patternVariableName.Contains("."))
             {
                 patternVariableName = patternVariableName.Split(".").Last().FirstCharToLowerCase();
+            }
+
+            if (TypeService.ContainsReservedKeyword(patternVariableName))
+            {
+                patternVariableName = $"@{patternVariableName}";
             }
 
             return patternVariableName;
