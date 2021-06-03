@@ -8,7 +8,7 @@
         <PackageOutputPath>./nupkg</PackageOutputPath>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <Title>EagleRepair</Title>
-        <Description>EagleRepair is a command line tool for automatically fixing static analysis warnigns.</Description>
+        <Description>EagleRepair is a command line tool for automatically fixing static analysis warnigns in C# programs.</Description>
         <RootNamespace>EagleRepair.Cli</RootNamespace>
         <TargetFramework>net5.0</TargetFramework>
         <PackageVersion>0.0.27</PackageVersion>
