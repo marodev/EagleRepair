@@ -19,11 +19,11 @@ and build the solution.
 Alternatively, the sources can be build from the command line:
 
 ```
-$ dotnet build
+dotnet build
 ```
 
 Run tests
 ```
-$ dotnet test
+dotnet test
 ```
 
