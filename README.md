@@ -37,7 +37,6 @@ eaglerepair -r R2 -p .
 ```
 where "." looks for a solution file (.sln) in the current folder (default if not provided)
 
-
 ## Contributing
 
 PR's are welcome!
