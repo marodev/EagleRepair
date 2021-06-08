@@ -27,6 +27,17 @@ EagleRepair is [available on NuGet](https://www.nuget.org/packages/EagleRepair.C
 dotnet tool install --global EagleRepair.Cli
 ```
 
+## Usage
+- first build your C# project
+- run EagleRepair
+
+and specify the target rules (e.g, rule R2):
+```
+eaglerepair -r R2 -p .
+```
+where "." looks for a solution file (.sln) in the current folder (default if not provided)
+
+
 ## Contributing
 
 PR's are welcome!
