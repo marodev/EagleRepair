@@ -3,7 +3,6 @@ copyright: Copyright &copy; 2021 Martin Odermatt
 repo_url: https://github.com/marodev/EagleRepair
 site_url: https://marodev.github.io/EagleRepair
 
-
 extra:
   social:
     - icon: fontawesome/brands/github
