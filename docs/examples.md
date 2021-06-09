@@ -1,7 +1,7 @@
 # Examples
 
-The following code examples show the source-code <em>before</em> (Non-Compliant) and <em>after</em>,
-containing the EagleRepair's fix (Compliant)
+The following examples show the source-code <em>before</em> (Non-Compliant) and <em>after</em>,
+containing the EagleRepair's fix (Compliant).
 
 !!! example "R1 DisposePattern"
 
@@ -219,9 +219,9 @@ containing the EagleRepair's fix (Compliant)
     public void M(object c)
     {
         var s = o as string;
-        // Check if is null
+        // Check if string is not null
         if (s != null) {
-            Console.WriteLine($""Hi. {s}"");
+            Console.WriteLine($"Hi. {s}");
         }
     }
     ```
@@ -231,9 +231,9 @@ containing the EagleRepair's fix (Compliant)
     ``` c# hl_lines="4"
     public void M(Car c)
     {
-        // Check if is null
+        // Check if string is not null
         if (o is string s) {
-            Console.WriteLine($""Hi. {s}"");
+            Console.WriteLine($"Hi. {s}");
         }
     }
     ```
