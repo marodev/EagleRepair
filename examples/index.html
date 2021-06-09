@@ -296,8 +296,8 @@
                 
                 
                 <h1 id="examples">Examples</h1>
-<p>The following code examples show the source-code <em>before</em> (Non-Compliant) and <em>after</em>,
-containing the EagleRepair's fix (Compliant)</p>
+<p>The following examples show the source-code <em>before</em> (Non-Compliant) and <em>after</em>,
+containing the EagleRepair's fix (Compliant).</p>
 <div class="admonition example">
 <p class="admonition-title">R1 DisposePattern</p>
 <p>Non-Compliant
@@ -476,18 +476,18 @@ containing the EagleRepair's fix (Compliant)</p>
 <div class="highlight"><pre><span></span><code><span class="k">public</span> <span class="k">void</span> <span class="nf">M</span><span class="p">(</span><span class="kt">object</span> <span class="n">c</span><span class="p">)</span>
 <span class="p">{</span>
 <span class="hll">    <span class="kt">var</span> <span class="n">s</span> <span class="p">=</span> <span class="n">o</span> <span class="k">as</span> <span class="kt">string</span><span class="p">;</span>
-</span>    <span class="c1">// Check if is null</span>
+</span>    <span class="c1">// Check if string is not null</span>
 <span class="hll">    <span class="k">if</span> <span class="p">(</span><span class="n">s</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
-</span>        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="err">$</span><span class="s">&quot;&quot;</span><span class="n">Hi</span><span class="p">.</span> <span class="p">{</span><span class="n">s</span><span class="p">}</span><span class="s">&quot;&quot;</span><span class="p">);</span>
+</span>        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="err">$</span><span class="s">&quot;Hi. {s}&quot;</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
 <p>Compliant</p>
 <div class="highlight"><pre><span></span><code><span class="k">public</span> <span class="k">void</span> <span class="nf">M</span><span class="p">(</span><span class="n">Car</span> <span class="n">c</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="c1">// Check if is null</span>
+    <span class="c1">// Check if string is not null</span>
 <span class="hll">    <span class="k">if</span> <span class="p">(</span><span class="n">o</span> <span class="k">is</span> <span class="kt">string</span> <span class="n">s</span><span class="p">)</span> <span class="p">{</span>
-</span>        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="err">$</span><span class="s">&quot;&quot;</span><span class="n">Hi</span><span class="p">.</span> <span class="p">{</span><span class="n">s</span><span class="p">}</span><span class="s">&quot;&quot;</span><span class="p">);</span>
+</span>        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="err">$</span><span class="s">&quot;Hi. {s}&quot;</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
