@@ -7,12 +7,15 @@
 </p>
 
 <p align="center">
-   <img src="https://github.com/marodev/EagleRepair/actions/workflows/ci.yml/badge.svg" />
+    <img src="https://github.com/marodev/EagleRepair/actions/workflows/ci.yml/badge.svg" />
+    <img src="https://img.shields.io/nuget/v/EagleRepair.Cli" />
 </p>
 
 ---
 
 **Documentation**: <a href="https://marodev.github.io/EagleRepair" target="_blank">https://marodev.github.io/EagleRepair</a>
+
+**Source-Code**: <a href="https://github.com/marodev/EagleRepair" target="_blank">https://github.com/marodev/EagleRepair</a>
 
 ---
 
