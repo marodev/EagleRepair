@@ -9,5 +9,12 @@ extra:
       link: https://github.com/marodev/EagleRepair
 theme:
   name: material
+  features:
+    - navigation.top
   icon:
     repo: fontawesome/brands/github
+    
+  nav:
+    - EagleRepair: index.md
+    - rules.md
+    - contributing.md
