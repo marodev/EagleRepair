@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-    <em>EagleRepair is a cross-platform command line tool for automatically fixing static analysis warnigns in C# programs.</em>
+    <em>EagleRepair is a cross-platform command line tool for automatically fixing static analysis warnings in C# programs.</em>
 </p>
 
 <p align="center">
