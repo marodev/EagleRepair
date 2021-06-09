@@ -296,8 +296,11 @@
                 
                 
                 <h1 id="examples">Examples</h1>
-<p>Coming soon!</p>
-<details class="r1" open="open"><summary>R1</summary><p>Non-Compliant
+<p>The following code examples show the source-code <em>before</em> (Non-Compliant) and <em>after</em>,
+containing the EagleRepair's fix (Compliant)</p>
+<div class="admonition example">
+<p class="admonition-title">R1 DisposePattern</p>
+<p>Non-Compliant
 <div class="highlight"><pre><span></span><code><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
 
 <span class="k">namespace</span> <span class="nn">N</span>
@@ -344,8 +347,10 @@
     <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
-</details>
-<details class="r2"><summary>R2</summary><p>Non-Compliant
+</div>
+<div class="admonition example">
+<p class="admonition-title">R2 MergeSequentialChecks</p>
+<p>Non-Compliant
 <div class="highlight"><pre><span></span><code><span class="k">public</span> <span class="k">void</span> <span class="nf">M</span><span class="p">(</span><span class="n">B</span> <span class="n">b</span><span class="p">)</span>
 <span class="p">{</span>
 <span class="hll">    <span class="k">if</span> <span class="p">(</span><span class="n">b</span> <span class="p">==</span> <span class="k">null</span> <span class="p">||</span> <span class="n">b</span><span class="p">.</span><span class="n">Parent</span> <span class="k">is</span> <span class="k">null</span><span class="p">)</span>
@@ -363,7 +368,168 @@
     <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
-</details>
+</div>
+<div class="admonition example">
+<p class="admonition-title">R3 NullChecksShouldNotBeUsedWithIs</p>
+<p>Non-Compliant
+<div class="highlight"><pre><span></span><code><span class="k">public</span> <span class="k">void</span> <span class="nf">M</span><span class="p">(</span><span class="kt">object</span> <span class="n">s</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="hll">    <span class="k">if</span> <span class="p">(</span><span class="n">s</span> <span class="p">!=</span> <span class="k">null</span> <span class="p">&amp;&amp;</span> <span class="n">s</span> <span class="k">is</span> <span class="kt">string</span><span class="p">)</span>
+</span>    <span class="p">{</span>
+        <span class="c1">// do something</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>Compliant</p>
+<div class="highlight"><pre><span></span><code><span class="k">public</span> <span class="k">void</span> <span class="nf">M</span><span class="p">(</span><span class="kt">object</span> <span class="n">s</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="hll">    <span class="k">if</span> <span class="p">(</span><span class="n">s</span> <span class="k">is</span> <span class="kt">string</span><span class="p">)</span>
+</span>    <span class="p">{</span>
+        <span class="c1">// do something</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+</div>
+<div class="admonition example">
+<p class="admonition-title">R4 SimplifyLinq</p>
+<p>Non-Compliant
+<div class="highlight"><pre><span></span><code><span class="k">public</span> <span class="k">void</span> <span class="nf">M</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">var</span> <span class="n">list</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;();</span>
+    <span class="kt">var</span> <span class="n">result1</span> <span class="p">=</span> <span class="n">list</span><span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">i</span> <span class="p">=&gt;</span> <span class="n">i</span> <span class="k">is</span> <span class="n">not</span> <span class="k">null</span> <span class="p">&amp;&amp;</span> <span class="n">i</span><span class="p">.</span><span class="n">ToString</span><span class="p">().</span><span class="n">Equals</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">)).</span><span class="n">Count</span><span class="p">();</span>
+    <span class="kt">var</span> <span class="n">result2</span> <span class="p">=</span> <span class="n">list</span><span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">i</span> <span class="p">=&gt;</span> <span class="n">i</span> <span class="p">&gt;</span> <span class="m">0</span><span class="p">).</span><span class="n">First</span><span class="p">();</span>
+    <span class="kt">var</span> <span class="n">result3</span> <span class="p">=</span> <span class="n">list</span><span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">i</span> <span class="p">=&gt;</span> <span class="n">i</span> <span class="p">&gt;</span> <span class="m">0</span><span class="p">).</span><span class="n">FirstOrDefault</span><span class="p">();</span>
+    <span class="kt">var</span> <span class="n">result4</span> <span class="p">=</span> <span class="n">list</span><span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">i</span> <span class="p">=&gt;</span> <span class="n">i</span> <span class="p">&gt;</span> <span class="m">0</span><span class="p">).</span><span class="n">Single</span><span class="p">();</span>
+    <span class="kt">var</span> <span class="n">result5</span> <span class="p">=</span> <span class="n">list</span><span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">i</span> <span class="p">=&gt;</span> <span class="n">i</span> <span class="p">&gt;</span> <span class="m">0</span><span class="p">).</span><span class="n">SingleOrDefault</span><span class="p">();</span>
+    <span class="kt">var</span> <span class="n">result6</span> <span class="p">=</span> <span class="n">list</span><span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">i</span> <span class="p">=&gt;</span> <span class="n">i</span> <span class="k">is</span> <span class="n">not</span> <span class="k">null</span> <span class="p">&amp;&amp;</span> <span class="n">i</span><span class="p">.</span><span class="n">ToString</span><span class="p">().</span><span class="n">Equals</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">)).</span><span class="n">Last</span><span class="p">();</span>
+    <span class="kt">var</span> <span class="n">result7</span> <span class="p">=</span> <span class="n">list</span><span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">element</span> <span class="p">=&gt;</span> <span class="n">element</span> <span class="k">is</span> <span class="n">T</span><span class="p">).</span><span class="n">Select</span><span class="p">(</span><span class="n">e</span> <span class="p">=&gt;</span> <span class="n">e</span> <span class="k">as</span> <span class="n">T</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>Compliant</p>
+<div class="highlight"><pre><span></span><code><span class="k">public</span> <span class="k">void</span> <span class="nf">M</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">var</span> <span class="n">list</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;();</span>
+    <span class="kt">var</span> <span class="n">result1</span> <span class="p">=</span> <span class="n">list</span><span class="p">.</span><span class="n">Count</span><span class="p">(</span><span class="n">i</span> <span class="p">=&gt;</span> <span class="n">i</span> <span class="k">is</span> <span class="n">not</span> <span class="k">null</span><span class="p">);</span>
+    <span class="kt">var</span> <span class="n">result2</span> <span class="p">=</span> <span class="n">list</span><span class="p">.</span><span class="n">First</span><span class="p">(</span><span class="n">i</span> <span class="p">=&gt;</span> <span class="n">i</span> <span class="p">&gt;</span> <span class="m">0</span><span class="p">);</span>
+    <span class="kt">var</span> <span class="n">result3</span> <span class="p">=</span> <span class="n">list</span><span class="p">.</span><span class="n">FirstOrDefault</span><span class="p">(</span><span class="n">i</span> <span class="p">=&gt;</span> <span class="n">i</span> <span class="p">&gt;</span> <span class="m">0</span><span class="p">);</span>
+    <span class="kt">var</span> <span class="n">result4</span> <span class="p">=</span> <span class="n">list</span><span class="p">.</span><span class="n">Single</span><span class="p">(</span><span class="n">i</span> <span class="p">=&gt;</span> <span class="n">i</span> <span class="p">&gt;</span> <span class="m">0</span><span class="p">);</span>
+    <span class="kt">var</span> <span class="n">result5</span> <span class="p">=</span> <span class="n">list</span><span class="p">.</span><span class="n">SingleOrDefault</span><span class="p">(</span><span class="n">i</span> <span class="p">=&gt;</span> <span class="n">i</span> <span class="p">&gt;</span> <span class="m">0</span><span class="p">);</span>
+    <span class="kt">var</span> <span class="n">result6</span> <span class="p">=</span> <span class="n">list</span><span class="p">.</span><span class="n">Last</span><span class="p">(</span><span class="n">i</span> <span class="p">=&gt;</span> <span class="n">i</span> <span class="k">is</span> <span class="n">not</span> <span class="k">null</span><span class="p">);</span>
+    <span class="kt">var</span> <span class="n">result7</span> <span class="p">=</span> <span class="n">list</span><span class="p">.</span><span class="n">OfType</span><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;();</span>
+<span class="p">}</span>
+</code></pre></div>
+</div>
+<div class="admonition example">
+<p class="admonition-title">R5 TypeCheckAndCast</p>
+<p>Non-Compliant</p>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="p">(</span><span class="n">o</span> <span class="k">is</span> <span class="kt">string</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="hll">    <span class="kt">var</span> <span class="n">str</span> <span class="p">=</span> <span class="p">(</span><span class="kt">string</span><span class="p">)</span> <span class="n">o</span><span class="p">;</span>
+</span>    <span class="kt">var</span> <span class="n">length</span> <span class="p">=</span> <span class="n">str</span><span class="p">.</span><span class="n">Length</span><span class="p">.</span><span class="n">GetHashCode</span><span class="p">();</span>
+    <span class="k">return</span> <span class="n">length</span> <span class="p">&gt;</span> <span class="m">2</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Compliant</p>
+<div class="highlight"><pre><span></span><code><span class="hll"><span class="k">if</span> <span class="p">(</span><span class="n">o</span> <span class="k">is</span> <span class="kt">string</span> <span class="n">str</span><span class="p">)</span>
+</span><span class="p">{</span>
+    <span class="kt">var</span> <span class="n">length</span> <span class="p">=</span> <span class="n">str</span><span class="p">.</span><span class="n">Length</span><span class="p">.</span><span class="n">GetHashCode</span><span class="p">();</span>
+    <span class="k">return</span> <span class="n">length</span> <span class="p">&gt;</span> <span class="m">2</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+</div>
+<div class="admonition example">
+<p class="admonition-title">R6 UseMethodAny</p>
+<p>Non-Compliant</p>
+<div class="highlight"><pre><span></span><code><span class="hll"><span class="k">if</span> <span class="p">(</span><span class="n">list</span><span class="p">.</span><span class="n">Count</span><span class="p">()</span> <span class="p">&gt;</span> <span class="m">0</span><span class="p">)</span>
+</span><span class="p">{</span>
+    <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;List is not empty.&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Compliant</p>
+<div class="highlight"><pre><span></span><code><span class="hll"><span class="k">if</span> <span class="p">(</span><span class="n">list</span><span class="p">.</span><span class="n">Any</span><span class="p">())</span>
+</span><span class="p">{</span>
+    <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;List is not empty.&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+</div>
+<div class="admonition example">
+<p class="admonition-title">R7 UseNullPropagation</p>
+<p>Non-Compliant</p>
+<div class="highlight"><pre><span></span><code><span class="k">public</span> <span class="k">void</span> <span class="nf">M</span><span class="p">(</span><span class="n">Car</span> <span class="n">c</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="hll">    <span class="k">if</span> <span class="p">(</span><span class="n">c</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span>
+</span><span class="hll">    <span class="p">{</span>
+</span><span class="hll">        <span class="n">c</span><span class="p">.</span><span class="n">Fly</span><span class="p">(</span><span class="m">42</span><span class="p">);</span>
+</span><span class="hll">    <span class="p">}</span>
+</span><span class="p">}</span>
+</code></pre></div>
+<p>Compliant</p>
+<div class="highlight"><pre><span></span><code><span class="k">public</span> <span class="k">void</span> <span class="nf">M</span><span class="p">(</span><span class="n">Car</span> <span class="n">c</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="hll">    <span class="n">c</span><span class="p">?.</span><span class="n">Fly</span><span class="p">(</span><span class="m">42</span><span class="p">);</span>
+</span><span class="p">}</span>
+</code></pre></div>
+</div>
+<div class="admonition example">
+<p class="admonition-title">R8 UsePatternMatching</p>
+<p>Non-Compliant</p>
+<div class="highlight"><pre><span></span><code><span class="k">public</span> <span class="k">void</span> <span class="nf">M</span><span class="p">(</span><span class="kt">object</span> <span class="n">c</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="hll">    <span class="kt">var</span> <span class="n">s</span> <span class="p">=</span> <span class="n">o</span> <span class="k">as</span> <span class="kt">string</span><span class="p">;</span>
+</span>    <span class="c1">// Check if is null</span>
+<span class="hll">    <span class="k">if</span> <span class="p">(</span><span class="n">s</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+</span>        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="err">$</span><span class="s">&quot;&quot;</span><span class="n">Hi</span><span class="p">.</span> <span class="p">{</span><span class="n">s</span><span class="p">}</span><span class="s">&quot;&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Compliant</p>
+<div class="highlight"><pre><span></span><code><span class="k">public</span> <span class="k">void</span> <span class="nf">M</span><span class="p">(</span><span class="n">Car</span> <span class="n">c</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// Check if is null</span>
+<span class="hll">    <span class="k">if</span> <span class="p">(</span><span class="n">o</span> <span class="k">is</span> <span class="kt">string</span> <span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+</span>        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="err">$</span><span class="s">&quot;&quot;</span><span class="n">Hi</span><span class="p">.</span> <span class="p">{</span><span class="n">s</span><span class="p">}</span><span class="s">&quot;&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+</div>
+<div class="admonition example">
+<p class="admonition-title">R9 UseStringInterpolation</p>
+<p>Non-Compliant</p>
+<div class="highlight"><pre><span></span><code><span class="k">public</span> <span class="k">void</span> <span class="nf">M</span><span class="p">(</span><span class="kt">string</span> <span class="n">s</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="hll">    <span class="k">if</span><span class="p">(</span><span class="n">s</span> <span class="p">!=</span> <span class="k">null</span> <span class="p">&amp;&amp;</span> <span class="n">s</span><span class="p">.</span><span class="n">Length</span> <span class="p">&gt;</span> <span class="m">0</span><span class="p">)</span> <span class="p">{</span>
+</span>        <span class="c1">// do something</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Compliant</p>
+<div class="highlight"><pre><span></span><code><span class="k">public</span> <span class="k">void</span> <span class="nf">M</span><span class="p">(</span><span class="kt">string</span> <span class="n">s</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="hll">    <span class="k">if</span><span class="p">(!</span><span class="kt">string</span><span class="p">.</span><span class="n">IsNullOrEmpty</span><span class="p">(</span><span class="n">s</span><span class="p">))</span> <span class="p">{</span>
+</span>        <span class="c1">// do something</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+</div>
+<div class="admonition example">
+<p class="admonition-title">R10 UseStringIsNullOrEmpty</p>
+<p>Non-Compliant</p>
+<div class="highlight"><pre><span></span><code><span class="k">public</span> <span class="k">void</span> <span class="nf">M</span><span class="p">(</span><span class="kt">string</span> <span class="n">s</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="hll">    <span class="k">if</span><span class="p">(</span><span class="n">s</span> <span class="p">!=</span> <span class="k">null</span> <span class="p">&amp;&amp;</span> <span class="n">s</span><span class="p">.</span><span class="n">Length</span> <span class="p">&gt;</span> <span class="m">0</span><span class="p">)</span> <span class="p">{</span>
+</span>        <span class="c1">// do something</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Compliant</p>
+<div class="highlight"><pre><span></span><code><span class="k">public</span> <span class="k">void</span> <span class="nf">M</span><span class="p">(</span><span class="kt">string</span> <span class="n">s</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="hll">    <span class="k">if</span><span class="p">(!</span><span class="kt">string</span><span class="p">.</span><span class="n">IsNullOrEmpty</span><span class="p">(</span><span class="n">s</span><span class="p">))</span> <span class="p">{</span>
+</span>        <span class="c1">// do something</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+</div>
                 
               
               
