@@ -236,9 +236,46 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Rules
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         Rules
       </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#sonarqube" class="md-nav__link">
+    SonarQube
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resharper" class="md-nav__link">
+    ReSharper
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -263,6 +300,28 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#sonarqube" class="md-nav__link">
+    SonarQube
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resharper" class="md-nav__link">
+    ReSharper
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -279,41 +338,103 @@
                 
                 
                 <h1 id="rules">Rules</h1>
-<p>Coming soon!</p>
+<p>EagleRepair currently aims to fix static analysis violations reported by SonarQube and ReSharper.</p>
+<h2 id="sonarqube">SonarQube</h2>
 <table>
 <thead>
 <tr>
-<th>EagleRepair ID</th>
-<th>SonarQube Squid</th>
-<th>SonarQube Description</th>
+<th align="center">ID</th>
+<th align="left">Squid</th>
+<th align="left">SonarQube Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>R1</td>
-<td><a href="https://rules.sonarsource.com/csharp/RSPEC-3881">3881</a></td>
-<td>"IDisposable" should be implemented correctly</td>
+<td align="center">R1</td>
+<td align="left"><a href="https://rules.sonarsource.com/csharp/RSPEC-3881">3881</a></td>
+<td align="left">"IDisposable" should be implemented correctly</td>
 </tr>
 <tr>
-<td>R3</td>
-<td><a href="https://rules.sonarsource.com/csharp/RSPEC-4201">4201</a></td>
-<td>Null checks should not be used with "is"</td>
+<td align="center">R3</td>
+<td align="left"><a href="https://rules.sonarsource.com/csharp/RSPEC-4201">4201</a></td>
+<td align="left">Null checks should not be used with "is"</td>
+</tr>
+<tr>
+<td align="center">R4</td>
+<td align="left"><a href="https://rules.sonarsource.com/csharp/RSPEC-2971">2971</a></td>
+<td align="left">"IEnumerable" LINQs should be simplified</td>
+</tr>
+<tr>
+<td align="center">R5</td>
+<td align="left"><a href="https://rules.sonarsource.com/csharp/RSPEC-3247">3247</a></td>
+<td align="left">Duplicate casts should not be made</td>
+</tr>
+<tr>
+<td align="center">R6</td>
+<td align="left"><a href="https://rules.sonarsource.com/csharp/RSPEC-1155">1155</a></td>
+<td align="left">"Any()" should be used to test for emptiness</td>
+</tr>
+<tr>
+<td align="center">R10</td>
+<td align="left"><a href="https://rules.sonarsource.com/csharp/RSPEC-3256">3256</a></td>
+<td align="left">"string.IsNullOrEmpty" should be used</td>
 </tr>
 </tbody>
 </table>
+<h2 id="resharper">ReSharper</h2>
 <table>
 <thead>
 <tr>
-<th>EagleRepair ID</th>
-<th>ReSharper TypeId</th>
-<th>ReSharper Description</th>
+<th align="center">ID</th>
+<th align="left">TypeId</th>
+<th align="left">ReSharper Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>R2</td>
-<td><a href="https://www.jetbrains.com/help/resharper/MergeSequentialChecks.html">MergeSequentialChecks</a></td>
-<td>Merge sequential checks in &amp;&amp; or || expressions</td>
+<td align="center">R2</td>
+<td align="left"><a href="https://www.jetbrains.com/help/resharper/MergeSequentialChecks.html">MergeSequentialChecks</a></td>
+<td align="left">Merge sequential checks in &amp;&amp; or || expressions</td>
+</tr>
+<tr>
+<td align="center">R3</td>
+<td align="left"><a href="https://www.jetbrains.com/help/resharper/MergeSequentialChecks.html">MergeSequentialChecks</a></td>
+<td align="left">Merge sequential checks in &amp;&amp; or || expressions</td>
+</tr>
+<tr>
+<td align="center">R4</td>
+<td align="left">ReplaceWithSingleCallTo</td>
+<td align="left">Any, Count, FirstOrDefault, SingleOrDefault, First, Single, Last</td>
+</tr>
+<tr>
+<td align="center">R5</td>
+<td align="left"><a href="https://www.jetbrains.com/help/resharper/MergeCastWithTypeCheck.html">MergeCastWithTypeCheck</a></td>
+<td align="left">Type check and casts can be merged</td>
+</tr>
+<tr>
+<td align="center">R6</td>
+<td align="left">UseMethodAny</td>
+<td align="left">Use ".Any()" to test whether this IEnumerable is empty or not</td>
+</tr>
+<tr>
+<td align="center">R7</td>
+<td align="left"><a href="https://www.jetbrains.com/help/resharper/UseNullPropagation.html">UseNullPropagation</a></td>
+<td align="left">Replace if statement with null-propagating code</td>
+</tr>
+<tr>
+<td align="center">R8</td>
+<td align="left"><a href="https://www.jetbrains.com/help/resharper/UsePatternMatching.html">UsePatternMatching</a></td>
+<td align="left">Convert "as" expression type check and the following null check into pattern matching</td>
+</tr>
+<tr>
+<td align="center">R9</td>
+<td align="left"><a href="https://www.jetbrains.com/help/resharper/UseStringInterpolation.html">UseStringInterpolation</a></td>
+<td align="left">Use string interpolation expression</td>
+</tr>
+<tr>
+<td align="center">R10</td>
+<td align="left"><a href="https://www.jetbrains.com/help/resharper/ReplaceWithStringIsNullOrEmpty.html">ReplaceWithStringIsNullOrEmpty</a></td>
+<td align="left">Use "String.IsNullOrEmpty"</td>
 </tr>
 </tbody>
 </table>
@@ -327,6 +448,10 @@
             </article>
           </div>
         </div>
+        
+          <a href="#" class="md-top md-icon" title="Back to top" data-md-component="top" data-md-state="hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"/></svg>
+          </a>
         
       </main>
       
@@ -389,7 +514,7 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.b0710199.min.js", "version": "0.0.30"}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.b0710199.min.js", "version": "0.0.30"}</script>
     
     
       <script src="../assets/javascripts/bundle.76f349be.min.js"></script>
