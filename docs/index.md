@@ -1,7 +1,7 @@
 # Home
 
 <p align="center">
-  <a href="https://github.com/marodev/EagleRepair"><img src="/img/eaglerepair-logo.png" alt="EagleRepair" width="400" ></a>
+  <a href="https://github.com/marodev/EagleRepair"><img src="img/eaglerepair-logo.png" alt="EagleRepair" width="400" ></a>
 </p>
 
 <p align="center">
