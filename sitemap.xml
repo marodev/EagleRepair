@@ -11,6 +11,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://marodev.github.io/EagleRepair/examples/</loc>
+         <lastmod>2021-06-09</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://marodev.github.io/EagleRepair/rules/</loc>
          <lastmod>2021-06-09</lastmod>
          <changefreq>daily</changefreq>

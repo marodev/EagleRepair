@@ -9,14 +9,14 @@
       
       
       
-        <link rel="canonical" href="https://marodev.github.io/EagleRepair/contributing/">
+        <link rel="canonical" href="https://marodev.github.io/EagleRepair/examples/">
       
       <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.2, mkdocs-material-7.1.7">
     
     
       
-        <title>Contributing - EagleRepair</title>
+        <title>Examples - EagleRepair</title>
       
     
     
@@ -63,7 +63,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#contributing" class="md-skip">
+        <a href="#examples" class="md-skip">
           Skip to content
         </a>
       
@@ -93,7 +93,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Contributing
+              Examples
             
           </span>
         </div>
@@ -212,6 +212,21 @@
 
   
   
+  
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
+        Contributing
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
     
   
   
@@ -224,24 +239,9 @@
       
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        Contributing
-      </a>
-      
-    </li>
-  
-
-    
-      
-      
-      
-
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../examples/" class="md-nav__link">
         Examples
       </a>
+      
     </li>
   
 
@@ -290,14 +290,80 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/marodev/EagleRepair/edit/master/docs/contributing.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/marodev/EagleRepair/edit/master/docs/examples.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
                 
-                <h1 id="contributing">Contributing</h1>
-<p>PR's are welcome!
-Start here: <a href="https://github.com/marodev/EagleRepair/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a></p>
+                <h1 id="examples">Examples</h1>
+<p>Coming soon!</p>
+<details class="r1" open="open"><summary>R1</summary><p>Non-Compliant
+<div class="highlight"><pre><span></span><code><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+
+<span class="k">namespace</span> <span class="nn">N</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">class</span> <span class="nc">C</span> <span class="p">:</span> <span class="n">IDisposable</span>
+    <span class="p">{</span>
+        <span class="k">public</span> <span class="k">void</span> <span class="nf">Dispose</span><span class="p">()</span>
+        <span class="p">{</span>
+<span class="hll">            <span class="c1">// cleanup</span>
+</span>        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>Compliant</p>
+<div class="highlight"><pre><span></span><code><span class="k">using</span> <span class="nn">System</span><span class="p">;</span>
+
+<span class="k">namespace</span> <span class="nn">N</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">class</span> <span class="nc">C</span> <span class="p">:</span> <span class="n">IDisposable</span>
+    <span class="p">{</span>
+        <span class="c1">// To detect redundant calls</span>
+        <span class="k">private</span> <span class="kt">bool</span> <span class="n">_disposed</span> <span class="p">=</span> <span class="k">false</span><span class="p">;</span>
+
+        <span class="k">public</span> <span class="k">void</span> <span class="nf">Dispose</span><span class="p">()</span>
+        <span class="p">{</span>
+            <span class="n">Dispose</span><span class="p">(</span><span class="k">true</span><span class="p">);</span>
+            <span class="n">GC</span><span class="p">.</span><span class="n">SuppressFinalize</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">protected</span> <span class="k">virtual</span> <span class="k">void</span> <span class="nf">Dispose</span><span class="p">(</span><span class="kt">bool</span> <span class="n">disposing</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">_disposed</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="k">return</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">disposing</span><span class="p">)</span>
+            <span class="p">{</span>
+<span class="hll">                <span class="c1">// cleanup</span>
+</span>            <span class="p">}</span>
+
+            <span class="n">_disposed</span> <span class="p">=</span> <span class="k">true</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+</details>
+<details class="r2"><summary>R2</summary><p>Non-Compliant
+<div class="highlight"><pre><span></span><code><span class="k">public</span> <span class="k">void</span> <span class="nf">M</span><span class="p">(</span><span class="n">B</span> <span class="n">b</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="hll">    <span class="k">if</span> <span class="p">(</span><span class="n">b</span> <span class="p">==</span> <span class="k">null</span> <span class="p">||</span> <span class="n">b</span><span class="p">.</span><span class="n">Parent</span> <span class="k">is</span> <span class="k">null</span><span class="p">)</span>
+</span>    <span class="p">{</span>
+        <span class="c1">// do something</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>Compliant</p>
+<div class="highlight"><pre><span></span><code><span class="k">public</span> <span class="k">void</span> <span class="nf">M</span><span class="p">(</span><span class="n">B</span> <span class="n">b</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="hll">    <span class="k">if</span> <span class="p">(</span><span class="n">b</span><span class="p">?.</span><span class="n">Parent</span> <span class="k">is</span> <span class="k">null</span><span class="p">)</span>
+</span>    <span class="p">{</span>
+        <span class="c1">// do something</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+</details>
                 
               
               
@@ -321,7 +387,7 @@ Start here: <a href="https://github.com/marodev/EagleRepair/blob/main/CONTRIBUTI
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href=".." class="md-footer__link md-footer__link--prev" aria-label="Previous: Home" rel="prev">
+        <a href="../contributing/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Contributing" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -330,20 +396,20 @@ Start here: <a href="https://github.com/marodev/EagleRepair/blob/main/CONTRIBUTI
               <span class="md-footer__direction">
                 Previous
               </span>
-              Home
+              Contributing
             </div>
           </div>
         </a>
       
       
         
-        <a href="../examples/" class="md-footer__link md-footer__link--next" aria-label="Next: Examples" rel="next">
+        <a href="../rules/" class="md-footer__link md-footer__link--next" aria-label="Next: Rules" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Examples
+              Rules
             </div>
           </div>
           <div class="md-footer__button md-icon">
