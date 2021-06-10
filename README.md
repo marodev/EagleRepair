@@ -30,6 +30,8 @@ EagleRepair is [available on NuGet](https://www.nuget.org/packages/EagleRepair.C
 dotnet tool install --global EagleRepair.Cli
 ```
 
+![Install Gif](docs/img/eagle-repair-install-video.gif) 
+
 ## Getting Started
 - first build your C# project
 - run EagleRepair
