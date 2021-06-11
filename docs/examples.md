@@ -229,7 +229,7 @@ containing the EagleRepair's fix (Compliant).
     Compliant
     
     ``` c# hl_lines="4"
-    public void M(Car c)
+    public void M(object o)
     {
         // Check if string is not null
         if (o is string s) {
@@ -242,22 +242,28 @@ containing the EagleRepair's fix (Compliant).
 
     Non-Compliant
 
-    ```c# hl_lines="3"
-    public void M(string s)
+    ```c# hl_lines="6"
+    public IList<string> M()
     {
-        if(s != null && s.Length > 0) {
-            // do something
+        const string msg = "Value is:";
+        return new List<string>
+            {
+                string.Format("{0} {1}", msg, _utils.GetValue())
+            };
         }
     }
     ```
     
     Compliant
     
-    ``` c# hl_lines="3"
-    public void M(string s)
+    ```c# hl_lines="6"
+    public IList<string> M()
     {
-        if(!string.IsNullOrEmpty(s)) {
-            // do something
+        const string msg = "Value is:";
+        return new List<string>
+            {
+                $"{msg} {_utils.GetValue()}"
+            };
         }
     }
     ```
