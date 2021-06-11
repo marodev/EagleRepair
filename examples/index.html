@@ -473,7 +473,7 @@ containing the EagleRepair's fix (Compliant).</p>
 <div class="admonition example">
 <p class="admonition-title">R8 UsePatternMatching</p>
 <p>Non-Compliant</p>
-<div class="highlight"><pre><span></span><code><span class="k">public</span> <span class="k">void</span> <span class="nf">M</span><span class="p">(</span><span class="kt">object</span> <span class="n">c</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="k">public</span> <span class="k">void</span> <span class="nf">M</span><span class="p">(</span><span class="kt">object</span> <span class="n">o</span><span class="p">)</span>
 <span class="p">{</span>
 <span class="hll">    <span class="kt">var</span> <span class="n">s</span> <span class="p">=</span> <span class="n">o</span> <span class="k">as</span> <span class="kt">string</span><span class="p">;</span>
 </span>    <span class="c1">// Check if string is not null</span>
@@ -483,7 +483,7 @@ containing the EagleRepair's fix (Compliant).</p>
 <span class="p">}</span>
 </code></pre></div>
 <p>Compliant</p>
-<div class="highlight"><pre><span></span><code><span class="k">public</span> <span class="k">void</span> <span class="nf">M</span><span class="p">(</span><span class="n">Car</span> <span class="n">c</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="k">public</span> <span class="k">void</span> <span class="nf">M</span><span class="p">(</span><span class="kt">object</span> <span class="n">o</span><span class="p">)</span>
 <span class="p">{</span>
     <span class="c1">// Check if string is not null</span>
 <span class="hll">    <span class="k">if</span> <span class="p">(</span><span class="n">o</span> <span class="k">is</span> <span class="kt">string</span> <span class="n">s</span><span class="p">)</span> <span class="p">{</span>
@@ -495,18 +495,24 @@ containing the EagleRepair's fix (Compliant).</p>
 <div class="admonition example">
 <p class="admonition-title">R9 UseStringInterpolation</p>
 <p>Non-Compliant</p>
-<div class="highlight"><pre><span></span><code><span class="k">public</span> <span class="k">void</span> <span class="nf">M</span><span class="p">(</span><span class="kt">string</span> <span class="n">s</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="k">public</span> <span class="n">IList</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;</span> <span class="n">M</span><span class="p">()</span>
 <span class="p">{</span>
-<span class="hll">    <span class="k">if</span><span class="p">(</span><span class="n">s</span> <span class="p">!=</span> <span class="k">null</span> <span class="p">&amp;&amp;</span> <span class="n">s</span><span class="p">.</span><span class="n">Length</span> <span class="p">&gt;</span> <span class="m">0</span><span class="p">)</span> <span class="p">{</span>
-</span>        <span class="c1">// do something</span>
+    <span class="k">const</span> <span class="kt">string</span> <span class="n">msg</span> <span class="p">=</span> <span class="s">&quot;Value is:&quot;</span><span class="p">;</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;</span>
+        <span class="p">{</span>
+<span class="hll">            <span class="kt">string</span><span class="p">.</span><span class="n">Format</span><span class="p">(</span><span class="s">&quot;{0} {1}&quot;</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">_utils</span><span class="p">.</span><span class="n">GetValue</span><span class="p">())</span>
+</span>        <span class="p">};</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
 <p>Compliant</p>
-<div class="highlight"><pre><span></span><code><span class="k">public</span> <span class="k">void</span> <span class="nf">M</span><span class="p">(</span><span class="kt">string</span> <span class="n">s</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="k">public</span> <span class="n">IList</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;</span> <span class="n">M</span><span class="p">()</span>
 <span class="p">{</span>
-<span class="hll">    <span class="k">if</span><span class="p">(!</span><span class="kt">string</span><span class="p">.</span><span class="n">IsNullOrEmpty</span><span class="p">(</span><span class="n">s</span><span class="p">))</span> <span class="p">{</span>
-</span>        <span class="c1">// do something</span>
+    <span class="k">const</span> <span class="kt">string</span> <span class="n">msg</span> <span class="p">=</span> <span class="s">&quot;Value is:&quot;</span><span class="p">;</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;</span>
+        <span class="p">{</span>
+<span class="hll">            <span class="err">$</span><span class="s">&quot;{msg} {_utils.GetValue()}&quot;</span>
+</span>        <span class="p">};</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
