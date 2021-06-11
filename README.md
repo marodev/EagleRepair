@@ -19,6 +19,9 @@
     <a href="https://github.com/marodev/EagleRepair/actions/workflows/codeql-analysis.yml">
        <img src="https://github.com/marodev/EagleRepair/actions/workflows/codeql-analysis.yml/badge.svg" />
     </a>
+    <a href="https://github.com/marodev/EagleRepair/blob/main/.github/dependabot.yml">
+       <img src="https://img.shields.io/badge/Debandabot-enabled-informational.svg" />
+    </a>
     <a href="https://github.com/marodev/EagleRepair/blob/main/LICENSE">
       <img src="https://img.shields.io/badge/license-MIT-informational.svg" />
     </a>
