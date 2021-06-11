@@ -8,6 +8,7 @@
 
 <p align="center">
     <img src="https://github.com/marodev/EagleRepair/actions/workflows/ci.yml/badge.svg" />
+    <img src="https://github.com/marodev/EagleRepair/actions/workflows/codeql-analysis.yml/badge.svg" />
     <img src="https://img.shields.io/nuget/v/EagleRepair.Cli" />
 </p>
 
