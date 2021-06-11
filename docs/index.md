@@ -3,7 +3,7 @@
 <p align="center">
   <a href="https://github.com/marodev/EagleRepair"><img src="img/eaglerepair-logo.png" alt="EagleRepair" width="400" ></a>
 </p>
-s
+
 <p align="center">
     <em>EagleRepair is a cross-platform command line tool for automatically fixing static analysis warnings in C# programs.</em>
 </p>
