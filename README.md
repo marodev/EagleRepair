@@ -7,10 +7,18 @@
 </p>
 
 <p align="center">
-    <img src="https://github.com/marodev/EagleRepair/actions/workflows/ci.yml/badge.svg" />
-    <img src="https://codecov.io/gh/marodev/EagleRepair/branch/main/graph/badge.svg?token=DPOM31AXDV"/>
-    <img src="https://github.com/marodev/EagleRepair/actions/workflows/codeql-analysis.yml/badge.svg" />
-    <img src="https://img.shields.io/nuget/v/EagleRepair.Cli" />
+    <a href="https://github.com/marodev/EagleRepair/actions/workflows/ci.yml">
+      <img src="https://github.com/marodev/EagleRepair/actions/workflows/ci.yml/badge.svg" />
+    </a>
+    <a href="https://codecov.io/gh/marodev/EagleRepair">
+      <img src="https://codecov.io/gh/marodev/EagleRepair/branch/main/graph/badge.svg?token=DPOM31AXDV"/>
+    </a>
+    <a href="https://www.nuget.org/packages/EagleRepair.Cli">
+     <img src="https://img.shields.io/nuget/v/EagleRepair.Cli" />
+    </a>
+    <a href="https://github.com/marodev/EagleRepair/actions/workflows/codeql-analysis.yml">
+       <img src="https://github.com/marodev/EagleRepair/actions/workflows/codeql-analysis.yml/badge.svg" />
+    </a>
 </p>
 
 ---
