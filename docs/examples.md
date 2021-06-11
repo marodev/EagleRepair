@@ -216,7 +216,7 @@ containing the EagleRepair's fix (Compliant).
     Non-Compliant
 
     ```c# hl_lines="3 5"
-    public void M(object c)
+    public void M(object o)
     {
         var s = o as string;
         // Check if string is not null
