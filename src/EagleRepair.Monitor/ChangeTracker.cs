@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using EagleRepair.Statistics;
 
+
 namespace EagleRepair.Monitor
 {
     public class ChangeTracker : IChangeTracker

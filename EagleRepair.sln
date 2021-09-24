@@ -8,7 +8,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EagleRepair.IntegrationTest
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EagleRepair.Monitor", "src\EagleRepair.Monitor\EagleRepair.Monitor.csproj", "{8DC2E777-B12B-4694-BD63-5A3ABEC3F050}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EagleRepair.Statistics", "EagleRepair.Statistics\EagleRepair.Statistics.csproj", "{7A32098D-664C-4CDD-A67F-BC6E66A58BDF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EagleRepair.Statistics", "src\EagleRepair.Statistics\EagleRepair.Statistics.csproj", "{7A32098D-664C-4CDD-A67F-BC6E66A58BDF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
