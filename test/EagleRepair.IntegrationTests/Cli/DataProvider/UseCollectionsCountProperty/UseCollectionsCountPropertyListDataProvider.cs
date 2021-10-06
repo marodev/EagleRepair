@@ -8,6 +8,7 @@ namespace EagleRepair.IntegrationTests.Cli.DataProvider.UseCollectionsCountPrope
 
         private const string Input = @"
 using System;
+using System.Collections.Generic;
 
 namespace Entry
 {
@@ -27,6 +28,7 @@ namespace Entry
 
         private const string ExpectedOutput = @"
 using System;
+using System.Collections.Generic;
 
 namespace Entry
 {

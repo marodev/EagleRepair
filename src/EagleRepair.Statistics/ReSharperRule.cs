@@ -16,6 +16,7 @@ namespace EagleRepair.Statistics
         UseMethodAny,
         UseNullPropagation,
         UsePatternMatching,
-        UseStringInterpolation
+        UseStringInterpolation,
+        UseCollectionsCountProperty
     }
 }
