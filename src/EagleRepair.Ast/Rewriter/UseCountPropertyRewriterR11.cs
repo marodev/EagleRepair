@@ -1,3 +1,4 @@
+using EagleRepair.Ast.Priority;
 using EagleRepair.Ast.Services;
 using EagleRepair.Ast.Url;
 using EagleRepair.Monitor;
@@ -41,6 +42,12 @@ namespace EagleRepair.Ast.Rewriter
                 ?.ToDisplayString();
 
             if (!TypeService.InheritsFromIEnumerable(containingNamespace) && !isArray)
+            {
+                return base.VisitInvocationExpression(node);
+            }
+
+            // only consider collections that implement ICollection<T> or its derived interfaces.
+            if (TypeService.IsIEnumerable(typeSymbol.ToString()))
             {
                 return base.VisitInvocationExpression(node);
             }
