@@ -26,3 +26,4 @@ R7 | [UseNullPropagation](https://www.jetbrains.com/help/resharper/UseNullPropag
 R8 | [UsePatternMatching](https://www.jetbrains.com/help/resharper/UsePatternMatching.html) | Convert "as" expression type check and the following null check into pattern matching |
 R9 | [UseStringInterpolation](https://www.jetbrains.com/help/resharper/UseStringInterpolation.html) | Use string interpolation expression |
 R10 | [ReplaceWithStringIsNullOrEmpty](https://www.jetbrains.com/help/resharper/ReplaceWithStringIsNullOrEmpty.html) | Use "String.IsNullOrEmpty" |
+R11 | [UseCountProperty](https://www.jetbrains.com/help/resharper/UseCollectionCountProperty.html) - *Coming soon* | Use collection’s count property | 

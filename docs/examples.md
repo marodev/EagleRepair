@@ -292,5 +292,23 @@ containing the EagleRepair's fix (Compliant).
     }
     ```
 
+!!! example "R11 UseCountProperty (COMING SOON)" 
 
+    Non-Compliant
+
+    ```c# hl_lines="3"
+    public int M(ICollection<int> collection)
+    {
+        return collection.Count();
+    }
+    ```
+    
+    Compliant
+    
+    ``` c# hl_lines="3"
+    public int M(ICollection<int> collection)
+    {
+        return collection.Count;
+    }
+    ```
 
