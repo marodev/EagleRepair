@@ -4,7 +4,6 @@ using System.Collections.Immutable;
 using System.Linq;
 using EagleRepair.Statistics;
 
-
 namespace EagleRepair.Monitor
 {
     public class ChangeTracker : IChangeTracker
@@ -171,7 +170,7 @@ namespace EagleRepair.Monitor
             }
 
             var grouped = allRuleIds.GroupBy(r => r)
-                .Select(g => new {Rule = g.Key, Count = g.Count()})
+                .Select(g => new { Rule = g.Key, Count = g.Count() })
                 .OrderByDescending(g => g.Count);
 
             var formattedResult = $"{Environment.NewLine}--- Rules Summary ---{Environment.NewLine}";

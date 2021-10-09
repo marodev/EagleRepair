@@ -21,7 +21,7 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree);
         }
-        
+
         [Theory]
         [MemberData(nameof(UseCollectionCoutPropertyAssignmentDataProvider.TestCases),
             MemberType = typeof(UseCollectionCoutPropertyAssignmentDataProvider))]
@@ -29,7 +29,7 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree);
         }
-        
+
         [Theory]
         [MemberData(nameof(UseCollectionsCountPropertyEqualsDataProvider.TestCases),
             MemberType = typeof(UseCollectionsCountPropertyEqualsDataProvider))]
@@ -37,15 +37,15 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree);
         }
-        
+
         [Theory]
         [MemberData(nameof(UseCollectionsCountPropertyParameterDataProvider.TestCases),
             MemberType = typeof(UseCollectionsCountPropertyParameterDataProvider))]
         public async Task UseCountMethodAsParameter_ReturnsCountProperty(string inputTree, string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree);
-        }       
-        
+        }
+
         [Theory]
         [MemberData(nameof(UseCollectionsCountPropertyIEnumerableDataProvider.TestCases),
             MemberType = typeof(UseCollectionsCountPropertyIEnumerableDataProvider))]
@@ -53,7 +53,7 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree);
         }
-        
+
         [Theory]
         [MemberData(nameof(UseCollectionsCountPropertyLinqDataProvider.TestCases),
             MemberType = typeof(UseCollectionsCountPropertyLinqDataProvider))]
@@ -61,6 +61,5 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree, false);
         }
-
     }
 }

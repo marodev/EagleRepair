@@ -102,7 +102,7 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree, false);
         }
-        
+
         [Theory]
         [MemberData(nameof(UsePatternMatchingGenericsDataProvider.TestCases),
             MemberType = typeof(UsePatternMatchingGenericsDataProvider))]

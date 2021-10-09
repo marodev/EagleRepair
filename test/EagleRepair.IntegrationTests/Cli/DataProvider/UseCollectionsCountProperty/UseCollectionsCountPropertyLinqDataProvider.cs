@@ -4,7 +4,6 @@ namespace EagleRepair.IntegrationTests.Cli.DataProvider.UseCollectionsCountPrope
 {
     public class UseCollectionsCountPropertyLinqDataProvider
     {
-        
         private const string InputAndExpectedOutput = @"
 using System;
 using System.Collections.Generic;
@@ -27,4 +26,3 @@ namespace Entry
         }
     }
 }
-

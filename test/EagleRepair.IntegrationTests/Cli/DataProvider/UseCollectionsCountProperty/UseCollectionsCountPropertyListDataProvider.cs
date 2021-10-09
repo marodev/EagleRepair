@@ -4,8 +4,6 @@ namespace EagleRepair.IntegrationTests.Cli.DataProvider.UseCollectionsCountPrope
 {
     public class UseCollectionsCountPropertyListDataProvider
     {
-
-
         private const string Input = @"
 using System;
 using System.Collections.Generic;
