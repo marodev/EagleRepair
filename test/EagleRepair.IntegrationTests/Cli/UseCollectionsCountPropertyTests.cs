@@ -44,6 +44,14 @@ namespace EagleRepair.IntegrationTests.Cli
         public async Task UseCountMethodAsParameter_ReturnsCountProperty(string inputTree, string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree);
+        }       
+        
+        [Theory]
+        [MemberData(nameof(UseCollectionsCountPropertyIEnumerableDataProvider.TestCases),
+            MemberType = typeof(UseCollectionsCountPropertyIEnumerableDataProvider))]
+        public async Task UseCountMethodInIEnumerable_ReturnsInput(string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree);
         }
 
     }
