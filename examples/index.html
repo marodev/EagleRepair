@@ -547,6 +547,21 @@ containing the EagleRepair's fix (Compliant).</p>
 <span class="p">}</span>
 </code></pre></div>
 </div>
+<div class="admonition example">
+<p class="admonition-title">R11 UseCountProperty (COMING SOON)</p>
+<p>Non-Compliant</p>
+<div class="highlight"><pre><span></span><code><span class="k">public</span> <span class="kt">int</span> <span class="nf">M</span><span class="p">(</span><span class="n">ICollection</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="n">collection</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="hll">    <span class="k">return</span> <span class="n">collection</span><span class="p">.</span><span class="n">Count</span><span class="p">();</span>
+</span><span class="p">}</span>
+</code></pre></div>
+<p>Compliant</p>
+<div class="highlight"><pre><span></span><code><span class="k">public</span> <span class="kt">int</span> <span class="nf">M</span><span class="p">(</span><span class="n">ICollection</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="n">collection</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="hll">    <span class="k">return</span> <span class="n">collection</span><span class="p">.</span><span class="n">Count</span><span class="p">;</span>
+</span><span class="p">}</span>
+</code></pre></div>
+</div>
                 
               
               
