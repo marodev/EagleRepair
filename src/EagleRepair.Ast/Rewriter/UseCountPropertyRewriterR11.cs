@@ -18,6 +18,11 @@ namespace EagleRepair.Ast.Rewriter
 
         public override SyntaxNode? VisitInvocationExpression(InvocationExpressionSyntax node)
         {
+            if (node.ArgumentList.Arguments.Any())
+            {
+                return base.VisitInvocationExpression(node); 
+            }
+            
             if (node.Expression is not MemberAccessExpressionSyntax memberAccessExpressionSyntax)
             {
                 return base.VisitInvocationExpression(node);
