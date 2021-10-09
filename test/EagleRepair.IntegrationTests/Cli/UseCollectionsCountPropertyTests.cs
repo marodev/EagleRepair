@@ -53,6 +53,14 @@ namespace EagleRepair.IntegrationTests.Cli
         {
             await TestExecutor.Run(inputTree, expectedTree);
         }
+        
+        [Theory]
+        [MemberData(nameof(UseCollectionsCountPropertyLinqDataProvider.TestCases),
+            MemberType = typeof(UseCollectionsCountPropertyLinqDataProvider))]
+        public async Task UseCountMethodWithLinq_ReturnsInput(string inputTree, string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree, false);
+        }
 
     }
 }
