@@ -52,7 +52,7 @@ namespace Entry
 
         public static IEnumerable<object[]> TestCases()
         {
-            yield return new object[] {Input, Input};
+            yield return new object[] { Input, Input };
         }
     }
 }

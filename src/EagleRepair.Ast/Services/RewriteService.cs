@@ -710,7 +710,9 @@ namespace EagleRepair.Ast.Services
                     e.Expression is InvocationExpressionSyntax
                     {
                         Expression: MemberAccessExpressionSyntax
-                            {Expression: IdentifierNameSyntax identifierName}
+                        {
+                            Expression: IdentifierNameSyntax identifierName
+                        }
                     } && identifierName.ToString().Equals("GC"));
         }
 

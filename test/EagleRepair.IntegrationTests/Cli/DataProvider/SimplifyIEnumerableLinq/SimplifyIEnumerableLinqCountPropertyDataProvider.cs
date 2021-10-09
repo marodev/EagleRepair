@@ -58,7 +58,7 @@ namespace Entry
 
         public static IEnumerable<object[]> TestCases()
         {
-            yield return new object[] {Input, ExpectedOutput};
+            yield return new object[] { Input, ExpectedOutput };
         }
     }
 }

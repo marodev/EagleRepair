@@ -1,4 +1,3 @@
-using EagleRepair.Ast.Priority;
 using EagleRepair.Ast.Services;
 using EagleRepair.Ast.Url;
 using EagleRepair.Monitor;
@@ -20,9 +19,9 @@ namespace EagleRepair.Ast.Rewriter
         {
             if (node.ArgumentList.Arguments.Any())
             {
-                return base.VisitInvocationExpression(node); 
+                return base.VisitInvocationExpression(node);
             }
-            
+
             if (node.Expression is not MemberAccessExpressionSyntax memberAccessExpressionSyntax)
             {
                 return base.VisitInvocationExpression(node);
@@ -41,7 +40,7 @@ namespace EagleRepair.Ast.Rewriter
             }
 
             var isArray = typeSymbol is IArrayTypeSymbol;
-            
+
             var containingNamespace = typeSymbol
                 .ContainingNamespace
                 ?.ToDisplayString();
@@ -56,7 +55,7 @@ namespace EagleRepair.Ast.Rewriter
             {
                 return base.VisitInvocationExpression(node);
             }
-            
+
             var newNode = node.Expression.WithTrailingTrivia(node.GetTrailingTrivia());
 
             if (newNode is not MemberAccessExpressionSyntax newMemberAccessExpr)
@@ -68,7 +67,7 @@ namespace EagleRepair.Ast.Rewriter
             {
                 newNode = newMemberAccessExpr.WithName(RewriteService.CreateIdentifier("Length"));
             }
-            
+
             var lineNumber = $"{DisplayService.GetLineNumber(node)}";
             var message = ReSharper.UseCollectionsCountProperty;
             ChangeTracker.Stage(new Message
@@ -80,7 +79,7 @@ namespace EagleRepair.Ast.Rewriter
                 Text = message,
                 ReSharperId = ReSharperRule.UseCollectionsCountProperty.ToString()
             });
-            
+
             return newNode;
         }
     }

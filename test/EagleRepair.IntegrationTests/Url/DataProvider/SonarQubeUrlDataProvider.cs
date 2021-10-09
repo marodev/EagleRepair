@@ -7,7 +7,7 @@ namespace EagleRepair.IntegrationTests.Url.DataProvider
     {
         public static IEnumerable<object[]> TestCases()
         {
-            yield return new object[] {SonarQube.BaseUrl};
+            yield return new object[] { SonarQube.BaseUrl };
         }
     }
 }

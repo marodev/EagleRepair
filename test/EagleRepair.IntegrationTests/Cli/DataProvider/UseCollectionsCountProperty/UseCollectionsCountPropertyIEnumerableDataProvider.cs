@@ -4,7 +4,6 @@ namespace EagleRepair.IntegrationTests.Cli.DataProvider.UseCollectionsCountPrope
 {
     public class UseCollectionsCountPropertyIEnumerableDataProvider
     {
-        
         private const string Input = @"
 using System;
 using System.Collections.Generic;
@@ -24,6 +23,7 @@ namespace Entry
         }
     }
 }";
+
         private const string ExpectedOutput = @"
 using System;
 using System.Collections.Generic;
@@ -43,10 +43,10 @@ namespace Entry
         }
     }
 }";
+
         public static IEnumerable<object[]> TestCases()
         {
             yield return new object[] { Input, ExpectedOutput };
         }
     }
 }
-

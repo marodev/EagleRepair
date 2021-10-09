@@ -37,7 +37,7 @@ public class FooClass
 
         public static IEnumerable<object[]> TestCases()
         {
-            yield return new object[] {InputAndExpectedOutput, InputAndExpectedOutput};
+            yield return new object[] { InputAndExpectedOutput, InputAndExpectedOutput };
         }
     }
 }

@@ -12,7 +12,8 @@ namespace EagleRepair.Ast.Url
 
         public static readonly string UseCollectionsCountPropertyUrl = $"{BaseUrl}/UseCollectionCountProperty.html";
 
-        public static readonly string UseCollectionsCountProperty = $"{ToolName}: Use collection’s count property. See {UseCollectionsCountPropertyUrl}";
+        public static readonly string UseCollectionsCountProperty =
+            $"{ToolName}: Use collection’s count property. See {UseCollectionsCountPropertyUrl}";
 
         public static readonly string ReplaceWithOfType2Message = $"{ToolName}: ReplaceWithOfType.2.";
 
