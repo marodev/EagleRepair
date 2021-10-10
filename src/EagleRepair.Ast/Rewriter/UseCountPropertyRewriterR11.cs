@@ -15,7 +15,7 @@ namespace EagleRepair.Ast.Rewriter
         {
         }
 
-        public override SyntaxNode? VisitInvocationExpression(InvocationExpressionSyntax node)
+        public override SyntaxNode VisitInvocationExpression(InvocationExpressionSyntax node)
         {
             if (node.ArgumentList.Arguments.Any())
             {
