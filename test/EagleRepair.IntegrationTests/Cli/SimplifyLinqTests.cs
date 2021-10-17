@@ -120,6 +120,15 @@ namespace EagleRepair.IntegrationTests.Cli
             string expectedTree)
         {
             await TestExecutor.Run(inputTree, expectedTree, false);
+        }   
+        
+        [Theory]
+        [MemberData(nameof(SimplifyIEnumerableLinqOfTypeDataProvider.TestCases),
+            MemberType = typeof(SimplifyIEnumerableLinqOfTypeDataProvider))]
+        public async Task SimplifyLinq_UseWhereSelect_ReturnsSelect(string inputTree,
+            string expectedTree)
+        {
+            await TestExecutor.Run(inputTree, expectedTree);
         }
     }
 }
