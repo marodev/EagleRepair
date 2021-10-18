@@ -165,6 +165,17 @@ namespace EagleRepair.Ast.Services
                                 IdentifierName(type))))));
         }
 
+        public InvocationExpressionSyntax CreateOfTypeTPredefined(string variable, TypeSyntax type)
+        {
+            return InvocationExpression(MemberAccessExpression(
+                SyntaxKind.SimpleMemberAccessExpression, IdentifierName(variable),
+                GenericName(
+                        Identifier("OfType"))
+                    .WithTypeArgumentList(
+                        TypeArgumentList(
+                            SingletonSeparatedList(type)))));
+        }
+
         public ExpressionStatementSyntax CreateNullPropagation(string variableName, string methodName,
             ArgumentListSyntax arguments = null)
         {

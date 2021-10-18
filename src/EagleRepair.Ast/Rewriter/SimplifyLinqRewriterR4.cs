@@ -217,7 +217,10 @@ namespace EagleRepair.Ast.Rewriter
                 return base.VisitInvocationExpression(node);
             }
 
-            if (lambdaBinaryExpr.Right is not IdentifierNameSyntax)
+            // predefined types, e.g., string
+            var isPredefined = lambdaBinaryExpr.Right is PredefinedTypeSyntax;
+
+            if (lambdaBinaryExpr.Right is not IdentifierNameSyntax && !isPredefined)
             {
                 base.VisitInvocationExpression(node);
             }
@@ -235,7 +238,9 @@ namespace EagleRepair.Ast.Rewriter
                 base.VisitInvocationExpression(node);
             }
 
-            var castedTypeInWhereCondition = ((IdentifierNameSyntax)lambdaBinaryExpr.Right).Identifier.ValueText;
+            var castedTypeInWhereCondition = isPredefined
+                ? ((PredefinedTypeSyntax)lambdaBinaryExpr.Right).ToString()
+                : ((IdentifierNameSyntax)lambdaBinaryExpr.Right).Identifier.ValueText;
 
             // selectLambdaExpr.Block;
             var bodyExpr = ((SimpleLambdaExpressionSyntax)selectArgumentExpr).Body;
@@ -277,7 +282,10 @@ namespace EagleRepair.Ast.Rewriter
             }
 
             var variableName = identifierNameSyntax.ToString();
-            var newOfTypeNode = RewriteService.CreateOfTypeT(variableName, castedTypeInWhereCondition);
+
+            var newOfTypeNode = isPredefined
+                ? RewriteService.CreateOfTypeTPredefined(variableName, (TypeSyntax)lambdaBinaryExpr.Right)
+                : RewriteService.CreateOfTypeT(variableName, castedTypeInWhereCondition);
 
             var lineNr = $"{DisplayService.GetLineNumber(node)}";
             var msg = ReSharper.ReplaceWithOfType2Message + " / " + SonarQube.RuleSpecification2971Message;
