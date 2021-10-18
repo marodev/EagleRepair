@@ -21,6 +21,7 @@ namespace EagleRepair.Ast.Services
             string designation, SyntaxNode syntaxTrivia = null);
 
         public InvocationExpressionSyntax CreateOfTypeT(string variable, string type);
+        public InvocationExpressionSyntax CreateOfTypeTPredefined(string variable, TypeSyntax typeSyntax);
 
         public ExpressionStatementSyntax CreateNullPropagation(string variableName, string methodName,
             ArgumentListSyntax arguments = null);
