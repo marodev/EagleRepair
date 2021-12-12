@@ -11,6 +11,7 @@ namespace EagleRepair.Ast
         R7, // UseNullPropagation
         R8, // UsePatternMatching
         R9, // UseStringInterpolation
-        R10 // UseStringIsNullOrEmpty
+        R10, // UseStringIsNullOrEmpty
+        R11 // UseCollectionsCountProperty
     }
 }

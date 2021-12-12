@@ -25,7 +25,7 @@ namespace EagleRepair.IntegrationTests
             var diContainer = diBuilder.Build();
             await using var scope = diContainer.BeginLifetimeScope();
             var app = scope.Resolve<IApplication>();
-            var cmdArgs = new List<string> {"-p", "ignore.sln", "-v", "True"};
+            var cmdArgs = new List<string> { "-p", "ignore.sln", "-v", "True" };
 
             // Act
             var succeeded = await app.Run(cmdArgs);

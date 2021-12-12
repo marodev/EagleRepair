@@ -139,7 +139,9 @@ namespace EagleRepair.Ast.Rewriter
                 .FirstOrDefault(n => n.Identifier.ValueText.Equals("Any"));
 
             if (newAnyNode!.Parent is MemberAccessExpressionSyntax
-                {Parent: not InvocationExpressionSyntax} memberAccess)
+            {
+                Parent: not InvocationExpressionSyntax
+            } memberAccess)
             {
                 newNode = newNode.ReplaceNode(memberAccess,
                     InvocationExpression(memberAccess).NormalizeWhitespace());
