@@ -21,9 +21,9 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
       - name: Build
-        run: dotnet build --no-restore --RunConfiguration.TargetPlatform="x64"
+        run: dotnet build --no-restore -- RunConfiguration.TargetPlatform="x64"
       - name: Test
-        run: dotnet test --no-build --verbosity normal --RunConfiguration.TargetPlatform="x64"
+        run: dotnet test --no-build --verbosity normal -- RunConfiguration.TargetPlatform="x64"
     
   ubuntu-build:
     runs-on: ubuntu-latest
