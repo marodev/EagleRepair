@@ -10,7 +10,7 @@
     <Title>EagleRepair</Title>
     <Description>EagleRepair is a command line tool for automatically fixing static analysis warnigns in C# programs.</Description>
     <RootNamespace>EagleRepair.Cli</RootNamespace>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <PackageVersion>0.0.33</PackageVersion>
     <InformationalVersion>0.0.33</InformationalVersion>
     <Authors>Martin Odermatt</Authors>
@@ -18,20 +18,21 @@
     <PackageProjectUrl>https://github.com/marodev/EagleRepair</PackageProjectUrl>
     <RepositoryUrl>https://github.com/marodev/EagleRepair</RepositoryUrl>
     <PackageTags>sonarqube, resharper, static, analyzer, fix</PackageTags>
+    <LangVersion>10</LangVersion>
 
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="6.3.0"/>
-    <PackageReference Include="CommandLineParser" Version="2.8.0"/>
+    <PackageReference Include="Autofac" Version="6.3.0" />
+    <PackageReference Include="CommandLineParser" Version="2.8.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EagleRepair.Ast\EagleRepair.Ast.csproj"/>
+    <ProjectReference Include="..\EagleRepair.Ast\EagleRepair.Ast.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="nupkg"/>
+    <Folder Include="nupkg" />
   </ItemGroup>
 
 </Project>
