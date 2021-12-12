@@ -9,7 +9,7 @@ Can you make EagleRepair even better? Feel free to open a pull request.
 We do all our development [on GitHub](https://github.com/marodev/EagleRepair).
 
 Prerequisites to develop:
-- .NET 5 SDK
+- .NET 6 SDK
 
 ## Building sources
 
