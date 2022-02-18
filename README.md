@@ -38,7 +38,7 @@
 ## Install
 
 ### Prerequisites
-Install [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) or later
+Install [.NET 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) or later
 
 ### Command line tool
 EagleRepair is [available on NuGet](https://www.nuget.org/packages/EagleRepair.Cli) and can be installed as a global tool:
