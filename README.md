@@ -52,9 +52,9 @@ dotnet tool install --global EagleRepair.Cli
 - first build your C# project
 - run EagleRepair
 
-and specify the target rules (e.g, rule R2):
+and specify the target rules (e.g, rule R5):
 ```
-eaglerepair -r R2 -p .
+eaglerepair -r R5 -p .
 ```
 where "." looks for a solution file (.sln) in the current folder (default if not provided)
 
